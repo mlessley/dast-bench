@@ -160,9 +160,41 @@ def ingest_scan_result(
         typer.echo(f"error: benchmark '{benchmark_id}' not found")
         raise typer.Exit(code=1)
     vendor = _load_vendor_or_exit(vendor_id)
-    findings = json.loads(file.read_text())
+
+    # Load and validate findings JSON
+    try:
+        findings_text = file.read_text()
+    except FileNotFoundError:
+        typer.echo(f"error: findings file not found: {file}")
+        raise typer.Exit(code=1)
+    except Exception as e:
+        typer.echo(f"error: failed to read findings file: {e}")
+        raise typer.Exit(code=1)
+
+    try:
+        findings = json.loads(findings_text)
+    except json.JSONDecodeError as e:
+        typer.echo(f"error: invalid JSON in findings file: {e}")
+        raise typer.Exit(code=1)
+
+    # Validate findings is a list and extract vuln_ids
+    if not isinstance(findings, list):
+        typer.echo("error: findings must be a JSON array")
+        raise typer.Exit(code=1)
+
+    found_ids = set()
+    for f in findings:
+        if not isinstance(f, dict):
+            typer.echo("error: each finding must be a JSON object")
+            raise typer.Exit(code=1)
+        vuln_id = f.get("vuln_id")
+        if vuln_id is not None and not isinstance(vuln_id, str):
+            typer.echo("error: vuln_id must be a string")
+            raise typer.Exit(code=1)
+        if vuln_id:
+            found_ids.add(vuln_id)
+
     known_ids = {vuln.id for vuln in bench.known_vulnerabilities}
-    found_ids = {f["vuln_id"] for f in findings if "vuln_id" in f}
     detected = found_ids & known_ids
     false_positives = [f for f in findings if f.get("vuln_id") not in known_ids]
     outcome = (
