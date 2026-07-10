@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import typer
 
 from . import storage
-from .models import Confidence, Criterion, ScoreEntry, Vendor, VendorSource, VendorStatus
+from .models import Confidence, Criterion, HandsOnResult, Observation, ScoreEntry, Vendor, VendorSource, VendorStatus
 
 app = typer.Typer()
 criteria_app = typer.Typer()
@@ -119,3 +120,59 @@ def record_score(
 def list_candidates() -> None:
     for v in storage.list_vendors(CANDIDATES_DIR):
         typer.echo(f"{v.id}\t{v.name}\t{v.source.value}\t{v.status.value}")
+
+
+handson_app = typer.Typer()
+app.add_typer(handson_app, name="handson")
+
+
+@handson_app.command("log-observation")
+def log_observation(
+    vendor_id: str = typer.Option(...),
+    context: str = typer.Option(...),
+    note: str = typer.Option(...),
+    tags: str = typer.Option(""),
+) -> None:
+    vendor = _load_vendor_or_exit(vendor_id)
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+    vendor.observations.append(Observation(context=context, note=note, tags=tag_list))
+    storage.save_vendor(vendor, storage.vendor_path(CANDIDATES_DIR, vendor_id))
+    typer.echo(f"logged observation for '{vendor_id}'")
+
+
+@handson_app.command("ingest-scan-result")
+def ingest_scan_result(
+    vendor_id: str = typer.Option(...),
+    benchmark_id: str = typer.Option(...),
+    file: Path = typer.Option(...),
+    test_id: str = typer.Option(...),
+    description: str = typer.Option(""),
+    automated: bool = typer.Option(True),
+) -> None:
+    benchmarks = storage.load_benchmarks(BENCHMARKS_PATH)
+    bench = next((b for b in benchmarks if b.id == benchmark_id), None)
+    if not bench:
+        typer.echo(f"error: benchmark '{benchmark_id}' not found")
+        raise typer.Exit(code=1)
+    vendor = _load_vendor_or_exit(vendor_id)
+    findings = json.loads(file.read_text())
+    known_ids = {vuln.id for vuln in bench.known_vulnerabilities}
+    found_ids = {f["vuln_id"] for f in findings if "vuln_id" in f}
+    detected = found_ids & known_ids
+    false_positives = [f for f in findings if f.get("vuln_id") not in known_ids]
+    outcome = (
+        f"detected {len(detected)}/{len(known_ids)} known vulnerabilities, "
+        f"{len(false_positives)} false positive(s)"
+    )
+    vendor.hands_on_results.append(
+        HandsOnResult(
+            test_id=test_id,
+            description=description or f"scan against {benchmark_id}",
+            automated=automated,
+            benchmark_id=benchmark_id,
+            outcome=outcome,
+            observations=f"findings file: {file.name}",
+        )
+    )
+    storage.save_vendor(vendor, storage.vendor_path(CANDIDATES_DIR, vendor_id))
+    typer.echo(outcome)
