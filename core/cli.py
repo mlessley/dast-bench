@@ -7,6 +7,9 @@ import typer
 
 from . import storage
 from .models import Confidence, Criterion, HandsOnResult, Observation, ScoreEntry, Vendor, VendorSource, VendorStatus
+from .render.html import write_html
+from .render.markdown import write_markdown
+from .render.xlsx import write_xlsx
 from .status import gap_report
 
 app = typer.Typer()
@@ -17,6 +20,7 @@ DATA_DIR = Path("data")
 CRITERIA_PATH = DATA_DIR / "criteria.yaml"
 CANDIDATES_DIR = DATA_DIR / "candidates"
 BENCHMARKS_PATH = DATA_DIR / "benchmarks.yaml"
+REPORTS_DIR = Path("reports")
 
 
 @criteria_app.command("add-criterion")
@@ -188,3 +192,15 @@ def status_command() -> None:
         typer.echo("no gaps found")
     for message in messages:
         typer.echo(message)
+
+
+@app.command("render")
+def render_command() -> None:
+    taxonomy = storage.load_criteria(CRITERIA_PATH)
+    vendors = storage.list_vendors(CANDIDATES_DIR)
+    for message in gap_report(taxonomy, vendors):
+        typer.echo(message)
+    write_markdown(taxonomy, vendors, REPORTS_DIR)
+    write_xlsx(taxonomy, vendors, REPORTS_DIR / "comparison-matrix.xlsx")
+    write_html(taxonomy, vendors, REPORTS_DIR / "dashboard.html")
+    typer.echo(f"rendered reports to {REPORTS_DIR}/")
