@@ -5,7 +5,7 @@ from pathlib import Path
 import typer
 
 from . import storage
-from .models import Criterion
+from .models import Confidence, Criterion, ScoreEntry, Vendor, VendorSource, VendorStatus
 
 app = typer.Typer()
 criteria_app = typer.Typer()
@@ -56,3 +56,66 @@ def list_criteria() -> None:
         typer.echo(f"{c.id}\t{c.category}\t{c.name}\tweight={c.weight:g}")
     for issue in taxonomy.validate_weights():
         typer.echo(f"warning: {issue}")
+
+
+candidate_app = typer.Typer()
+app.add_typer(candidate_app, name="candidate")
+
+
+def _load_vendor_or_exit(vendor_id: str) -> Vendor:
+    path = storage.vendor_path(CANDIDATES_DIR, vendor_id)
+    if not path.exists():
+        typer.echo(f"error: vendor '{vendor_id}' not found")
+        raise typer.Exit(code=1)
+    return storage.load_vendor(path)
+
+
+@candidate_app.command("add")
+def add_candidate(
+    id: str = typer.Option(...),
+    name: str = typer.Option(...),
+    source: VendorSource = typer.Option(...),
+    website: str = typer.Option(""),
+    notes: str = typer.Option(""),
+) -> None:
+    path = storage.vendor_path(CANDIDATES_DIR, id)
+    if path.exists():
+        typer.echo(f"error: vendor '{id}' already exists")
+        raise typer.Exit(code=1)
+    vendor = Vendor(id=id, name=name, source=source, website=website, notes=notes)
+    storage.save_vendor(vendor, path)
+    typer.echo(f"added vendor '{id}'")
+
+
+@candidate_app.command("set-status")
+def set_status(id: str = typer.Option(...), status: VendorStatus = typer.Option(...)) -> None:
+    vendor = _load_vendor_or_exit(id)
+    vendor.status = status
+    storage.save_vendor(vendor, storage.vendor_path(CANDIDATES_DIR, id))
+    typer.echo(f"set status of '{id}' to {status.value}")
+
+
+@candidate_app.command("record-score")
+def record_score(
+    vendor_id: str = typer.Option(...),
+    criterion_id: str = typer.Option(...),
+    score: float = typer.Option(...),
+    evidence: str = typer.Option(...),
+    confidence: Confidence = typer.Option(...),
+) -> None:
+    taxonomy = storage.load_criteria(CRITERIA_PATH)
+    if not taxonomy.get(criterion_id):
+        typer.echo(f"error: criterion '{criterion_id}' not found in taxonomy")
+        raise typer.Exit(code=1)
+    vendor = _load_vendor_or_exit(vendor_id)
+    vendor.scores.append(
+        ScoreEntry(criterion_id=criterion_id, score=score, evidence=evidence, confidence=confidence)
+    )
+    storage.save_vendor(vendor, storage.vendor_path(CANDIDATES_DIR, vendor_id))
+    typer.echo(f"recorded score for '{vendor_id}' on '{criterion_id}'")
+
+
+@candidate_app.command("list")
+def list_candidates() -> None:
+    for v in storage.list_vendors(CANDIDATES_DIR):
+        typer.echo(f"{v.id}\t{v.name}\t{v.source.value}\t{v.status.value}")
