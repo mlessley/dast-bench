@@ -7,6 +7,7 @@ import typer
 
 from . import storage
 from .models import Confidence, Criterion, HandsOnResult, Observation, ScoreEntry, Vendor, VendorSource, VendorStatus
+from .status import gap_report
 
 app = typer.Typer()
 criteria_app = typer.Typer()
@@ -176,3 +177,14 @@ def ingest_scan_result(
     )
     storage.save_vendor(vendor, storage.vendor_path(CANDIDATES_DIR, vendor_id))
     typer.echo(outcome)
+
+
+@app.command("status")
+def status_command() -> None:
+    taxonomy = storage.load_criteria(CRITERIA_PATH)
+    vendors = storage.list_vendors(CANDIDATES_DIR)
+    messages = gap_report(taxonomy, vendors)
+    if not messages:
+        typer.echo("no gaps found")
+    for message in messages:
+        typer.echo(message)
