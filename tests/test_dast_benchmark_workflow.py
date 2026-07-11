@@ -78,3 +78,20 @@ def test_each_job_scans_with_zap_and_tolerates_its_nonzero_exit():
             f"ZAP scan step in job {job_name} must tolerate zap-full-scan.py's "
             "non-zero exit when it finds alerts"
         )
+
+
+def test_each_job_chmods_workspace_before_zap_scan():
+    # ZAP's docker image runs as its own internal `zap` user, which cannot
+    # write to the GitHub Actions runner's mounted checkout directory unless
+    # its permissions are opened up first — without this step, the scan
+    # completes but fails to write raw-report.json with a permission error.
+    workflow = _load_workflow()
+    for job_name in ("juice-shop", "vampi"):
+        steps = workflow["jobs"][job_name]["steps"]
+        chmod_indices = [i for i, s in enumerate(steps) if "chmod" in s.get("run", "") and "777" in s.get("run", "")]
+        scan_indices = [i for i, s in enumerate(steps) if "zap-full-scan.py" in s.get("run", "")]
+        assert len(chmod_indices) == 1, f"expected exactly one chmod step in job {job_name}"
+        assert chmod_indices[0] < scan_indices[0], (
+            f"chmod step in job {job_name} must run before the ZAP scan step, "
+            "not after"
+        )

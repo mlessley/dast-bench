@@ -39,6 +39,9 @@ jobs:
           echo "target did not become healthy in time" >&2
           exit 1
 
+      - name: Allow ZAP container to write reports
+        run: chmod -R 777 "$(pwd)"
+
       - name: Run ZAP full scan
         run: |
           docker run --network host -v "$(pwd)":/zap/wrk/:rw \
@@ -86,6 +89,9 @@ jobs:
           done
           echo "target did not become healthy in time" >&2
           exit 1
+
+      - name: Allow ZAP container to write reports
+        run: chmod -R 777 "$(pwd)"
 
       - name: Run ZAP full scan
         run: |
