@@ -58,9 +58,9 @@ approving before advancing between phases:
    Re-invocable at any time, not a one-time step.
 2. **Discovery** — build a candidate shortlist via market research, merged
    with any stakeholder-seeded "must include" vendors.
-3. **Paper cut** — desk-research every candidate against the criteria
+3. **Shortlist** — desk-research every candidate against the criteria
    taxonomy, record scores with evidence citations, recommend finalists.
-4. **Hands-on** — deeper testing of finalists only: benchmark scans against
+4. **Scan** — deeper testing of finalists only: benchmark scans against
    known-vulnerable reference targets (automated where tooling allows) plus
    free-form "play with the tool" observation capture.
 5. **Report** — render the SSoT into presentation artifacts (Markdown, HTML,
@@ -70,7 +70,7 @@ approving before advancing between phases:
 
 Two layers, intentionally decoupled:
 
-- **Core library** (`dast_eval_core`, Python + Pydantic): owns all data
+- **Core library** (`dast_bench_core`, Python + Pydantic): owns all data
   models, validation rules, and a CLI that is the only sanctioned way to
   mutate the YAML SSoT. This layer is the "interface" that is expected to
   survive a Phase 2 port unchanged — only the orchestration shell around it
@@ -88,16 +88,16 @@ evaluator's existing Claude Code usage.
 
 ### Invocation model
 
-- **Phase-advancing steps** (discovery research, paper-cut scoring, hands-on
+- **Phase-advancing steps** (discovery research, shortlist scoring, scan
   test planning, report narrative) require LLM judgment and run as Claude
   Code slash-command skills: `/dast-criteria`, `/dast-discovery`,
-  `/dast-paper-cut`, `/dast-handson`, `/dast-report`. Internally each shells
+  `/dast-shortlist`, `/dast-scan`, `/dast-report`. Internally each shells
   out to the core CLI to persist validated data.
 - **Deterministic operations** (checking status/gaps, re-rendering reports
   from existing data, ingesting a scan result file already in hand, manual
   score correction) don't need an LLM and can be run directly from bash via
-  the core CLI, e.g. `dast-eval status`, `dast-eval render`, `dast-eval
-  ingest-scan-result ...`.
+  the core CLI, e.g. `dast-bench status`, `dast-bench render`, `dast-bench
+  scan ingest-scan-result ...`.
 
 ## Data Model (Pydantic)
 
@@ -126,7 +126,7 @@ evaluation (including before/after hands-on testing).
 ## File Layout
 
 ```
-dast-eval/
+dast-bench/
   core/                      # Python package: Pydantic models + CLI
     models.py
     cli.py
@@ -141,8 +141,8 @@ dast-eval/
   .claude/skills/
     dast-criteria/
     dast-discovery/
-    dast-paper-cut/
-    dast-handson/
+    dast-shortlist/
+    dast-scan/
     dast-report/
   reports/                   # generated output — never hand-edited
 ```
@@ -153,8 +153,8 @@ dast-eval/
 |---|---|---|---|
 | `dast-criteria` | Scaffold/revise the criteria taxonomy from an industry-standard baseline (OWASP-style categories, informed by DAST vendor-evaluation checklists but reviewed for vendor bias), let evaluator adjust weights. Re-invocable anytime. | — | `criteria.yaml` |
 | `dast-discovery` | Research the DAST market, build a candidate shortlist with rationale + sources, merge in stakeholder-seeded must-include vendors. | `criteria.yaml` | `candidates/*.yaml` (status: `candidate`) |
-| `dast-paper-cut` | Research each candidate against every criterion, record score + evidence + confidence, recommend finalists. | `criteria.yaml`, `candidates/*.yaml` | `candidates/*.yaml` (scores, status transitions) |
-| `dast-handson` | For finalists: run/guide benchmark scans against reference targets, capture automated results and ad hoc observations, refine scores. | `candidates/*.yaml`, `benchmarks.yaml` | `candidates/*.yaml` (hands-on results, observations, status: `evaluated`) |
+| `dast-shortlist` | Research each candidate against every criterion, record score + evidence + confidence, recommend finalists. | `criteria.yaml`, `candidates/*.yaml` | `candidates/*.yaml` (scores, status transitions) |
+| `dast-scan` | For finalists: run/guide benchmark scans against reference targets, capture automated results and ad hoc observations, refine scores. | `candidates/*.yaml`, `benchmarks.yaml` | `candidates/*.yaml` (hands-on results, observations, status: `evaluated`) |
 | `dast-report` | Render SSoT into presentation artifacts; surface any criteria/score gaps. | `criteria.yaml`, `candidates/*.yaml` | `reports/` (Markdown, HTML, XLSX) |
 
 ## Criteria Extensibility & Gap Detection
@@ -162,7 +162,7 @@ dast-eval/
 The taxonomy is pure data (`criteria.yaml`); adding, removing, or reweighting
 criteria never requires a code change. Because criteria can change after some
 vendors are already scored, the core CLI provides a gap-detection command
-(`dast-eval status`) that reports vendors missing a score for any current
+(`dast-bench status`) that reports vendors missing a score for any current
 criterion. This check also runs automatically as part of `dast-report`, so
 stale/incomplete scoring surfaces before it reaches a presentation artifact
 rather than being silently missed.
@@ -176,21 +176,21 @@ rather than being silently missed.
   eyeballed. Initial targets: OWASP Juice Shop (general/SPA coverage) and an
   API-focused target such as crAPI or VAmPI (matching the priority on
   API/shadow-API detection).
-- **Generic scan ingestion**, not bespoke adapters per vendor: `dast-eval
-  ingest-scan-result` accepts normalized findings (CLI/API JSON output, a
-  SARIF file, or manually transcribed results) and maps them against a
+- **Generic scan ingestion**, not bespoke adapters per vendor: `dast-bench
+  scan ingest-scan-result` accepts normalized findings (CLI/API JSON output,
+  a SARIF file, or manually transcribed results) and maps them against a
   benchmark's ground truth. This is deliberately tool-agnostic since the
-  finalist tool set isn't known until after the paper cut.
+  finalist tool set isn't known until after the shortlist cut.
 - **One reference adapter in Phase 1: OWASP ZAP.** Free, scriptable
   (CLI/API), and sufficient to prove the automated-scan-to-scorecard pipeline
-  end to end. The `dast-handson` skill can drive ZAP directly and pipe output
+  end to end. The `dast-scan` skill can drive ZAP directly and pipe output
   into `ingest-scan-result`.
   - **Documented future adapter candidates** (not built in Phase 1): Nuclei
     (free, actively developed, template-based, strong for API/modern-stack
     scanning, complements rather than replaces ZAP's crawler), and Burp Suite
     Professional (self-serve purchase, no sales gate, industry-standard
     scanner) as a commercial-tier reference point.
-- **Ad hoc observation capture**: `dast-eval log-observation` records
+- **Ad hoc observation capture**: `dast-bench scan log-observation` records
   freeform notes (vendor, context, tags) during unstructured "play with the
   tool" sessions, so impressions aren't lost to a separate notebook and feed
   the same data model as structured results.
@@ -208,7 +208,7 @@ All formats generated on demand from the YAML SSoT, never hand-edited:
 
 ## Phase 2 (Noted, Not Designed)
 
-When the workflow is validated, `dast_eval_core`'s Pydantic models and CLI
+When the workflow is validated, `dast_bench_core`'s Pydantic models and CLI
 functions are expected to become native tool definitions for an AWS Strands
 Agents SDK implementation (or a hybrid Claude Agent SDK + AWS-deployed
 shell), reusing the same YAML schema and validation logic. Only the

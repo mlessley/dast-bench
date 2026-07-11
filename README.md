@@ -1,13 +1,21 @@
-# dast-eval
+# DAST Bench
 
-A small, git-native toolkit for running a structured, evidence-backed
-evaluation of DAST (Dynamic Application Security Testing) tools/frameworks —
-built as a personal utility for a single evaluator, not a multi-user product.
+DAST Bench is a structured evaluation framework for comparing DAST (Dynamic
+Application Security Testing) tools — replacing ad hoc bake-offs with a
+repeatable, evidence-backed methodology: a versioned criteria taxonomy,
+automated benchmark scoring against known-vulnerable reference targets, and
+generated scorecards/comparison reports rendered straight from a single YAML
+source of truth. Nothing gets hand-edited — a CLI (`dast-bench`) is the only
+sanctioned way to mutate that data, so every score and observation carries a
+clean, diffable audit trail.
 
-YAML files are the single source of truth. A Python CLI (`dast-eval`) is the
-only sanctioned way to mutate that data, so nothing gets edited by hand. LLM
-agents (Claude Code skills, still to be built) are expected to drive the
-research/judgment phases and shell out to this CLI for every write.
+The current implementation drives its research and orchestration phases
+through Claude Code, with the agent doing the judgment work for each
+evaluation phase and shelling out to the `dast-bench` CLI for every data
+mutation. That orchestration layer is deliberately swappable, not
+load-bearing: a planned Phase 2 port moves the same data model and CLI onto
+a standalone agent runtime, so the evaluation engine itself isn't tied to
+any one AI platform.
 
 Full context, rationale, and phased rollout: see [Docs](#docs) below —
 start with the Phase 1 design spec if you want the "why."
@@ -15,9 +23,9 @@ start with the Phase 1 design spec if you want the "why."
 ## Status
 
 **Phase 1 core library and CLI: done.** Five command groups (`criteria`,
-`candidate`, `handson`, `status`, `render`), YAML round-tripping via
-Pydantic, and Markdown/XLSX/HTML report rendering are implemented and
-tested (55 tests passing).
+`candidate`, `scan`, `status`, `render`), YAML round-tripping via Pydantic,
+and Markdown/XLSX/HTML report rendering are implemented and tested (55
+tests passing).
 
 **DAST benchmark CI pipeline: built, not yet live-verified.** A GitHub
 Actions `workflow_dispatch` pipeline
@@ -28,9 +36,9 @@ been dispatched against a real GitHub-hosted run yet — see the plan's
 manual-verification note.
 
 **Not yet built:**
-- The `dast-handson` Claude Code skill (the orchestrator that will trigger
+- The `dast-scan` Claude Code skill (the orchestrator that will trigger
   the CI pipeline above, download its artifacts, and call `ingest-scan-result`).
-- The `dast-criteria`, `dast-discovery`, `dast-paper-cut`, `dast-report` skills.
+- The `dast-criteria`, `dast-discovery`, `dast-shortlist`, `dast-report` skills.
 - Production-safe scanning (drift/misconfiguration detection against a real
   or staging target, as opposed to the ephemeral benchmark targets above) —
   deliberately deferred; see the roadmap doc.
@@ -41,9 +49,9 @@ Requires Python >=3.11 and [`uv`](https://docs.astral.sh/uv/) — this
 project uses `uv` for all dependency management, not `pip`.
 
 ```bash
-uv sync --extra dev      # installs the package + pytest into .venv
-uv run pytest -v         # run the test suite
-uv run dast-eval --help  # see all CLI commands
+uv sync --extra dev       # installs the package + pytest into .venv
+uv run pytest -v          # run the test suite
+uv run dast-bench --help  # see all CLI commands
 ```
 
 ## CLI reference
@@ -52,20 +60,20 @@ All commands take explicit `--flag value` options (no positional
 arguments), so they're unambiguous when invoked by an LLM-driven skill.
 
 ```
-dast-eval criteria add-criterion --id --category --name --description --weight --rubric
-dast-eval criteria set-weight --id --weight
-dast-eval criteria list
+dast-bench criteria add-criterion --id --category --name --description --weight --rubric
+dast-bench criteria set-weight --id --weight
+dast-bench criteria list
 
-dast-eval candidate add --id --name --source --website --notes
-dast-eval candidate set-status --id --status
-dast-eval candidate record-score --vendor-id --criterion-id --score --evidence --confidence
-dast-eval candidate list
+dast-bench candidate add --id --name --source --website --notes
+dast-bench candidate set-status --id --status
+dast-bench candidate record-score --vendor-id --criterion-id --score --evidence --confidence
+dast-bench candidate list
 
-dast-eval handson log-observation --vendor-id --context --note --tags
-dast-eval handson ingest-scan-result --vendor-id --benchmark-id --file --test-id --description --automated
+dast-bench scan log-observation --vendor-id --context --note --tags
+dast-bench scan ingest-scan-result --vendor-id --benchmark-id --file --test-id --description --automated
 
-dast-eval status   # reports vendors missing a score for any current criterion, and weight-total warnings
-dast-eval render   # renders reports/scorecard-<id>.md, comparison-matrix.md, comparison-matrix.xlsx, dashboard.html
+dast-bench status   # reports vendors missing a score for any current criterion, and weight-total warnings
+dast-bench render   # renders reports/scorecard-<id>.md, comparison-matrix.md, comparison-matrix.xlsx, dashboard.html
 ```
 
 ## Project layout
@@ -81,7 +89,7 @@ core/                      # Python package: Pydantic models + CLI
     xlsx.py                    # comparison matrix (XLSX)
     html.py                    # self-contained, sortable comparison dashboard (HTML)
 data/                      # YAML source of truth (criteria.yaml, benchmarks.yaml, candidates/*.yaml)
-reports/                   # generated output — never hand-edited, regenerated via `dast-eval render`
+reports/                   # generated output — never hand-edited, regenerated via `dast-bench render`
 .github/
   workflows/dast-benchmark.yml     # CI pipeline: ephemeral benchmark target + ZAP scan
   scripts/normalize/zap.py          # ZAP report -> generic findings JSON

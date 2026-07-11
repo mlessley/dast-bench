@@ -1,10 +1,10 @@
-# DAST Benchmark CI Pipeline (Hands-On Phase Infrastructure)
+# DAST Benchmark CI Pipeline (Scan Phase Infrastructure)
 
 ## Purpose & Context
 
 The Phase 1 design (`2026-07-10-dast-eval-phase1-design.md`) names an OWASP ZAP
-reference adapter for the hands-on phase, driven by the (not-yet-built)
-`dast-handson` Claude Code skill directly via Bash/CLI/API. This design
+reference adapter for the scan phase, driven by the (not-yet-built)
+`dast-scan` Claude Code skill directly via Bash/CLI/API. This design
 revisits how that driving happens for the **benchmark-target** test
 scenario specifically: rather than an LLM improvising a scan invocation in
 an interactive session, the tool runs inside a real GitHub Actions CI
@@ -23,20 +23,20 @@ second scenario, scanning a production or production-like target for drift
 and misconfiguration rather than known vulnerabilities, was discussed and
 deliberately deferred; see `2026-07-11-production-safe-scanning-roadmap.md`.
 
-Building the `dast-handson` skill itself (the orchestrator that will
+Building the `dast-scan` skill itself (the orchestrator that will
 eventually call the pieces this design produces) is explicitly out of
 scope — this design produces the CI-side infrastructure that skill will
 call into once it exists.
 
 ## Goals
 
-- Run each hands-on finalist DAST tool against a fresh, ephemeral,
+- Run each finalist DAST tool against a fresh, ephemeral,
   deliberately-vulnerable benchmark target inside a real GitHub Actions
   pipeline, rather than an ad hoc interactive session.
 - Produce a permanent, inspectable audit trail: every run's raw tool
   output is preserved as a build artifact, regardless of whether
   normalization succeeds.
-- Feed normalized findings into the existing `dast-eval handson
+- Feed normalized findings into the existing `dast-bench scan
   ingest-scan-result` CLI command (already built) without requiring any
   changes to the core library.
 - Support adding new tools incrementally: a tool can be tried before a
@@ -46,7 +46,7 @@ call into once it exists.
 
 ## Non-Goals / Out of Scope
 
-- The `dast-handson` skill itself (trigger + poll + download + ingest
+- The `dast-scan` skill itself (trigger + poll + download + ingest
   orchestration) — deferred, built after this infrastructure exists.
 - Production or production-like scanning (drift/misconfiguration
   detection, passive-first/guardrailed posture, post-deploy and scheduled
@@ -107,7 +107,7 @@ that must not be disrupted.
 
 1. **Trigger:** `gh workflow run dast-benchmark.yml -f tool=zap -f
    target=juice-shop`. This will eventually be issued by the
-   `dast-handson` skill, but works standalone via the `gh` CLI today,
+   `dast-scan` skill, but works standalone via the `gh` CLI today,
    before that skill exists.
 2. GitHub Actions runs the matching target's job, brings up the service
    container, and waits for it to report healthy.
@@ -127,11 +127,11 @@ that must not be disrupted.
      script has been written): no normalization step runs; only the raw
      report artifact is produced.
 6. The run completes. Whoever triggered it (a human, or eventually the
-   `dast-handson` skill) runs `gh run download <run-id>` to pull the
+   `dast-scan` skill) runs `gh run download <run-id>` to pull the
    artifact(s) locally.
 7. **If the normalized artifact is present**, it's fed directly to:
    ```
-   dast-eval handson ingest-scan-result \
+   dast-bench scan ingest-scan-result \
      --vendor-id <id> --benchmark-id <juice-shop|vampi> \
      --file <normalized.json> --test-id <run-id>
    ```

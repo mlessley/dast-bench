@@ -31,7 +31,7 @@ def test_log_observation_appends_to_vendor(tmp_path, monkeypatch):
     result = runner.invoke(
         app,
         [
-            "handson", "log-observation",
+            "scan", "log-observation",
             "--vendor-id", "v1", "--context", "juice-shop crawl",
             "--note", "UI felt sluggish", "--tags", "ux-friction,setup-cost",
         ],
@@ -51,7 +51,7 @@ def test_ingest_scan_result_computes_detection_rate(tmp_path, monkeypatch):
     result = runner.invoke(
         app,
         [
-            "handson", "ingest-scan-result",
+            "scan", "ingest-scan-result",
             "--vendor-id", "v1", "--benchmark-id", "juice-shop",
             "--file", str(findings_file), "--test-id", "scan-1",
         ],
@@ -70,7 +70,7 @@ def test_ingest_scan_result_errors_on_unknown_benchmark(tmp_path, monkeypatch):
     result = runner.invoke(
         app,
         [
-            "handson", "ingest-scan-result",
+            "scan", "ingest-scan-result",
             "--vendor-id", "v1", "--benchmark-id", "missing-benchmark",
             "--file", str(findings_file), "--test-id", "scan-1",
         ],

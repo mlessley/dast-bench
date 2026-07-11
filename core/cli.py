@@ -127,11 +127,11 @@ def list_candidates() -> None:
         typer.echo(f"{v.id}\t{v.name}\t{v.source.value}\t{v.status.value}")
 
 
-handson_app = typer.Typer()
-app.add_typer(handson_app, name="handson")
+scan_app = typer.Typer()
+app.add_typer(scan_app, name="scan")
 
 
-@handson_app.command("log-observation")
+@scan_app.command("log-observation")
 def log_observation(
     vendor_id: str = typer.Option(...),
     context: str = typer.Option(...),
@@ -145,7 +145,7 @@ def log_observation(
     typer.echo(f"logged observation for '{vendor_id}'")
 
 
-@handson_app.command("ingest-scan-result")
+@scan_app.command("ingest-scan-result")
 def ingest_scan_result(
     vendor_id: str = typer.Option(...),
     benchmark_id: str = typer.Option(...),

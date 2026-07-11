@@ -1,5 +1,5 @@
 [project]
-name = "dast-eval-core"
+name = "dast-bench-core"
 version = "0.1.0"
 description = "Core data layer and CLI for DAST tool evaluation workflow"
 requires-python = ">=3.11"
@@ -14,7 +14,7 @@ dependencies = [
 dev = ["pytest>=8"]
 
 [project.scripts]
-dast-eval = "core.cli:app"
+dast-bench = "core.cli:app"
 
 [build-system]
 requires = ["setuptools>=68"]
