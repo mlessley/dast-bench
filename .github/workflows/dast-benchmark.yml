@@ -1,0 +1,111 @@
+"on":
+  workflow_dispatch:
+    inputs:
+      tool:
+        description: "DAST tool to run"
+        required: true
+        type: choice
+        options:
+          - zap
+      target:
+        description: "Benchmark target to scan"
+        required: true
+        type: choice
+        options:
+          - juice-shop
+          - vampi
+
+jobs:
+  juice-shop:
+    if: inputs.target == 'juice-shop'
+    runs-on: ubuntu-latest
+    services:
+      target:
+        image: bkimminich/juice-shop
+        ports:
+          - 3000:3000
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for target to become healthy
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000 > /dev/null; then
+              echo "target healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "target did not become healthy in time" >&2
+          exit 1
+
+      - name: Run ZAP full scan
+        run: |
+          docker run --network host -v "$(pwd)":/zap/wrk/:rw \
+            zaproxy/zap-stable zap-full-scan.py \
+            -t http://localhost:3000 -J raw-report.json || true
+
+      - name: Upload raw report
+        uses: actions/upload-artifact@v4
+        with:
+          name: raw-report-${{ inputs.tool }}-${{ inputs.target }}
+          path: raw-report.json
+
+      - name: Normalize report
+        if: inputs.tool == 'zap'
+        run: python .github/scripts/normalize/zap.py raw-report.json normalized.json
+
+      - name: Upload normalized report
+        if: inputs.tool == 'zap'
+        uses: actions/upload-artifact@v4
+        with:
+          name: normalized-${{ inputs.tool }}-${{ inputs.target }}
+          path: normalized.json
+
+  vampi:
+    if: inputs.target == 'vampi'
+    runs-on: ubuntu-latest
+    services:
+      target:
+        image: erev0s/vampi:latest
+        ports:
+          - 5000:5000
+        env:
+          vulnerable: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for target to become healthy
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:5000 > /dev/null; then
+              echo "target healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "target did not become healthy in time" >&2
+          exit 1
+
+      - name: Run ZAP full scan
+        run: |
+          docker run --network host -v "$(pwd)":/zap/wrk/:rw \
+            zaproxy/zap-stable zap-full-scan.py \
+            -t http://localhost:5000 -J raw-report.json || true
+
+      - name: Upload raw report
+        uses: actions/upload-artifact@v4
+        with:
+          name: raw-report-${{ inputs.tool }}-${{ inputs.target }}
+          path: raw-report.json
+
+      - name: Normalize report
+        if: inputs.tool == 'zap'
+        run: python .github/scripts/normalize/zap.py raw-report.json normalized.json
+
+      - name: Upload normalized report
+        if: inputs.tool == 'zap'
+        uses: actions/upload-artifact@v4
+        with:
+          name: normalized-${{ inputs.tool }}-${{ inputs.target }}
+          path: normalized.json
