@@ -12,7 +12,7 @@ def _load_workflow():
 
 def test_run_name_shows_tool_and_target_in_the_runs_list():
     workflow = _load_workflow()
-    assert workflow["run-name"] == "${{ inputs.tool }} · ${{ inputs.target }}"
+    assert workflow["run-name"] == "${{ inputs.tool == 'zap' && 'ZAP' || 'Nuclei' }} · ${{ inputs.target }}"
 
 
 def test_workflow_dispatch_inputs_present():

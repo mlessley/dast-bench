@@ -70,3 +70,37 @@ def test_add_vulnerability_rejects_duplicate_vuln_id(tmp_path, monkeypatch):
     result = runner.invoke(app, vuln_args)
     assert result.exit_code != 0
     assert "already exists" in result.output
+
+
+def test_remove_vulnerability_removes_it_from_benchmark(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    runner.invoke(app, ADD_ARGS)
+    runner.invoke(
+        app,
+        [
+            "benchmark", "add-vulnerability",
+            "--benchmark-id", "juice-shop", "--vuln-id", "40018",
+            "--name", "SQL Injection", "--severity", "high",
+        ],
+    )
+    result = runner.invoke(app, ["benchmark", "remove-vulnerability", "--benchmark-id", "juice-shop", "--vuln-id", "40018"])
+    assert result.exit_code == 0, result.output
+    benchmarks = storage.load_benchmarks(tmp_path / "data" / "benchmarks.yaml")
+    assert benchmarks[0].known_vulnerabilities == []
+    result = runner.invoke(app, ["benchmark", "list"])
+    assert "known_vulnerabilities=0" in result.output
+
+
+def test_remove_vulnerability_errors_on_unknown_benchmark(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    result = runner.invoke(app, ["benchmark", "remove-vulnerability", "--benchmark-id", "missing", "--vuln-id", "40018"])
+    assert result.exit_code != 0
+    assert "not found" in result.output
+
+
+def test_remove_vulnerability_errors_on_unknown_vuln_id(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    runner.invoke(app, ADD_ARGS)
+    result = runner.invoke(app, ["benchmark", "remove-vulnerability", "--benchmark-id", "juice-shop", "--vuln-id", "does-not-exist"])
+    assert result.exit_code != 0
+    assert "not found" in result.output

@@ -319,6 +319,24 @@ def add_benchmark_vulnerability(
     typer.echo(f"added vulnerability '{vuln_id}' to benchmark '{benchmark_id}'")
 
 
+@benchmark_app.command("remove-vulnerability")
+def remove_benchmark_vulnerability(
+    benchmark_id: str = typer.Option(...),
+    vuln_id: str = typer.Option(...),
+) -> None:
+    benchmarks = storage.load_benchmarks(BENCHMARKS_PATH)
+    bench = next((b for b in benchmarks if b.id == benchmark_id), None)
+    if not bench:
+        typer.echo(f"error: benchmark '{benchmark_id}' not found")
+        raise typer.Exit(code=1)
+    if not any(v.id == vuln_id for v in bench.known_vulnerabilities):
+        typer.echo(f"error: vulnerability '{vuln_id}' not found on benchmark '{benchmark_id}'")
+        raise typer.Exit(code=1)
+    bench.known_vulnerabilities = [v for v in bench.known_vulnerabilities if v.id != vuln_id]
+    storage.save_benchmarks(benchmarks, BENCHMARKS_PATH)
+    typer.echo(f"removed vulnerability '{vuln_id}' from benchmark '{benchmark_id}'")
+
+
 @benchmark_app.command("list")
 def list_benchmarks() -> None:
     for b in storage.load_benchmarks(BENCHMARKS_PATH):
