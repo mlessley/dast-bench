@@ -1,4 +1,4 @@
-run-name: "${{ inputs.tool }} · ${{ inputs.target }}"
+run-name: "${{ inputs.tool == 'zap' && 'ZAP' || 'Nuclei' }} · ${{ inputs.target }}"
 
 "on":
   workflow_dispatch:
