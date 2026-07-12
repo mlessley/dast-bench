@@ -147,6 +147,14 @@ def set_status(id: str = typer.Option(...), status: VendorStatus = typer.Option(
     typer.echo(f"set status of '{id}' to {status.value}")
 
 
+@candidate_app.command("set-ci-tool")
+def set_ci_tool(id: str = typer.Option(...), tool: str = typer.Option(...)) -> None:
+    vendor = _load_vendor_or_exit(id)
+    vendor.ci_tool_id = tool
+    storage.save_vendor(vendor, storage.vendor_path(CANDIDATES_DIR, id))
+    typer.echo(f"set ci-tool of '{id}' to {tool}")
+
+
 @candidate_app.command("record-score")
 def record_score(
     vendor_id: str = typer.Option(...),

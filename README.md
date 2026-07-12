@@ -66,10 +66,11 @@ dast-bench criteria list
 
 dast-bench candidate add --id --name --source --website --notes
 dast-bench candidate set-status --id --status
+dast-bench candidate set-ci-tool --id --tool
 dast-bench candidate record-score --vendor-id --criterion-id --score --evidence --confidence
+dast-bench candidate log-observation --vendor-id --context --note --tags
 dast-bench candidate list
 
-dast-bench scan log-observation --vendor-id --context --note --tags
 dast-bench scan ingest-scan-result --vendor-id --benchmark-id --file --test-id --description --automated
 
 dast-bench status   # reports vendors missing a score for any current criterion, and weight-total warnings

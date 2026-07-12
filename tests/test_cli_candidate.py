@@ -94,3 +94,18 @@ def test_log_observation_appends_to_vendor(tmp_path, monkeypatch):
     vendor = storage.load_vendor(tmp_path / "data" / "candidates" / "v1.yaml")
     assert vendor.observations[0].note == "UI felt sluggish"
     assert vendor.observations[0].tags == ["ux-friction", "setup-cost"]
+
+
+def test_set_ci_tool_updates_vendor(tmp_path, monkeypatch):
+    _add_vendor(monkeypatch, tmp_path)
+    result = runner.invoke(app, ["candidate", "set-ci-tool", "--id", "v1", "--tool", "zap"])
+    assert result.exit_code == 0, result.output
+    vendor = storage.load_vendor(tmp_path / "data" / "candidates" / "v1.yaml")
+    assert vendor.ci_tool_id == "zap"
+
+
+def test_set_ci_tool_errors_on_unknown_vendor(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    result = runner.invoke(app, ["candidate", "set-ci-tool", "--id", "missing", "--tool", "zap"])
+    assert result.exit_code != 0
+    assert "not found" in result.output

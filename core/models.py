@@ -81,6 +81,7 @@ class Vendor(BaseModel):
     status: VendorStatus = VendorStatus.CANDIDATE
     website: str = ""
     notes: str = ""
+    ci_tool_id: str | None = None
     scores: list[ScoreEntry] = Field(default_factory=list)
     hands_on_results: list[HandsOnResult] = Field(default_factory=list)
     observations: list[Observation] = Field(default_factory=list)
