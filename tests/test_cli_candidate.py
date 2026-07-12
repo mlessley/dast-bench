@@ -78,3 +78,19 @@ def test_record_score_stores_score_against_known_criterion(tmp_path, monkeypatch
     assert result.exit_code == 0, result.output
     vendor = storage.load_vendor(tmp_path / "data" / "candidates" / "v1.yaml")
     assert vendor.score_for("c1").score == 4
+
+
+def test_log_observation_appends_to_vendor(tmp_path, monkeypatch):
+    _add_vendor(monkeypatch, tmp_path)
+    result = runner.invoke(
+        app,
+        [
+            "candidate", "log-observation",
+            "--vendor-id", "v1", "--context", "juice-shop crawl",
+            "--note", "UI felt sluggish", "--tags", "ux-friction,setup-cost",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    vendor = storage.load_vendor(tmp_path / "data" / "candidates" / "v1.yaml")
+    assert vendor.observations[0].note == "UI felt sluggish"
+    assert vendor.observations[0].tags == ["ux-friction", "setup-cost"]

@@ -26,22 +26,6 @@ def _setup_vendor_and_benchmark(monkeypatch, tmp_path):
     )
 
 
-def test_log_observation_appends_to_vendor(tmp_path, monkeypatch):
-    _setup_vendor_and_benchmark(monkeypatch, tmp_path)
-    result = runner.invoke(
-        app,
-        [
-            "scan", "log-observation",
-            "--vendor-id", "v1", "--context", "juice-shop crawl",
-            "--note", "UI felt sluggish", "--tags", "ux-friction,setup-cost",
-        ],
-    )
-    assert result.exit_code == 0, result.output
-    vendor = storage.load_vendor(tmp_path / "data" / "candidates" / "v1.yaml")
-    assert vendor.observations[0].note == "UI felt sluggish"
-    assert vendor.observations[0].tags == ["ux-friction", "setup-cost"]
-
-
 def test_ingest_scan_result_computes_detection_rate(tmp_path, monkeypatch):
     _setup_vendor_and_benchmark(monkeypatch, tmp_path)
     findings_file = tmp_path / "findings.json"

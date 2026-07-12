@@ -173,11 +173,7 @@ def list_candidates() -> None:
         typer.echo(f"{v.id}\t{v.name}\t{v.source.value}\t{v.status.value}")
 
 
-scan_app = typer.Typer()
-app.add_typer(scan_app, name="scan")
-
-
-@scan_app.command("log-observation")
+@candidate_app.command("log-observation")
 def log_observation(
     vendor_id: str = typer.Option(...),
     context: str = typer.Option(...),
@@ -189,6 +185,10 @@ def log_observation(
     vendor.observations.append(Observation(context=context, note=note, tags=tag_list))
     storage.save_vendor(vendor, storage.vendor_path(CANDIDATES_DIR, vendor_id))
     typer.echo(f"logged observation for '{vendor_id}'")
+
+
+scan_app = typer.Typer()
+app.add_typer(scan_app, name="scan")
 
 
 @scan_app.command("ingest-scan-result")
