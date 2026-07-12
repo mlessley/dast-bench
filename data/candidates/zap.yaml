@@ -1,0 +1,95 @@
+id: zap
+name: OWASP ZAP
+source: seeded
+status: finalist
+website: https://www.zaproxy.org/
+notes: Free, open-source, OWASP-maintained DAST tool; already wired into dast-bench's
+  CI pipeline
+ci_tool_id: zap
+scores:
+- criterion_id: api-spa-coverage
+  score: 4.0
+  evidence: 'REST/GraphQL/SOAP via Automation Framework + dedicated GraphQL add-on
+    (introspection + query fuzzing), AJAX Spider for headless JS-SPA crawling. GraphQL
+    deep testing sometimes needs custom scripts, not fully automatic. Source: zaproxy.org/docs/desktop/addons/graphql-support'
+  confidence: paper
+  timestamp: '2026-07-12T16:15:17.210341'
+- criterion_id: shadow-api-discovery
+  score: 3.0
+  evidence: AJAX Spider + traditional spider do JS-bundle/common-path heuristic discovery;
+    no dedicated deprecated/versioned-endpoint detection engine.
+  confidence: paper
+  timestamp: '2026-07-12T16:15:17.435788'
+- criterion_id: auth-session-handling
+  score: 3.5
+  evidence: Form/script-based auth and HTTP session management are solid; SSO/OAuth/MFA
+    flows handleable via custom Zest scripts but require manual scripting, not native
+    support.
+  confidence: paper
+  timestamp: '2026-07-12T16:15:17.661755'
+- criterion_id: detection-accuracy
+  score: 3.5
+  evidence: Mature detection across OWASP Top 10 classes, confirmed by this project's
+    own live CI runs (12 findings on Juice Shop, 4 on VAmPI); nuanced/logic-based
+    vulnerabilities generally need custom rules.
+  confidence: paper
+  timestamp: '2026-07-12T16:15:17.881426'
+- criterion_id: false-positive-rate
+  score: 3.0
+  evidence: Passive rules fairly reliable; active rules (generic header/CSRF-token
+    findings) produce moderate, manageable noise per community consensus.
+  confidence: paper
+  timestamp: '2026-07-12T16:15:18.109458'
+- criterion_id: safe-prod-scanning
+  score: 4.5
+  evidence: 'Passive-only proxying explicitly documented as safe for production; dedicated
+    safe/protected modes; configurable rate limiting (Network > Rate Limit). Source:
+    zaproxy.org/faq/is-there-any-danger-when-scanning-with-zap'
+  confidence: paper
+  timestamp: '2026-07-12T16:15:18.319647'
+- criterion_id: cicd-native-fit
+  score: 5.0
+  evidence: First-class docker CLI scripts (zap-full-scan.py etc.), YAML Automation
+    Framework, clear exit codes, machine-readable JSON/XML output -- this project's
+    own CI pipeline uses it directly.
+  confidence: paper
+  timestamp: '2026-07-12T16:15:18.551707'
+- criterion_id: triage-remediation-guidance
+  score: 3.0
+  evidence: Every alert includes a description, solution text, and references -- generic
+    per-vulnerability-class advice, not tailored to the specific instance/tech stack.
+  confidence: paper
+  timestamp: '2026-07-12T16:15:18.769244'
+- criterion_id: auto-remediation-pr
+  score: 1.0
+  evidence: No auto-remediation or auto-PR capability -- it's a scanner, not a code-fixing
+    tool.
+  confidence: paper
+  timestamp: '2026-07-12T16:15:18.994990'
+- criterion_id: setup-onboarding-friction
+  score: 4.5
+  evidence: Free, official docker images, first useful scan achievable in minutes
+    with sensible defaults -- confirmed by this project's own live-verification run.
+  confidence: paper
+  timestamp: '2026-07-12T16:15:19.214436'
+- criterion_id: reporting-exportability
+  score: 4.0
+  evidence: HTML/XML/JSON/Markdown report generation; community plugins for Jira/Slack
+    exist but aren't first-party/polished.
+  confidence: paper
+  timestamp: '2026-07-12T16:15:19.452447'
+- criterion_id: extensibility-custom-rules
+  score: 5.0
+  evidence: Highly extensible -- custom active/passive scan rules via Zest/Python/JS/Groovy
+    scripting, large add-on marketplace.
+  confidence: paper
+  timestamp: '2026-07-12T16:15:19.694211'
+hands_on_results: []
+observations:
+- context: discovery research
+  note: 'Seeded must-include per stakeholder decision. Leading free/open-source DAST
+    tool, actively maintained by the OWASP Foundation, scriptable and pipeline-friendly.
+    Source: Aikido Security ''Top 13 DAST Tools 2026'' (aikido.dev/blog/top-dynamic-application-security-testing-dast-tools).'
+  tags:
+  - discovery
+  timestamp: '2026-07-12T16:11:11.933975'

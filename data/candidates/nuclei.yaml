@@ -1,0 +1,108 @@
+id: nuclei
+name: Nuclei
+source: seeded
+status: finalist
+website: https://github.com/projectdiscovery/nuclei
+notes: Template-based vulnerability scanner from ProjectDiscovery; docker/CLI-friendly,
+  huge community template library
+ci_tool_id: nuclei
+scores:
+- criterion_id: api-spa-coverage
+  score: 3.5
+  evidence: '11,000+ community templates with strong dedicated GraphQL coverage (introspection,
+    query-depth, batch-abuse); fundamentally a template-matcher against target URLs,
+    not a headless-browser crawler -- weaker JS-rendered SPA content discovery than
+    ZAP''s AJAX Spider. Source: github.com/projectdiscovery/nuclei-templates'
+  confidence: paper
+  timestamp: '2026-07-12T16:18:56.079489'
+- criterion_id: shadow-api-discovery
+  score: 3.0
+  evidence: Exposure/technology-fingerprint templates do heuristic path-guessing,
+    similar depth to ZAP; no deprecated/versioned-endpoint-aware discovery engine.
+  confidence: paper
+  timestamp: '2026-07-12T16:18:56.291889'
+- criterion_id: auth-session-handling
+  score: 4.0
+  evidence: 'v3.2 added real static + dynamic authentication (API keys, OAuth-style
+    flows, session cookie/header maintenance) -- documented and real, though newer/less
+    battle-tested than ZAP''s scripting approach. Source: projectdiscovery.io/blog/nuclei-3-2'
+  confidence: paper
+  timestamp: '2026-07-12T16:18:56.505457'
+- criterion_id: detection-accuracy
+  score: 2.5
+  evidence: LOW CONFIDENCE -- inferred, not hands-on verified. Nuclei's strength is
+    signature-matching against known CVEs/misconfigs (1,496+ KEV templates); Juice
+    Shop/VAmPI are intentionally-vulnerable custom apps, not systems with known CVEs,
+    and Nuclei isn't primarily a black-box parameter-fuzzer like ZAP. Real detection
+    rate against these specific benchmark targets is unknown from public info alone
+    -- flagged for dast-scan's hands-on run to resolve with real evidence.
+  confidence: paper
+  timestamp: '2026-07-12T16:18:56.721197'
+- criterion_id: false-positive-rate
+  score: 4.5
+  evidence: Signature-matching design means false positives are rare by construction;
+    a few noisy templates exist but are excludable via -exclude-templates.
+  confidence: paper
+  timestamp: '2026-07-12T16:18:56.965406'
+- criterion_id: safe-prod-scanning
+  score: 3.5
+  evidence: Rate-limiting flags exist and most templates are non-destructive by nature
+    (matching, not exploiting), but no dedicated safe-mode branding/formal guarantee
+    like ZAP's.
+  confidence: paper
+  timestamp: '2026-07-12T16:18:57.181656'
+- criterion_id: cicd-native-fit
+  score: 3.5
+  evidence: 'Strong JSON/JSONL/SARIF output and widespread CI adoption -- but Nuclei
+    always returns exit code 0 regardless of findings; must parse JSON output yourself
+    to fail a build. Falls short of clear exit codes. Source: github.com/orgs/projectdiscovery/discussions/3218'
+  confidence: paper
+  timestamp: '2026-07-12T16:18:57.415059'
+- criterion_id: triage-remediation-guidance
+  score: 3.0
+  evidence: Templates include name/description/references, but quality is inconsistent
+    across 11,000+ community-contributed templates.
+  confidence: paper
+  timestamp: '2026-07-12T16:18:57.626631'
+- criterion_id: auto-remediation-pr
+  score: 1.0
+  evidence: No auto-remediation/auto-PR capability.
+  confidence: paper
+  timestamp: '2026-07-12T16:18:57.849740'
+- criterion_id: setup-onboarding-friction
+  score: 5.0
+  evidence: Single static Go binary, go install or docker, -update-templates auto-fetches
+    the library -- genuinely lower friction than ZAP's Java/docker footprint.
+  confidence: paper
+  timestamp: '2026-07-12T16:18:58.072328'
+- criterion_id: reporting-exportability
+  score: 4.5
+  evidence: JSON/JSONL/SARIF output -- SARIF integrates natively with GitHub's code-scanning
+    security tab, a stronger integration story than ZAP's plugin-based approach.
+  confidence: paper
+  timestamp: '2026-07-12T16:18:58.274773'
+- criterion_id: extensibility-custom-rules
+  score: 5.0
+  evidence: The entire tool is custom rules -- a simple YAML DSL explicitly designed
+    for community/user-authored templates, no vendor involvement needed.
+  confidence: paper
+  timestamp: '2026-07-12T16:18:58.478651'
+hands_on_results: []
+observations:
+- context: discovery research
+  note: 'Seeded must-include per stakeholder decision, chosen as the second tool to
+    onboard for dast-bench''s own dogfooding exercise. Extremely popular, actively
+    maintained open-source template-based scanner (different architecture from crawl-and-attack
+    tools like ZAP: signature/template matching against a large community rule library).
+    Source: ProjectDiscovery''s own GitHub project (github.com/projectdiscovery/nuclei).'
+  tags:
+  - discovery
+  timestamp: '2026-07-12T16:11:12.360055'
+- context: dast-onboard-tool integration research
+  note: 'Tier 1 (fully local): official docker image projectdiscovery/nuclei:latest,
+    CLI invocation ''docker run projectdiscovery/nuclei:latest -u <target> -jsonl
+    -o <output>'', no secrets/API key required. Source: projectdiscovery.io/blog/how-to-run-nuclei-other-projectdiscovery-tools-in-docker'
+  tags:
+  - onboard-tool
+  - integration
+  timestamp: '2026-07-12T16:22:16.828005'

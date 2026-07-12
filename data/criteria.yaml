@@ -1,0 +1,109 @@
+version: 1
+criteria:
+- id: api-spa-coverage
+  category: Coverage
+  name: API/SPA Coverage
+  description: Detects vulnerabilities across REST APIs, GraphQL, and JavaScript-rendered
+    single-page applications, not just traditional server-rendered pages.
+  weight: 15.0
+  rubric: '1: Only scans traditional server-rendered HTML forms; no JS-rendered SPA
+    crawling, no OpenAPI/GraphQL-aware scanning. 3: Crawls JS-rendered SPA content
+    with a headless browser and supports REST via OpenAPI import, but GraphQL support
+    is absent or minimal. 5: Full support for JS-rendered SPAs (headless browser crawling),
+    REST (OpenAPI/Swagger import), and GraphQL (schema-aware introspection and query
+    fuzzing).'
+- id: shadow-api-discovery
+  category: Coverage
+  name: Shadow/Zombie API Discovery
+  description: Finds undocumented, deprecated, or forgotten API endpoints beyond what's
+    in a provided spec.
+  weight: 10.0
+  rubric: '1: Only tests endpoints explicitly provided; no discovery of undocumented
+    endpoints. 3: Some heuristic discovery but misses deprecated/versioned endpoints.
+    5: Actively discovers undocumented, deprecated, and versioned endpoints via traffic
+    analysis, JS bundle parsing, and pattern-based enumeration.'
+- id: auth-session-handling
+  category: Coverage
+  name: Authentication & Session Handling
+  description: Navigates login flows and holds authenticated session state through
+    a scan.
+  weight: 5.0
+  rubric: '1: No support for authenticated scanning. 3: Supports basic scripted login
+    but session handling breaks on complex flows (MFA, SSO, refresh tokens). 5: Robust
+    support for complex auth flows with reliable session maintenance throughout a
+    long scan.'
+- id: detection-accuracy
+  category: Detection Quality
+  name: Detection Accuracy
+  description: True-positive rate against known benchmarks.
+  weight: 15.0
+  rubric: '1: Detects only a small fraction of known vulnerabilities, well below OWASP
+    Top 10 baseline coverage. 3: Detects most common vulnerability classes reliably
+    but misses nuanced/logic-based vulnerabilities. 5: High detection rate across
+    both common and nuanced vulnerability classes, validated against known ground
+    truth.'
+- id: false-positive-rate
+  category: Detection Quality
+  name: Noise / False-Positive Rate
+  description: How much triage overhead the findings create.
+  weight: 10.0
+  rubric: '1: High false-positive rate requiring extensive manual triage. 3: Moderate
+    false-positive rate; manageable triage. 5: Low false-positive rate; findings consistently
+    actionable with minimal triage.'
+- id: safe-prod-scanning
+  category: Production Safety & Operability
+  name: Safe Production Scanning
+  description: Passive/non-destructive scan modes, rate limiting, low instrumentation
+    overhead.
+  weight: 12.0
+  rubric: '1: No passive-only mode; active scans risk disrupting a live system. 3:
+    Offers a passive/safe mode but with limited configurability. 5: Robust passive/non-destructive
+    scanning mode with configurable rate limiting suitable for a real production system.'
+- id: cicd-native-fit
+  category: Production Safety & Operability
+  name: CI/CD-Native Fit
+  description: Drivable headlessly via CLI/API, not just GUI.
+  weight: 8.0
+  rubric: "1: GUI-only; no meaningful CLI/API. 3: CLI/API exists but requires significant\
+    \ scripting/glue code. 5: First-class CLI/API designed for CI/CD use \u2014 clear\
+    \ exit codes, consistent machine-readable output, minimal glue code."
+- id: triage-remediation-guidance
+  category: Developer Experience
+  name: Triage & Remediation Guidance
+  description: Explains how to fix a finding, not just what's wrong.
+  weight: 8.0
+  rubric: '1: Findings list vulnerability names only. 3: General remediation advice
+    but not tailored. 5: Specific, actionable remediation guidance tailored to the
+    detected instance and tech stack.'
+- id: auto-remediation-pr
+  category: Developer Experience
+  name: Auto-Remediation / Auto-PR
+  description: Can automatically propose or open a fix for a detected finding.
+  weight: 5.0
+  rubric: '1: No auto-remediation capability. 3: Can suggest a fix diff but can''t
+    open a PR automatically. 5: Can automatically open a pull request with a proposed
+    fix for at least some finding classes.'
+- id: setup-onboarding-friction
+  category: Developer Experience
+  name: Setup & Onboarding Friction
+  description: Time/complexity to get a first useful scan running.
+  weight: 7.0
+  rubric: "1: Significant setup complexity \u2014 hours/tickets needed. 3: Moderate\
+    \ setup; first scan achievable within an hour with docs. 5: Minimal setup; first\
+    \ useful scan achievable within minutes, sensible defaults."
+- id: reporting-exportability
+  category: Reporting & Extensibility
+  name: Reporting Quality / Exportability
+  description: Report clarity and integration with common tools.
+  weight: 3.0
+  rubric: '1: Reports hard to read/export; no integrations. 3: Clear reports with
+    basic export (PDF/CSV) but no direct integrations. 5: Clear, exportable reports
+    with direct integrations into common tools (Jira, Slack, CI dashboards).'
+- id: extensibility-custom-rules
+  category: Reporting & Extensibility
+  name: Extensibility / Custom Rules
+  description: Ability to add custom detection rules or policies.
+  weight: 2.0
+  rubric: '1: No way to add custom detection rules. 3: Some support but limited/awkward.
+    5: Well-documented, straightforward way to add custom detection rules/policies
+    without vendor involvement.'

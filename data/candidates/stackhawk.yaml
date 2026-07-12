@@ -1,0 +1,108 @@
+id: stackhawk
+name: StackHawk
+source: discovered
+status: rejected
+website: https://www.stackhawk.com/
+notes: CI/CD-native DAST, config-as-code, cloud-backed execution (needs an API key)
+ci_tool_id: null
+scores:
+- criterion_id: api-spa-coverage
+  score: 4.0
+  evidence: 'Native REST/GraphQL/SOAP/gRPC, introspection-driven GraphQL test generation.
+    API coverage excellent; JS-rendered SPA-UI crawling not emphasized in their docs
+    (spec-driven, not crawl-driven). Source: stackhawk.com/blog/graphql-security'
+  confidence: paper
+  timestamp: '2026-07-12T16:21:17.435242'
+- criterion_id: shadow-api-discovery
+  score: 2.5
+  evidence: INFERRED, LOW CONFIDENCE. No documented shadow/undocumented-endpoint discovery
+    capability found; model is spec-driven (OpenAPI/GraphQL) rather than traffic-analysis-based
+    discovery. Absence of evidence, not confirmed weakness.
+  confidence: paper
+  timestamp: '2026-07-12T16:21:17.666509'
+- criterion_id: auth-session-handling
+  score: 4.5
+  evidence: JWT, OAuth flows, most 3rd-party providers directly configurable in stackhawk.yml
+    without custom scripts -- strong, low-friction, well-documented.
+  confidence: paper
+  timestamp: '2026-07-12T16:21:17.893457'
+- criterion_id: detection-accuracy
+  score: 4.0
+  evidence: VENDOR CLAIM, not independently verified. HawkScan runs real attacks against
+    the live app; dedicated Intelligent Business Logic Testing feature specifically
+    targets authorization/logic flaws -- notable vs ZAP/Nuclei. All from StackHawk's
+    own marketing.
+  confidence: paper
+  timestamp: '2026-07-12T16:21:18.106118'
+- criterion_id: false-positive-rate
+  score: 4.0
+  evidence: VENDOR CLAIM. Runtime testing against live app (not code patterns) reduces
+    FPs per their own materials -- directionally credible but unverified independently.
+  confidence: paper
+  timestamp: '2026-07-12T16:21:18.305545'
+- criterion_id: safe-prod-scanning
+  score: 2.5
+  evidence: INFERRED, LOW CONFIDENCE. No passive-mode/rate-limiting documentation
+    found; framing emphasizes catching issues before production (pre-prod/CI-gate
+    positioning), suggesting less emphasis on safe live-production scanning.
+  confidence: paper
+  timestamp: '2026-07-12T16:21:18.520976'
+- criterion_id: cicd-native-fit
+  score: 5.0
+  evidence: 'Core value prop -- YAML config-as-code, deliberately CI-native exit-code
+    design: exit 42 for findings-threshold-reached vs exit 1 for scan failure, cleanly
+    distinguishable.'
+  confidence: paper
+  timestamp: '2026-07-12T16:21:18.744701'
+- criterion_id: triage-remediation-guidance
+  score: 4.5
+  evidence: Remediation guidance written in the target language with code-level context,
+    not generic jargon.
+  confidence: paper
+  timestamp: '2026-07-12T16:21:18.972008'
+- criterion_id: auto-remediation-pr
+  score: 2.5
+  evidence: Delivers findings into PR comments and auto-generates a reproduction cURL
+    command -- doesn't generate a fix diff or open a PR automatically.
+  confidence: paper
+  timestamp: '2026-07-12T16:21:19.201453'
+- criterion_id: setup-onboarding-friction
+  score: 4.0
+  evidence: Three-line YAML minimum config, onboarding wizard -- fast, but requires
+    SaaS signup/API key, a qualitatively different friction than a docker pull.
+  confidence: paper
+  timestamp: '2026-07-12T16:21:19.423269'
+- criterion_id: reporting-exportability
+  score: 5.0
+  evidence: Direct, first-party Jira/Slack/PR-comment integrations -- stronger than
+    ZAP's plugin-based story, comparable to Nuclei's SARIF.
+  confidence: paper
+  timestamp: '2026-07-12T16:21:19.638258'
+- criterion_id: extensibility-custom-rules
+  score: 2.0
+  evidence: INFERRED. No evidence of a custom-rule-authoring engine akin to ZAP's
+    Zest or Nuclei's YAML DSL; appears to be a closed, managed platform rather than
+    community-extensible.
+  confidence: paper
+  timestamp: '2026-07-12T16:21:19.862050'
+hands_on_results: []
+observations:
+- context: discovery research
+  note: 'Discovered via live market research for a more realistic three-way comparison.
+    Config-as-code (YAML in-repo), native GitHub Actions/CircleCI integration, cloud-backed
+    scan execution requiring an API key -- a structurally different deployment tier
+    (Tier 2) from ZAP/Nuclei''s fully-local containers. Source: StackHawk ''Top 10
+    DAST Tools'' comparison (stackhawk.com/blog/dynamic-application-security-testing-tools-comparison).'
+  tags:
+  - discovery
+  timestamp: '2026-07-12T16:11:12.849869'
+- context: dast-shortlist finalist decision
+  note: 'Rejected for this round on practical grounds, not merit: highest weighted
+    paper score (3.73) but relies on unverified vendor claims for its strongest inputs
+    (detection-accuracy, false-positive-rate), two inferred weaknesses (shadow-api-discovery,
+    safe-prod-scanning), and is Tier 2 (needs a paid SaaS account/API key not available
+    for this dogfood exercise). Worth revisiting if a trial account becomes available.'
+  tags:
+  - shortlist
+  - business-context
+  timestamp: '2026-07-12T16:21:49.564877'
