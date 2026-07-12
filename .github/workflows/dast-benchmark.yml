@@ -1,3 +1,5 @@
+run-name: "${{ inputs.tool }} · ${{ inputs.target }}"
+
 "on":
   workflow_dispatch:
     inputs:

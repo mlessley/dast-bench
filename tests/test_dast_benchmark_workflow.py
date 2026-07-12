@@ -10,6 +10,11 @@ def _load_workflow():
     return yaml.safe_load(WORKFLOW_PATH.read_text())
 
 
+def test_run_name_shows_tool_and_target_in_the_runs_list():
+    workflow = _load_workflow()
+    assert workflow["run-name"] == "${{ inputs.tool }} · ${{ inputs.target }}"
+
+
 def test_workflow_dispatch_inputs_present():
     workflow = _load_workflow()
     inputs = workflow["on"]["workflow_dispatch"]["inputs"]
