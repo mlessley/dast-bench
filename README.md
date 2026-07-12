@@ -22,23 +22,29 @@ start with the Phase 1 design spec if you want the "why."
 
 ## Status
 
-**Phase 1 core library and CLI: done.** Five command groups (`criteria`,
-`candidate`, `scan`, `status`, `render`), YAML round-tripping via Pydantic,
-and Markdown/XLSX/HTML report rendering are implemented and tested (55
-tests passing).
+**Phase 1 core library and CLI: done.** Six command groups (`criteria`,
+`candidate`, `scan`, `benchmark`, `status`, `render`), YAML round-tripping
+via Pydantic, and Markdown/XLSX/HTML report rendering are implemented and
+tested (69 tests passing).
 
-**DAST benchmark CI pipeline: built, not yet live-verified.** A GitHub
-Actions `workflow_dispatch` pipeline
-(`.github/workflows/dast-benchmark.yml`) spins up OWASP Juice Shop or VAmPI
-as an ephemeral service container, runs a ZAP full active scan, and uploads
-both the raw and (for ZAP) normalized report as build artifacts. It hasn't
-been dispatched against a real GitHub-hosted run yet — see the plan's
-manual-verification note.
+**DAST benchmark CI pipeline: built and live-verified.** A GitHub Actions
+`workflow_dispatch` pipeline (`.github/workflows/dast-benchmark.yml`) spins
+up OWASP Juice Shop or VAmPI as an ephemeral service container, runs a ZAP
+full active scan, and uploads both the raw and (for ZAP) normalized report
+as build artifacts. Dispatched against both targets on GitHub: Juice Shop
+found 12 real findings, VAmPI found 4.
+
+**Four of five Claude Code skills built:** `dast-criteria` (criteria
+taxonomy), `dast-discovery` (candidate vendor list), `dast-shortlist`
+(scoring + finalist decisions), and `dast-scan` (hands-on benchmark
+scanning + evaluated-status transition) are all implemented. `dast-report`
+(final presentation/narrative layer) completes the original five-skill
+workflow.
 
 **Not yet built:**
-- The `dast-scan` Claude Code skill (the orchestrator that will trigger
-  the CI pipeline above, download its artifacts, and call `ingest-scan-result`).
-- The `dast-criteria`, `dast-discovery`, `dast-shortlist`, `dast-report` skills.
+- `dast-onboard-tool` — a sixth skill (not part of the original five) for
+  wiring a *new* DAST tool into the CI pipeline above; a code-change task
+  distinct from the others' YAML-data-mutation shape.
 - Production-safe scanning (drift/misconfiguration detection against a real
   or staging target, as opposed to the ephemeral benchmark targets above) —
   deliberately deferred; see the roadmap doc.
