@@ -64,6 +64,52 @@ def list_criteria() -> None:
         typer.echo(f"warning: {issue}")
 
 
+@criteria_app.command("remove-criterion")
+def remove_criterion(id: str = typer.Option(...)) -> None:
+    taxonomy = storage.load_criteria(CRITERIA_PATH)
+    criterion = taxonomy.get(id)
+    if not criterion:
+        typer.echo(f"error: criterion '{id}' not found")
+        raise typer.Exit(code=1)
+    taxonomy.criteria = [c for c in taxonomy.criteria if c.id != id]
+    storage.save_criteria(taxonomy, CRITERIA_PATH)
+    affected = [v for v in storage.list_vendors(CANDIDATES_DIR) if v.score_for(id)]
+    if affected:
+        typer.echo(
+            f"warning: {len(affected)} vendor(s) have existing scores for '{id}' — "
+            "those scores are now orphaned, not deleted"
+        )
+    typer.echo(f"removed criterion '{id}'")
+
+
+@criteria_app.command("update-criterion")
+def update_criterion(
+    id: str = typer.Option(...),
+    category: str = typer.Option(None),
+    name: str = typer.Option(None),
+    description: str = typer.Option(None),
+    weight: float = typer.Option(None),
+    rubric: str = typer.Option(None),
+) -> None:
+    taxonomy = storage.load_criteria(CRITERIA_PATH)
+    criterion = taxonomy.get(id)
+    if not criterion:
+        typer.echo(f"error: criterion '{id}' not found")
+        raise typer.Exit(code=1)
+    if category is not None:
+        criterion.category = category
+    if name is not None:
+        criterion.name = name
+    if description is not None:
+        criterion.description = description
+    if weight is not None:
+        criterion.weight = weight
+    if rubric is not None:
+        criterion.rubric = rubric
+    storage.save_criteria(taxonomy, CRITERIA_PATH)
+    typer.echo(f"updated criterion '{id}'")
+
+
 candidate_app = typer.Typer()
 app.add_typer(candidate_app, name="candidate")
 

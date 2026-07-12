@@ -60,3 +60,63 @@ def test_list_warns_when_weights_do_not_sum_to_100(tmp_path, monkeypatch):
     runner.invoke(app, ADD_ARGS)
     result = runner.invoke(app, ["criteria", "list"])
     assert "warning" in result.output.lower()
+
+
+def test_remove_criterion_removes_it(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    runner.invoke(app, ADD_ARGS)
+    result = runner.invoke(app, ["criteria", "remove-criterion", "--id", "c1"])
+    assert result.exit_code == 0, result.output
+    result = runner.invoke(app, ["criteria", "list"])
+    assert "c1" not in result.output
+
+
+def test_remove_criterion_errors_on_unknown_id(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    result = runner.invoke(app, ["criteria", "remove-criterion", "--id", "missing"])
+    assert result.exit_code != 0
+    assert "not found" in result.output
+
+
+def test_remove_criterion_warns_about_orphaned_scores(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    runner.invoke(app, ADD_ARGS)
+    runner.invoke(app, ["candidate", "add", "--id", "v1", "--name", "Vendor One", "--source", "discovered"])
+    runner.invoke(
+        app,
+        [
+            "candidate", "record-score",
+            "--vendor-id", "v1", "--criterion-id", "c1",
+            "--score", "4", "--evidence", "docs", "--confidence", "paper",
+        ],
+    )
+    result = runner.invoke(app, ["criteria", "remove-criterion", "--id", "c1"])
+    assert result.exit_code == 0, result.output
+    assert "1 vendor" in result.output
+    assert "orphaned" in result.output
+
+
+def test_update_criterion_changes_only_passed_fields(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    runner.invoke(app, ADD_ARGS)
+    result = runner.invoke(app, ["criteria", "update-criterion", "--id", "c1", "--name", "New Name"])
+    assert result.exit_code == 0, result.output
+    result = runner.invoke(app, ["criteria", "list"])
+    assert "New Name" in result.output
+    assert "weight=20" in result.output
+
+
+def test_update_criterion_updates_weight(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    runner.invoke(app, ADD_ARGS)
+    result = runner.invoke(app, ["criteria", "update-criterion", "--id", "c1", "--weight", "75"])
+    assert result.exit_code == 0, result.output
+    result = runner.invoke(app, ["criteria", "list"])
+    assert "weight=75" in result.output
+
+
+def test_update_criterion_errors_on_unknown_id(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    result = runner.invoke(app, ["criteria", "update-criterion", "--id", "missing", "--name", "x"])
+    assert result.exit_code != 0
+    assert "not found" in result.output
