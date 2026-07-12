@@ -100,7 +100,7 @@ core/                      # Python package: Pydantic models + CLI
     xlsx.py                    # comparison matrix (XLSX)
     html.py                    # self-contained, sortable comparison dashboard (HTML)
 data/                      # YAML source of truth (criteria.yaml, benchmarks.yaml, candidates/*.yaml)
-reports/                   # generated output — never hand-edited, regenerated via `dast-bench render`
+reports/                   # generated output — never hand-edited, regenerated via `dast-bench render` (plus `dast-report`'s skill-authored `executive-summary.md`)
 .github/
   workflows/dast-benchmark.yml     # CI pipeline: ephemeral benchmark target + ZAP scan
   scripts/normalize/zap.py          # ZAP report -> generic findings JSON
