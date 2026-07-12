@@ -52,6 +52,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"email":"dastbench@test.local","password":"DastBench123!"}' \
             | jq -r '.authentication.token')
+          echo "token length: ${#TOKEN}" >&2
           echo "TOKEN=$TOKEN" >> "$GITHUB_ENV"
 
       - name: Allow scan container to write reports
@@ -128,6 +129,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"username":"dastbench","password":"DastBench123!"}' \
             | jq -r '.auth_token')
+          echo "token length: ${#TOKEN}" >&2
           echo "TOKEN=$TOKEN" >> "$GITHUB_ENV"
 
       - name: Allow scan container to write reports
