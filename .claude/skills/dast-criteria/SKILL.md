@@ -52,7 +52,7 @@ workaround.
 ## Step 5: Confirm final state
 
 Run `dast-bench criteria list` again. If its output includes a
-`warning: weights sum to X, expected 100.00` line, the taxonomy is not yet
+`warning: criteria weights sum to X, expected 100.00` line, the taxonomy is not yet
 valid — return to Step 3 and keep adjusting weights with the evaluator
 until that warning disappears. Do not consider this phase complete while
 it is showing.
