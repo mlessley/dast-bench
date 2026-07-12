@@ -6,7 +6,18 @@ from pathlib import Path
 import typer
 
 from . import storage
-from .models import Confidence, Criterion, HandsOnResult, Observation, ScoreEntry, Vendor, VendorSource, VendorStatus
+from .models import (
+    Benchmark,
+    BenchmarkVulnerability,
+    Confidence,
+    Criterion,
+    HandsOnResult,
+    Observation,
+    ScoreEntry,
+    Vendor,
+    VendorSource,
+    VendorStatus,
+)
 from .render.html import write_html
 from .render.markdown import write_markdown
 from .render.xlsx import write_xlsx
@@ -267,6 +278,51 @@ def ingest_scan_result(
     )
     storage.save_vendor(vendor, storage.vendor_path(CANDIDATES_DIR, vendor_id))
     typer.echo(outcome)
+
+
+benchmark_app = typer.Typer()
+app.add_typer(benchmark_app, name="benchmark")
+
+
+@benchmark_app.command("add")
+def add_benchmark(
+    id: str = typer.Option(...),
+    name: str = typer.Option(...),
+    target_type: str = typer.Option(...),
+) -> None:
+    benchmarks = storage.load_benchmarks(BENCHMARKS_PATH)
+    if any(b.id == id for b in benchmarks):
+        typer.echo(f"error: benchmark '{id}' already exists")
+        raise typer.Exit(code=1)
+    benchmarks.append(Benchmark(id=id, name=name, target_type=target_type))
+    storage.save_benchmarks(benchmarks, BENCHMARKS_PATH)
+    typer.echo(f"added benchmark '{id}'")
+
+
+@benchmark_app.command("add-vulnerability")
+def add_benchmark_vulnerability(
+    benchmark_id: str = typer.Option(...),
+    vuln_id: str = typer.Option(...),
+    name: str = typer.Option(...),
+    severity: str = typer.Option(...),
+) -> None:
+    benchmarks = storage.load_benchmarks(BENCHMARKS_PATH)
+    bench = next((b for b in benchmarks if b.id == benchmark_id), None)
+    if not bench:
+        typer.echo(f"error: benchmark '{benchmark_id}' not found")
+        raise typer.Exit(code=1)
+    if any(v.id == vuln_id for v in bench.known_vulnerabilities):
+        typer.echo(f"error: vulnerability '{vuln_id}' already exists on benchmark '{benchmark_id}'")
+        raise typer.Exit(code=1)
+    bench.known_vulnerabilities.append(BenchmarkVulnerability(id=vuln_id, name=name, severity=severity))
+    storage.save_benchmarks(benchmarks, BENCHMARKS_PATH)
+    typer.echo(f"added vulnerability '{vuln_id}' to benchmark '{benchmark_id}'")
+
+
+@benchmark_app.command("list")
+def list_benchmarks() -> None:
+    for b in storage.load_benchmarks(BENCHMARKS_PATH):
+        typer.echo(f"{b.id}\t{b.name}\t{b.target_type}\tknown_vulnerabilities={len(b.known_vulnerabilities)}")
 
 
 @app.command("status")
