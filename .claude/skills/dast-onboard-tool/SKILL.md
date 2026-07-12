@@ -134,6 +134,8 @@ Then:
 ```
 dast-bench candidate set-ci-tool --id <vendor-id> --tool <newtool>
 ```
+If this prints an `error: ...` message, relay it verbatim and ask the
+evaluator how to proceed rather than retrying blindly.
 
 **Tier 3:**
 ```bash

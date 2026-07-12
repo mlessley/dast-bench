@@ -11,7 +11,7 @@ against Juice Shop and VAmPI, records the results, and refines the two
 criteria whose scores are directly computable from detection results:
 `detection-accuracy` and `false-positive-rate`. It never decides finalists
 (`dast-shortlist`'s job) and never wires a *new* tool into the CI workflow
-(`dast-onboard-tool`'s job — not yet built). Any other hands-on impression
+(`dast-onboard-tool`'s job). Any other hands-on impression
 (CI/CD integration friction, a manual tweak that was needed, any other
 caveat) belongs in `candidate log-observation`, tagged, not in a formal
 score — that criterion-level judgment stays out of this skill's scope.
