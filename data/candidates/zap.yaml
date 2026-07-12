@@ -1,7 +1,7 @@
 id: zap
 name: OWASP ZAP
 source: seeded
-status: finalist
+status: evaluated
 website: https://www.zaproxy.org/
 notes: Free, open-source, OWASP-maintained DAST tool; already wired into dast-bench's
   CI pipeline
@@ -84,6 +84,21 @@ scores:
     scripting, large add-on marketplace.
   confidence: paper
   timestamp: '2026-07-12T16:15:19.694211'
+- criterion_id: detection-accuracy
+  score: 3.5
+  evidence: 'Aggregate hands-on: 11/15 (73%) known vulnerabilities detected across
+    Juice Shop (8/10) and VAmPI (3/5), against ground truth rebuilt from real observed
+    output. Solid coverage of misconfiguration/header-level issues; refines the earlier
+    paper score (3.5, unchanged) with real evidence.'
+  confidence: hands-on
+  timestamp: '2026-07-12T20:46:02.015664'
+- criterion_id: false-positive-rate
+  score: 3.5
+  evidence: 'Aggregate hands-on: 5 false positives against 11 real detections across
+    both targets -- a manageable ratio, refining the earlier paper score (3, now 3.5)
+    with real evidence.'
+  confidence: hands-on
+  timestamp: '2026-07-12T20:46:02.354735'
 hands_on_results:
 - test_id: scan-29200159094-juice-shop
   description: CI scan run 29200159094
@@ -99,6 +114,22 @@ hands_on_results:
   outcome: detected 0/9 known vulnerabilities, 4 false positive(s)
   observations: 'findings file: normalized.json'
   timestamp: '2026-07-12T19:23:03.988637'
+- test_id: corrected-ground-truth-juice-shop
+  description: Re-scored against corrected, empirically-grounded ground truth (authenticated
+    scan, run 29206742457)
+  automated: true
+  benchmark_id: juice-shop
+  outcome: detected 8/10 known vulnerabilities, 4 false positive(s)
+  observations: 'findings file: normalized.json'
+  timestamp: '2026-07-12T20:45:24.345073'
+- test_id: corrected-ground-truth-vampi
+  description: Re-scored against corrected, empirically-grounded ground truth (authenticated
+    scan, run 29206286258)
+  automated: true
+  benchmark_id: vampi
+  outcome: detected 3/5 known vulnerabilities, 1 false positive(s)
+  observations: 'findings file: normalized.json'
+  timestamp: '2026-07-12T20:45:24.561335'
 observations:
 - context: discovery research
   note: 'Seeded must-include per stakeholder decision. Leading free/open-source DAST
@@ -123,3 +154,13 @@ observations:
   - hands-on
   - ground-truth-gap
   timestamp: '2026-07-12T19:23:15.679316'
+- context: ground-truth correction
+  note: Ground truth rebuilt from real observed output (see benchmarks.yaml commit
+    cf4ef05) after confirming authentication didn't change reachability. The 'corrected-ground-truth-*'
+    hands-on results supersede the earlier ones ingested against the original aspirational
+    ground truth -- those earlier results (1/10, 0/9) reflected an unreachable answer
+    key, not real tool performance.
+  tags:
+  - hands-on
+  - ground-truth-gap
+  timestamp: '2026-07-12T20:45:48.183029'

@@ -1,7 +1,7 @@
 id: nuclei
 name: Nuclei
 source: seeded
-status: finalist
+status: evaluated
 website: https://github.com/projectdiscovery/nuclei
 notes: Template-based vulnerability scanner from ProjectDiscovery; docker/CLI-friendly,
   huge community template library
@@ -87,6 +87,22 @@ scores:
     for community/user-authored templates, no vendor involvement needed.
   confidence: paper
   timestamp: '2026-07-12T16:18:58.478651'
+- criterion_id: detection-accuracy
+  score: 2.0
+  evidence: 'Aggregate hands-on: 4/15 (27%) known vulnerabilities detected across
+    Juice Shop (2/10) and VAmPI (2/5). Confirms the low-confidence paper score''s
+    concern (2.5) -- Nuclei''s signature-matching strength (known CVEs/exposures)
+    doesn''t align well with this ground truth''s misconfiguration-heavy composition.'
+  confidence: hands-on
+  timestamp: '2026-07-12T20:46:02.717355'
+- criterion_id: false-positive-rate
+  score: 2.0
+  evidence: 'Aggregate hands-on: 17 false positives against 4 real detections. Coarse
+    metric (counts legitimate info-level fingerprinting as FP too, not just wrong
+    findings), but still a real ratio worth reflecting, refining the earlier paper
+    score (4.5, now 2) downward significantly.'
+  confidence: hands-on
+  timestamp: '2026-07-12T20:46:03.085537'
 hands_on_results:
 - test_id: scan-29200162833-juice-shop
   description: CI scan run 29200162833
@@ -102,6 +118,22 @@ hands_on_results:
   outcome: detected 0/9 known vulnerabilities, 6 false positive(s)
   observations: 'findings file: normalized.json'
   timestamp: '2026-07-12T19:23:04.477045'
+- test_id: corrected-ground-truth-juice-shop
+  description: Re-scored against corrected, empirically-grounded ground truth (authenticated
+    scan, run 29206288626)
+  automated: true
+  benchmark_id: juice-shop
+  outcome: detected 2/10 known vulnerabilities, 12 false positive(s)
+  observations: 'findings file: normalized.json'
+  timestamp: '2026-07-12T20:45:24.768506'
+- test_id: corrected-ground-truth-vampi
+  description: Re-scored against corrected, empirically-grounded ground truth (authenticated
+    scan, run 29206290758)
+  automated: true
+  benchmark_id: vampi
+  outcome: detected 2/5 known vulnerabilities, 5 false positive(s)
+  observations: 'findings file: normalized.json'
+  timestamp: '2026-07-12T20:45:24.979224'
 observations:
 - context: discovery research
   note: 'Seeded must-include per stakeholder decision, chosen as the second tool to
@@ -134,3 +166,16 @@ observations:
   - ground-truth-gap
   - id-reconciliation-gap
   timestamp: '2026-07-12T19:23:15.905736'
+- context: ground-truth correction
+  note: 'Ground truth rebuilt from real observed output (see benchmarks.yaml commit
+    cf4ef05). The ''corrected-ground-truth-*'' hands-on results supersede the earlier
+    ones (0/10, 0/9) ingested against the original aspirational ground truth. Also
+    note: the false-positive count here is coarse -- it counts every finding not on
+    the ground truth list as a false positive, including legitimate info-level fingerprinting
+    (tech-detect, robots.txt, etc.) that isn''t really a false alarm, just not itself
+    a tracked vulnerability. Nuclei''s high FP count partly reflects this scoring
+    coarseness, not necessarily 17 genuinely wrong findings.'
+  tags:
+  - hands-on
+  - ground-truth-gap
+  timestamp: '2026-07-12T20:45:48.519412'
