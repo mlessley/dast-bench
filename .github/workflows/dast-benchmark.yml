@@ -7,6 +7,7 @@
         type: choice
         options:
           - zap
+          - nuclei
       target:
         description: "Benchmark target to scan"
         required: true
@@ -25,7 +26,7 @@ jobs:
         ports:
           - 3000:3000
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Wait for target to become healthy
         run: |
@@ -39,28 +40,38 @@ jobs:
           echo "target did not become healthy in time" >&2
           exit 1
 
-      - name: Allow ZAP container to write reports
+      - name: Allow scan container to write reports
         run: chmod -R 777 "$(pwd)"
 
       - name: Run ZAP full scan
+        if: inputs.tool == 'zap'
+        timeout-minutes: 20
         run: |
           docker run --network host -v "$(pwd)":/zap/wrk/:rw \
-            zaproxy/zap-stable zap-full-scan.py \
+            zaproxy/zap-stable:2.17.0 zap-full-scan.py \
             -t http://localhost:3000 -J raw-report.json || true
 
+      - name: Run Nuclei scan
+        if: inputs.tool == 'nuclei'
+        timeout-minutes: 20
+        run: |
+          docker run --network host -v "$(pwd)":/nuclei-output/:rw \
+            projectdiscovery/nuclei:latest \
+            -u http://localhost:3000 -jsonl -o /nuclei-output/raw-report.json || true
+
       - name: Upload raw report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: raw-report-${{ inputs.tool }}-${{ inputs.target }}
           path: raw-report.json
 
       - name: Normalize report
-        if: inputs.tool == 'zap'
-        run: python .github/scripts/normalize/zap.py raw-report.json normalized.json
+        if: inputs.tool == 'zap' || inputs.tool == 'nuclei'
+        run: python .github/scripts/normalize/${{ inputs.tool }}.py raw-report.json normalized.json
 
       - name: Upload normalized report
-        if: inputs.tool == 'zap'
-        uses: actions/upload-artifact@v4
+        if: inputs.tool == 'zap' || inputs.tool == 'nuclei'
+        uses: actions/upload-artifact@v7
         with:
           name: normalized-${{ inputs.tool }}-${{ inputs.target }}
           path: normalized.json
@@ -76,7 +87,7 @@ jobs:
         env:
           vulnerable: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Wait for target to become healthy
         run: |
@@ -90,28 +101,38 @@ jobs:
           echo "target did not become healthy in time" >&2
           exit 1
 
-      - name: Allow ZAP container to write reports
+      - name: Allow scan container to write reports
         run: chmod -R 777 "$(pwd)"
 
       - name: Run ZAP full scan
+        if: inputs.tool == 'zap'
+        timeout-minutes: 20
         run: |
           docker run --network host -v "$(pwd)":/zap/wrk/:rw \
-            zaproxy/zap-stable zap-full-scan.py \
+            zaproxy/zap-stable:2.17.0 zap-full-scan.py \
             -t http://localhost:5000 -J raw-report.json || true
 
+      - name: Run Nuclei scan
+        if: inputs.tool == 'nuclei'
+        timeout-minutes: 20
+        run: |
+          docker run --network host -v "$(pwd)":/nuclei-output/:rw \
+            projectdiscovery/nuclei:latest \
+            -u http://localhost:5000 -jsonl -o /nuclei-output/raw-report.json || true
+
       - name: Upload raw report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: raw-report-${{ inputs.tool }}-${{ inputs.target }}
           path: raw-report.json
 
       - name: Normalize report
-        if: inputs.tool == 'zap'
-        run: python .github/scripts/normalize/zap.py raw-report.json normalized.json
+        if: inputs.tool == 'zap' || inputs.tool == 'nuclei'
+        run: python .github/scripts/normalize/${{ inputs.tool }}.py raw-report.json normalized.json
 
       - name: Upload normalized report
-        if: inputs.tool == 'zap'
-        uses: actions/upload-artifact@v4
+        if: inputs.tool == 'zap' || inputs.tool == 'nuclei'
+        uses: actions/upload-artifact@v7
         with:
           name: normalized-${{ inputs.tool }}-${{ inputs.target }}
           path: normalized.json
