@@ -3,64 +3,52 @@ benchmarks:
   name: OWASP Juice Shop
   target_type: spa
   known_vulnerabilities:
-  - id: '40018'
-    name: SQL Injection
-    severity: high
-  - id: '40012'
-    name: Cross-Site Scripting (Reflected)
-    severity: high
-  - id: '40014'
-    name: Cross-Site Scripting (Persistent)
-    severity: high
-  - id: '10202'
-    name: Absence of Anti-CSRF Tokens
-    severity: medium
-  - id: '10003'
-    name: Vulnerable JS Library (Known Vulnerable Component)
-    severity: medium
   - id: '10038'
     name: Content Security Policy Header Not Set
     severity: medium
-  - id: '10023'
-    name: Information Disclosure - Debug Error Messages
+  - id: '40038'
+    name: Bypassing 403
     severity: medium
-  - id: '10037'
-    name: Server Leaks Information via X-Powered-By Header
+  - id: '40040'
+    name: CORS Misconfiguration
+    severity: medium
+  - id: '10098'
+    name: Cross-Domain Misconfiguration
+    severity: medium
+  - id: '90004'
+    name: Cross-Origin-Embedder-Policy Header Missing or Invalid
     severity: low
-  - id: '40036'
-    name: JSON Web Token (JWT) Weaknesses
-    severity: high
-  - id: '10062'
-    name: PII Disclosure
-    severity: high
+  - id: '10063'
+    name: Deprecated Feature Policy Header Set
+    severity: low
+  - id: '10110'
+    name: Dangerous JS Functions
+    severity: low
+  - id: '10095'
+    name: Backup File Disclosure
+    severity: medium
+  - id: prometheus-metrics
+    name: Exposed Prometheus Metrics Endpoint
+    severity: medium
+  - id: http-missing-security-headers
+    name: Missing HTTP Security Headers
+    severity: low
 - id: vampi
   name: VAmPI
   target_type: api
   known_vulnerabilities:
-  - id: '40018'
-    name: SQL Injection
+  - id: '90004'
+    name: Cross-Origin-Resource-Policy Header Missing or Invalid
+    severity: low
+  - id: '10036'
+    name: Server Leaks Version Information via Server Header
+    severity: low
+  - id: '10021'
+    name: X-Content-Type-Options Header Missing
+    severity: low
+  - id: werkzeug-debugger-detect
+    name: Werkzeug Debugger Console Exposed
     severity: high
-  - id: '40036'
-    name: JWT Authentication Bypass (weak signing key)
-    severity: high
-  - id: '10062'
-    name: Excessive Data Exposure via /users/v1/_debug
-    severity: medium
-  - id: vampi-bola
-    name: Broken Object Level Authorization (view other users' book secrets)
-    severity: high
-  - id: vampi-mass-assignment
-    name: Mass Assignment via user update endpoint
-    severity: medium
-  - id: vampi-user-enum
-    name: User and Password Enumeration via differing error responses
-    severity: medium
-  - id: vampi-regexdos
-    name: RegexDOS via crafted input to a vulnerable regex
-    severity: medium
-  - id: vampi-rate-limiting
-    name: Lack of Resources and Rate Limiting
-    severity: medium
-  - id: vampi-unauthorized-password-change
-    name: Unauthorized Password Change without re-authentication
-    severity: high
+  - id: http-missing-security-headers
+    name: Missing HTTP Security Headers
+    severity: low
