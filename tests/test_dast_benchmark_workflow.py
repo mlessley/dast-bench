@@ -98,6 +98,67 @@ def test_each_job_scans_with_nuclei_conditionally():
         )
 
 
+def test_juice_shop_job_authenticates_before_scanning():
+    # Unauthenticated scans never reach Juice Shop's login-gated challenges
+    # (SQLi in the login form, JWT weaknesses, etc.) -- a real gap this
+    # project's own dogfooding run surfaced (detected 1/10 known
+    # vulnerabilities). This step registers a test user, logs in, and
+    # captures the JWT so both ZAP and Nuclei can attack authenticated.
+    workflow = _load_workflow()
+    steps = workflow["jobs"]["juice-shop"]["steps"]
+    auth_steps = [s for s in steps if "/api/Users/" in s.get("run", "") and "/rest/user/login" in s.get("run", "")]
+    assert len(auth_steps) == 1, "expected exactly one register+login step in the juice-shop job"
+    assert "GITHUB_ENV" in auth_steps[0]["run"], "auth step must export the token via GITHUB_ENV for later steps"
+
+    auth_index = steps.index(auth_steps[0])
+    scan_indices = [
+        i
+        for i, s in enumerate(steps)
+        if "zap-full-scan.py" in s.get("run", "") or "projectdiscovery/nuclei" in s.get("run", "")
+    ]
+    assert auth_index < min(scan_indices), "auth step must run before every scan step"
+
+
+def test_vampi_job_authenticates_before_scanning():
+    workflow = _load_workflow()
+    steps = workflow["jobs"]["vampi"]["steps"]
+    auth_steps = [
+        s for s in steps if "/users/v1/register" in s.get("run", "") and "/users/v1/login" in s.get("run", "")
+    ]
+    assert len(auth_steps) == 1, "expected exactly one register+login step in the vampi job"
+    assert "GITHUB_ENV" in auth_steps[0]["run"], "auth step must export the token via GITHUB_ENV for later steps"
+
+    auth_index = steps.index(auth_steps[0])
+    scan_indices = [
+        i
+        for i, s in enumerate(steps)
+        if "zap-full-scan.py" in s.get("run", "") or "projectdiscovery/nuclei" in s.get("run", "")
+    ]
+    assert auth_index < min(scan_indices), "auth step must run before every scan step"
+
+
+def test_zap_scan_steps_inject_auth_header():
+    workflow = _load_workflow()
+    for job_name in ("juice-shop", "vampi"):
+        steps = workflow["jobs"][job_name]["steps"]
+        scan_steps = [s for s in steps if "zap-full-scan.py" in s.get("run", "")]
+        assert "ZAP_AUTH_HEADER_VALUE" in scan_steps[0]["run"], (
+            f"ZAP scan step in job {job_name} must inject the captured token via "
+            "ZAP_AUTH_HEADER_VALUE so the scan runs authenticated"
+        )
+
+
+def test_nuclei_scan_steps_inject_auth_header():
+    workflow = _load_workflow()
+    for job_name in ("juice-shop", "vampi"):
+        steps = workflow["jobs"][job_name]["steps"]
+        scan_steps = [s for s in steps if "projectdiscovery/nuclei" in s.get("run", "")]
+        assert "-H " in scan_steps[0]["run"] and "Authorization" in scan_steps[0]["run"], (
+            f"Nuclei scan step in job {job_name} must inject the captured token via "
+            "a -H Authorization header so the scan runs authenticated"
+        )
+
+
 def test_each_job_chmods_workspace_before_any_scan():
     # ZAP's docker image runs as its own internal `zap` user, which cannot
     # write to the GitHub Actions runner's mounted checkout directory unless

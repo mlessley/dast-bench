@@ -40,6 +40,18 @@ jobs:
           echo "target did not become healthy in time" >&2
           exit 1
 
+      - name: Register and authenticate test user
+        run: |
+          curl -s -X POST http://localhost:3000/api/Users/ \
+            -H "Content-Type: application/json" \
+            -d '{"email":"dastbench@test.local","password":"DastBench123!","passwordRepeat":"DastBench123!","securityQuestion":{"id":1,"question":"Your eldest siblings middle name?"},"securityAnswer":"na"}' \
+            > /dev/null || true
+          TOKEN=$(curl -s -X POST http://localhost:3000/rest/user/login \
+            -H "Content-Type: application/json" \
+            -d '{"email":"dastbench@test.local","password":"DastBench123!"}' \
+            | jq -r '.authentication.token')
+          echo "TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
       - name: Allow scan container to write reports
         run: chmod -R 777 "$(pwd)"
 
@@ -48,6 +60,8 @@ jobs:
         timeout-minutes: 20
         run: |
           docker run --network host -v "$(pwd)":/zap/wrk/:rw \
+            -e ZAP_AUTH_HEADER_VALUE="Bearer ${TOKEN}" \
+            -e ZAP_AUTH_HEADER_SITE=localhost \
             zaproxy/zap-stable:2.17.0 zap-full-scan.py \
             -t http://localhost:3000 -J raw-report.json || true
 
@@ -57,7 +71,8 @@ jobs:
         run: |
           docker run --network host -v "$(pwd)":/nuclei-output/:rw \
             projectdiscovery/nuclei:latest \
-            -u http://localhost:3000 -jsonl -o /nuclei-output/raw-report.json || true
+            -u http://localhost:3000 -H "Authorization: Bearer ${TOKEN}" \
+            -jsonl -o /nuclei-output/raw-report.json || true
 
       - name: Upload raw report
         uses: actions/upload-artifact@v7
@@ -101,6 +116,18 @@ jobs:
           echo "target did not become healthy in time" >&2
           exit 1
 
+      - name: Register and authenticate test user
+        run: |
+          curl -s -X POST http://localhost:5000/users/v1/register \
+            -H "Content-Type: application/json" \
+            -d '{"username":"dastbench","email":"dastbench@test.local","password":"DastBench123!"}' \
+            > /dev/null || true
+          TOKEN=$(curl -s -X POST http://localhost:5000/users/v1/login \
+            -H "Content-Type: application/json" \
+            -d '{"username":"dastbench","password":"DastBench123!"}' \
+            | jq -r '.auth_token')
+          echo "TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
       - name: Allow scan container to write reports
         run: chmod -R 777 "$(pwd)"
 
@@ -109,6 +136,8 @@ jobs:
         timeout-minutes: 20
         run: |
           docker run --network host -v "$(pwd)":/zap/wrk/:rw \
+            -e ZAP_AUTH_HEADER_VALUE="Bearer ${TOKEN}" \
+            -e ZAP_AUTH_HEADER_SITE=localhost \
             zaproxy/zap-stable:2.17.0 zap-full-scan.py \
             -t http://localhost:5000 -J raw-report.json || true
 
@@ -118,7 +147,8 @@ jobs:
         run: |
           docker run --network host -v "$(pwd)":/nuclei-output/:rw \
             projectdiscovery/nuclei:latest \
-            -u http://localhost:5000 -jsonl -o /nuclei-output/raw-report.json || true
+            -u http://localhost:5000 -H "Authorization: Bearer ${TOKEN}" \
+            -jsonl -o /nuclei-output/raw-report.json || true
 
       - name: Upload raw report
         uses: actions/upload-artifact@v7
