@@ -87,7 +87,21 @@ scores:
     for community/user-authored templates, no vendor involvement needed.
   confidence: paper
   timestamp: '2026-07-12T16:18:58.478651'
-hands_on_results: []
+hands_on_results:
+- test_id: scan-29200162833-juice-shop
+  description: CI scan run 29200162833
+  automated: true
+  benchmark_id: juice-shop
+  outcome: detected 0/10 known vulnerabilities, 14 false positive(s)
+  observations: 'findings file: normalized.json'
+  timestamp: '2026-07-12T19:23:04.243291'
+- test_id: scan-29200164617-vampi
+  description: CI scan run 29200164617
+  automated: true
+  benchmark_id: vampi
+  outcome: detected 0/9 known vulnerabilities, 6 false positive(s)
+  observations: 'findings file: normalized.json'
+  timestamp: '2026-07-12T19:23:04.477045'
 observations:
 - context: discovery research
   note: 'Seeded must-include per stakeholder decision, chosen as the second tool to
@@ -106,3 +120,17 @@ observations:
   - onboard-tool
   - integration
   timestamp: '2026-07-12T16:22:16.828005'
+- context: dast-scan hands-on results, ground-truth mismatch
+  note: Real CI run detected 0/10 Juice Shop and 0/9 VAmPI seeded ground-truth vulnerabilities.
+    Real findings were entirely info/low-severity fingerprinting and detection templates
+    (tech-detect, swagger-api, robots.txt, security.txt, missing-headers) using Nuclei's
+    own template-id namespace, which shares zero overlap with the ZAP-plugin-ID-based
+    ground truth -- confirms the cross-tool ID-reconciliation gap flagged during dast-onboard-tool's
+    design. Additionally, like ZAP's run, the scan was unauthenticated, so template-based
+    CVE/misconfig matching had no path to the app's actual planted vulnerabilities
+    either.
+  tags:
+  - hands-on
+  - ground-truth-gap
+  - id-reconciliation-gap
+  timestamp: '2026-07-12T19:23:15.905736'
