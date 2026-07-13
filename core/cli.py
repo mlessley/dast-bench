@@ -22,6 +22,7 @@ from .render.html import write_html
 from .render.markdown import write_markdown
 from .render.xlsx import write_xlsx
 from .status import gap_report
+from .workflow import SKILLS, phase_report
 
 app = typer.Typer()
 criteria_app = typer.Typer()
@@ -352,6 +353,18 @@ def status_command() -> None:
         typer.echo("no gaps found")
     for message in messages:
         typer.echo(message)
+    for line in phase_report(taxonomy, vendors):
+        typer.echo(line)
+
+
+@app.command("workflow")
+def workflow_command() -> None:
+    for skill in SKILLS:
+        typer.echo(skill["name"])
+        typer.echo(f"  purpose: {skill['purpose']}")
+        typer.echo(f"  reads:   {skill['reads']}")
+        typer.echo(f"  writes:  {skill['writes']}")
+        typer.echo("")
 
 
 @app.command("render")

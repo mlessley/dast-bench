@@ -83,8 +83,9 @@ dast-bench benchmark add --id --name --target-type
 dast-bench benchmark add-vulnerability --benchmark-id --vuln-id --name --severity
 dast-bench benchmark list
 
-dast-bench status   # reports vendors missing a score for any current criterion, and weight-total warnings
+dast-bench status   # reports vendors missing a score for any current criterion, and weight-total warnings, plus a Progress/Next summary of the whole pipeline
 dast-bench render   # renders reports/scorecard-<id>.md, comparison-matrix.md, comparison-matrix.xlsx, dashboard.html
+dast-bench workflow # static reference: what each of the six skills does, reads, and writes
 ```
 
 ## Project layout
