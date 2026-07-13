@@ -39,7 +39,9 @@ test against yet.
 If the evaluator names a specific vendor, use that. Otherwise, run
 `dast-bench candidate list` and suggest the first `finalist`-status vendor
 that doesn't yet have hands-on results for both Juice Shop and VAmPI (check
-via Step 4's direct read).
+via Step 4's direct read). Note: a vendor with a Juice-Shop-only result from
+the manual path is considered complete coverage and shouldn't be suggested
+again unless a fresh rerun is requested.
 
 ## Step 2: Check the vendor is wired into the CI workflow
 
@@ -195,7 +197,7 @@ it a descriptive slug of your own and leave it alone, matching nothing
 classification is uncertain, rather than guessing confidently. Then:
 
 ```
-dast-bench scan ingest-scan-result --vendor-id <id> --benchmark-id juice-shop --file <hand-authored.json> --test-id manual-<date> --description "Manual hands-on test, no CI wiring"
+dast-bench scan ingest-scan-result --vendor-id <id> --benchmark-id juice-shop --file <hand-authored.json> --test-id manual-<date> --description "Manual hands-on test, no CI wiring" --no-automated
 ```
 
 If anything qualitative comes up (setup friction getting the vendor's
