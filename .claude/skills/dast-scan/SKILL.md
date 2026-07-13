@@ -1,20 +1,24 @@
 ---
 name: dast-scan
-description: Use to hands-on test a finalist vendor's tool against the ephemeral benchmark targets (Juice Shop, VAmPI) via the CI workflow, refine detection-accuracy/false-positive-rate scores with the results, and — once both targets are scanned — drive that finalist to evaluated status. Re-invocable anytime, one finalist per invocation.
+description: Use to hands-on test a finalist vendor's tool against the ephemeral benchmark targets (Juice Shop, VAmPI) via the CI workflow, or manually against the public Juice Shop demo instance if the vendor isn't CI-wired, refine detection-accuracy/false-positive-rate scores with the results, and — once available — drive that finalist to evaluated status. Re-invocable anytime, one finalist per invocation.
 ---
 
 # dast-scan
 
 This skill fills in **hands-on evidence** for a finalist vendor — it runs
-that vendor's tool (via the already-built `dast-benchmark.yml` CI workflow)
-against Juice Shop and VAmPI, records the results, and refines the two
-criteria whose scores are directly computable from detection results:
+that vendor's tool against Juice Shop and VAmPI, either automatically (via
+the already-built `dast-benchmark.yml` CI workflow, for tools wired in) or
+manually (for tools that aren't, and aren't worth wiring in for a single
+data point), records the results, and refines the two criteria whose
+scores are directly computable from detection results:
 `detection-accuracy` and `false-positive-rate`. It never decides finalists
 (`dast-shortlist`'s job) and never wires a *new* tool into the CI workflow
-(`dast-onboard-tool`'s job). Any other hands-on impression
-(CI/CD integration friction, a manual tweak that was needed, any other
-caveat) belongs in `candidate log-observation`, tagged, not in a formal
-score — that criterion-level judgment stays out of this skill's scope.
+for repeated automated use (`dast-onboard-tool`'s job — still the right
+choice instead of the manual path if this vendor will be tested
+repeatedly). Any other hands-on impression (CI/CD integration friction, a
+manual tweak that was needed, any other caveat) belongs in `candidate
+log-observation`, tagged, not in a formal score — that criterion-level
+judgment stays out of this skill's scope.
 
 Never edit `data/candidates/*.yaml` or `data/benchmarks.yaml` directly.
 Every change happens through `dast-bench` CLI commands: `candidate
@@ -24,9 +28,11 @@ ingest-scan-result`. Reading a vendor's current record directly
 (`data/candidates/<id>.yaml`) is fine for inspection — only writes must go
 through the CLI.
 
-**Score exactly one finalist per invocation.** Cover whichever of the two
-benchmark targets that finalist doesn't yet have a result for in this one
-pass (usually both, the first time).
+**Score exactly one finalist per invocation.** Cover whichever benchmark
+target(s) that finalist doesn't yet have a result for in this one pass —
+both Juice Shop and VAmPI for a CI-automated vendor, or Juice Shop only
+for a manually-tested one, since VAmPI has no public instance to manually
+test against yet.
 
 ## Step 1: Identify which finalist to scan
 
@@ -38,20 +44,28 @@ via Step 4's direct read).
 ## Step 2: Check the vendor is wired into the CI workflow
 
 Read the vendor's record directly (`data/candidates/<id>.yaml`) and check
-`ci_tool_id`. The CI workflow currently only supports `tool=zap`.
+`ci_tool_id`. The CI workflow currently supports `tool=zap` and
+`tool=nuclei`.
 
-**If `ci_tool_id` is unset:** ask the evaluator what CI `tool` value this
-vendor's product corresponds to, then persist it:
-```
-dast-bench candidate set-ci-tool --id <id> --tool <tool>
-```
+**If `ci_tool_id` is already set to a value the workflow supports:**
+proceed to Step 3.
 
-**If `ci_tool_id` is set but isn't a value the workflow supports (currently
-only `zap`):** tell the evaluator this vendor's tool isn't wired into
-`.github/workflows/dast-benchmark.yml` yet. Wiring in a new tool (a new
-workflow step, docker/CLI invocation, auth/licensing handling, a new
-normalize script) is `dast-onboard-tool`'s job, not this skill's — do not
-attempt to edit the workflow yourself. Stop here for this vendor.
+**If `ci_tool_id` is unset or isn't a value the workflow supports:** ask
+the evaluator directly which of two paths they want for this vendor:
+
+- **Full CI automation** — worth it if this vendor's tool will be tested
+  repeatedly, is self-hostable/scriptable, and the evaluator wants it
+  wired into `.github/workflows/dast-benchmark.yml` for good. That's
+  `dast-onboard-tool`'s job, not this skill's — point them there and stop
+  here for this invocation; do not attempt to edit the workflow yourself.
+- **A single manual data point, right now** — no CI wiring, no normalize
+  script, appropriate for a vendor you may only ever hands-on test once.
+  Proceed to Step 3, then Step 6 instead of Step 5.
+
+If `ci_tool_id` was already set from a prior invocation but still isn't a
+workflow-supported value (e.g. someone answered this before but chose not
+to onboard it), ask again rather than assuming last time's answer still
+holds.
 
 ## Step 3: Ensure benchmark ground truth exists
 
@@ -100,9 +114,14 @@ Read the vendor's record directly (`data/candidates/<id>.yaml`) to see which
 of Juice Shop/VAmPI it already has a `HandsOnResult` for. Only the targets
 missing a result get scanned this invocation. If both already have results,
 tell the evaluator so and ask whether they want a fresh rerun of either
-target before proceeding — do not silently rerun or silently skip.
+target before proceeding — do not silently rerun or silently skip. A
+manually-tested vendor will never have a VAmPI result — that's expected
+(see Step 7), not something to keep asking about.
 
-## Step 5: Run the CI workflow for each target still needed
+## Step 5: Run the CI workflow for each target still needed (CI-automated path)
+
+Skip this step entirely if you're on the manual path from Step 2 — go to
+Step 6 instead.
 
 For each target (`juice-shop`, `vampi`) missing a result, using this
 vendor's `ci_tool_id` as `tool`:
@@ -124,10 +143,10 @@ If this reports a failed run, relay the failure verbatim (e.g. via
 `gh run view <run-id> --log-failed`) and ask the evaluator how to proceed —
 retry, skip this target, or investigate — rather than retrying blindly. If
 one target fails but the other succeeds, continue with the one that
-succeeded; this finalist just isn't ready for Step 6 yet.
+succeeded; this finalist just isn't ready for Step 7 yet.
 
 On success, download the workflow's already-normalized artifact directly —
-the workflow itself runs `.github/scripts/normalize/zap.py` and uploads the
+the workflow itself runs the tool's normalize script and uploads the
 result, so there is no need to normalize again locally:
 
 ```
@@ -148,22 +167,71 @@ folding it into a formal score:
 dast-bench candidate log-observation --vendor-id <id> --context "dast-scan: <target>" --note "<what happened>" --tags hands-on
 ```
 
-## Step 6: Propose refined scores once both targets are scanned
+## Step 6: Manual hands-on path (no CI wiring)
 
-Once the vendor has `HandsOnResult`s for **both** Juice Shop and VAmPI, read
-both results' `outcome` text (e.g. "detected 8/10 known vulnerabilities, 2
-false positive(s)"), aggregate the detected/known counts and false-positive
-counts across both, and run `dast-bench criteria list` to get the current
-rubric text for `detection-accuracy` and `false-positive-rate`. Propose a
-refined score for each against that rubric, citing the aggregate numbers as
-evidence. Present both proposed scores together — nothing persisted yet —
-for the evaluator to review and adjust.
+Only reached if the evaluator chose this at Step 2. Skip this step
+entirely for the CI-automated path.
 
-If either target's scan hasn't happened yet for this vendor, stop after
-Step 5 instead — confirm what was scanned this round and that the other
-target remains outstanding.
+Confirm the evaluator has trial/account access to the vendor's tool. If
+not, say so plainly and stop here for this vendor — there's nothing to
+test without it.
 
-## Step 7: Persist confirmed scores and offer the evaluated transition
+Tell the evaluator to point the vendor's tool at
+`https://demo.owasp-juice.shop` — OWASP's own officially-hosted public
+Juice Shop demo instance, maintained explicitly for this kind of
+practice/testing, so a cloud-based scanner has something publicly
+reachable without needing new infrastructure. VAmPI has no equivalent
+public instance, so this path only ever covers Juice Shop — that's
+expected, not a gap to fix here (see Step 7).
+
+Once the evaluator has the vendor's own findings report (however the
+vendor's tool exports it — dashboard, CSV, JSON, whatever), hand-author
+the generic findings JSON yourself: for each finding, decide whether it's
+the same real vulnerability as one of the entries already in
+`data/benchmarks.yaml`'s `juice-shop` list — if so, use that entry's
+existing `vuln_id` (not the vendor's own internal ID for it); if not, give
+it a descriptive slug of your own and leave it alone, matching nothing
+(correctly). State explicitly to the evaluator if a finding's
+classification is uncertain, rather than guessing confidently. Then:
+
+```
+dast-bench scan ingest-scan-result --vendor-id <id> --benchmark-id juice-shop --file <hand-authored.json> --test-id manual-<date> --description "Manual hands-on test, no CI wiring"
+```
+
+If anything qualitative comes up (setup friction getting the vendor's
+scan running, an unexpected caveat), log it the same way Step 5 does:
+
+```
+dast-bench candidate log-observation --vendor-id <id> --context "dast-scan: manual" --note "<what happened>" --tags hands-on
+```
+
+## Step 7: Propose refined scores once available
+
+**CI-automated path:** once the vendor has `HandsOnResult`s for **both**
+Juice Shop and VAmPI, read both results' `outcome` text (e.g. "detected
+8/10 known vulnerabilities, 2 false positive(s)"), aggregate the
+detected/known counts and false-positive counts across both.
+
+**Manual path:** once the vendor has a Juice-Shop `HandsOnResult` (VAmPI
+will never have one for a manually-tested vendor — that's expected, not
+something to wait for), use that single result's numbers directly. The
+evidence you write for the refined scores must explicitly state that this
+is based on Juice Shop only and VAmPI wasn't covered — this caveat is
+mandatory, not optional, so a reader of the eventual scorecard understands
+the evidence is narrower than a CI-tested vendor's.
+
+Either way: run `dast-bench criteria list` to get the current rubric text
+for `detection-accuracy` and `false-positive-rate`. Propose a refined
+score for each against that rubric, citing the numbers (and, for the
+manual path, the Juice-Shop-only caveat) as evidence. Present both
+proposed scores together — nothing persisted yet — for the evaluator to
+review and adjust.
+
+If the CI-automated path hasn't finished both targets yet, stop here
+instead — confirm what was scanned this round and that the other target
+remains outstanding.
+
+## Step 8: Persist confirmed scores and offer the evaluated transition
 
 Once the evaluator confirms:
 
@@ -182,7 +250,7 @@ dast-bench candidate set-status --id <id> --status evaluated
 If any command prints an `error: ...` message, relay it verbatim and ask how
 to proceed rather than retrying blindly.
 
-## Step 8: Summarize
+## Step 9: Summarize
 
 Summarize for the evaluator what was scanned, what scores were refined
 (and with what evidence), and whether the vendor was transitioned to
