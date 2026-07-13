@@ -22,8 +22,8 @@ judgment stays out of this skill's scope.
 
 Never edit `data/candidates/*.yaml` or `data/benchmarks.yaml` directly.
 Every change happens through `dast-bench` CLI commands: `candidate
-set-ci-tool`, `candidate record-score`, `candidate set-status`, `candidate
-log-observation`, `benchmark add`, `benchmark add-vulnerability`, `scan
+record-score`, `candidate set-status`, `candidate log-observation`,
+`benchmark add`, `benchmark add-vulnerability`, `scan
 ingest-scan-result`. Reading a vendor's current record directly
 (`data/candidates/<id>.yaml`) is fine for inspection — only writes must go
 through the CLI.
