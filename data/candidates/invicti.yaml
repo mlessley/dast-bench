@@ -1,0 +1,261 @@
+id: invicti
+name: Invicti
+source: seeded
+status: finalist
+website: https://www.invicti.com/
+notes: Enterprise DAST platform (formerly Netsparker, merged with Acunetix, ASPM capabilities
+  from Kondukto acquisition); Proof-Based Scanning for automated safe exploit confirmation
+ci_tool_id: null
+scores:
+- criterion_id: api-spa-coverage
+  score: 4.5
+  evidence: 'Full browser-engine crawling accurately scans SPAs (jQuery/AngularJS),
+    executing JS and parsing dynamic elements; REST/SOAP/GraphQL support with automatic
+    schema/introspection discovery even without an imported schema. Source: invicti.com/support/scanning-graphql-api,
+    invicti.com/features/advanced-website-crawling-technologies'
+  confidence: paper
+  timestamp: '2026-07-14T18:07:37.009072'
+- criterion_id: shadow-api-discovery
+  score: 4.0
+  evidence: 'Dedicated API Discovery product feature for surfacing undocumented/shadow
+    APIs. Source: invicti.com/solutions/api-discovery'
+  confidence: paper
+  timestamp: '2026-07-14T18:07:37.258459'
+- criterion_id: auth-session-handling
+  score: 4.0
+  evidence: 'Supports API Key, Bearer Token, JWT, Basic Auth, and OAuth 2.0; explicit
+    messaging on handling SSO/MFA for thorough authenticated testing. Source: invicti.com/features/api-security-testing'
+  confidence: paper
+  timestamp: '2026-07-14T18:07:37.507057'
+- criterion_id: business-logic-workflow-detection
+  score: 2.0
+  evidence: No dedicated multi-step business-logic/authorization-testing engine found
+    in public materials (unlike StackHawk's purpose-built Intelligent Business Logic
+    Testing) -- inferred absence, not confirmed.
+  confidence: paper
+  timestamp: '2026-07-14T18:07:37.758830'
+- criterion_id: legacy-app-protocol-support
+  score: 3.0
+  evidence: SOAP API scanning explicitly supported; no legacy-framework-specific (ASP
+    WebForms/JSP) accuracy claims found beyond general protocol coverage.
+  confidence: paper
+  timestamp: '2026-07-14T18:07:38.051281'
+- criterion_id: third-party-partner-api-risk
+  score: 2.0
+  evidence: No dedicated vendor-risk-assessment output shaping for partner-facing
+    APIs found in public materials -- inferred absence.
+  confidence: paper
+  timestamp: '2026-07-14T18:07:38.296872'
+- criterion_id: asset-discovery-inventory
+  score: 3.5
+  evidence: 'API Discovery feature plus Kondukto ASPM acquisition aggregates asset/risk
+    data across scanners -- discovers known apps/APIs within the org''s ecosystem,
+    not confirmed as network-based unknown-asset discovery like a dedicated ASM tool.
+    Source: invicti.com/solutions/api-discovery'
+  confidence: paper
+  timestamp: '2026-07-14T18:07:38.558233'
+- criterion_id: stateful-web-crawling
+  score: 4.0
+  evidence: 'Marketed advanced crawling technology built around a full browser engine,
+    explicitly positioned to ''crawl where other vulnerability scanners can''t,''
+    designed for full application coverage of static and dynamic elements. Source:
+    invicti.com/features/advanced-website-crawling-technologies'
+  confidence: paper
+  timestamp: '2026-07-14T18:07:38.824947'
+- criterion_id: detection-accuracy
+  score: 4.0
+  evidence: 'VENDOR CLAIM, not independently verified: Proof-Based Scanning claims
+    99.98% detection accuracy. Source: invicti.com/features/proof-based-scanning'
+  confidence: paper
+  timestamp: '2026-07-14T18:07:50.971215'
+- criterion_id: false-positive-rate
+  score: 4.5
+  evidence: 'Proof-Based Scanning automatically re-exploits detected vulnerabilities
+    in a safe way to confirm they''re real (not theoretical), specifically designed
+    to eliminate false positives before they reach a triage queue. Source: invicti.com/features/proof-based-scanning'
+  confidence: paper
+  timestamp: '2026-07-14T18:07:51.255408'
+- criterion_id: compliance-standards-mapping
+  score: 4.5
+  evidence: 'Built-in compliance reporting for PCI DSS, ISO 27001, HIPAA, and SOC
+    2; PCI DSS reports explicitly show which findings violate specific control sections.
+    Source: invicti.com/blog/web-security/how-dast-supports-compliance-pci-dss-iso27001-hipaa-soc2'
+  confidence: paper
+  timestamp: '2026-07-14T18:07:51.505294'
+- criterion_id: finding-validation-proof-of-exploit
+  score: 5.0
+  evidence: 'Proof-Based Scanning is the product''s core differentiator: automatically
+    and safely re-exploits every detected vulnerability to produce a proof of exploit,
+    directly matching this criterion''s top anchor. Source: invicti.com/features/proof-based-scanning'
+  confidence: paper
+  timestamp: '2026-07-14T18:07:51.756441'
+- criterion_id: sensitive-financial-data-exposure
+  score: 2.0
+  evidence: No dedicated financial-data-pattern (account/routing number, card PAN)
+    detection capability found in public materials -- inferred absence.
+  confidence: paper
+  timestamp: '2026-07-14T18:07:52.017063'
+- criterion_id: automated-triage-fp-reduction
+  score: 5.0
+  evidence: 'Proof-Based Scanning is itself an automated-triage mechanism -- it auto-confirms
+    exploitability via safe re-exploitation, the strongest fit of any candidate evaluated
+    for this criterion since it''s the product''s central design principle, not an
+    add-on feature. Source: invicti.com/features/proof-based-scanning'
+  confidence: paper
+  timestamp: '2026-07-14T18:07:52.284391'
+- criterion_id: safe-prod-scanning
+  score: 3.0
+  evidence: No explicit passive-only/rate-limited safe-mode messaging found in public
+    materials, though Proof-Based Scanning's non-destructive verification implies
+    some inherent caution -- inferred, moderate confidence.
+  confidence: paper
+  timestamp: '2026-07-14T18:08:00.624677'
+- criterion_id: cicd-native-fit
+  score: 5.0
+  evidence: 'Native integration across GitHub Actions, Jenkins, GitLab CI, Azure DevOps,
+    CircleCI, Bamboo, TeamCity, and Bitbucket Pipelines via a Docker-based scan-cli
+    container configured entirely through environment variables; explicit exit-code-based
+    build-gating and branch-protection/deployment-gate workflows. Source: invicti.com/support/integrating-invicti-enterprise-github-actions,
+    invicti.com/blog/web-security/api-security-testing-cicd-integration'
+  confidence: paper
+  timestamp: '2026-07-14T18:08:00.884478'
+- criterion_id: scan-performance-scalability
+  score: 3.0
+  evidence: Enterprise tier implies scale (unlimited seats, custom SLAs, dedicated
+    account management) but no explicit scan-speed or concurrency benchmark found
+    in public materials -- inferred from tier positioning.
+  confidence: paper
+  timestamp: '2026-07-14T18:08:01.121135'
+- criterion_id: incremental-differential-scanning
+  score: 2.0
+  evidence: No incremental/differential/change-aware scanning mode found in public
+    materials -- inferred absence.
+  confidence: paper
+  timestamp: '2026-07-14T18:08:01.368761'
+- criterion_id: triage-remediation-guidance
+  score: 4.5
+  evidence: 'AI-driven remediation guidance delivers code-level fix suggestions tailored
+    to the specific finding, in context, rather than generic secure-coding advice.
+    Source: invicti.com/features/developer-guidance'
+  confidence: paper
+  timestamp: '2026-07-14T18:08:11.121186'
+- criterion_id: auto-remediation-pr
+  score: 3.5
+  evidence: 'Auto-assigns confirmed vulnerabilities to developers with AI-driven fix
+    recommendations they can apply and validate directly in their workflow, but no
+    explicit auto-opened-PR capability confirmed. Source: invicti.com/product/ai-powered-application-security'
+  confidence: paper
+  timestamp: '2026-07-14T18:08:11.403975'
+- criterion_id: setup-onboarding-friction
+  score: 3.0
+  evidence: Enterprise-platform positioning (dedicated account management, custom
+    SLAs, on-prem deployment options) implies moderate setup complexity, more involved
+    than a single docker-pull tool -- inferred from tier positioning, no explicit
+    onboarding-time claim found.
+  confidence: paper
+  timestamp: '2026-07-14T18:08:11.683800'
+- criterion_id: ide-local-dev-tooling
+  score: 2.0
+  evidence: No IDE plugin or pre-commit/pre-push local feedback loop found in public
+    materials (integrations found are Jira/GitHub/Jenkins/GitLab, not IDE-specific)
+    -- inferred absence.
+  confidence: paper
+  timestamp: '2026-07-14T18:08:11.959320'
+- criterion_id: reporting-exportability
+  score: 4.5
+  evidence: 'Tailored dashboards for executives, AppSec engineers, and developers;
+    audit-ready visibility into triage/remediation progress; integrates with 50+ tools
+    including Jira, Slack, ServiceNow. Source: invicti.com/features/automate-remediation-workflows'
+  confidence: paper
+  timestamp: '2026-07-14T18:08:25.525719'
+- criterion_id: extensibility-custom-rules
+  score: 2.0
+  evidence: Closed commercial platform; no custom-rule-authoring engine found comparable
+    to ZAP's Zest or Nuclei's YAML DSL -- inferred absence.
+  confidence: paper
+  timestamp: '2026-07-14T18:08:25.894952'
+- criterion_id: ticketing-collaboration-integration
+  score: 5.0
+  evidence: 'Automatically confirms vulnerabilities, creates detailed tickets in Jira
+    and other trackers, assigns to the correct developer, and re-tests/auto-closes
+    the ticket once the fix is marked complete -- a full bidirectional lifecycle,
+    matching this criterion''s top anchor. Source: invicti.com pricing/integration
+    materials'
+  confidence: paper
+  timestamp: '2026-07-14T18:08:26.289538'
+- criterion_id: siem-soar-integration
+  score: 3.5
+  evidence: SIEM integration mentioned generally as part of its broader toolchain
+    integrations, but no specific named platforms (e.g. Splunk, Elasticsearch) confirmed
+    in public materials.
+  confidence: paper
+  timestamp: '2026-07-14T18:08:26.676332'
+- criterion_id: historical-risk-trend-dashboards
+  score: 4.5
+  evidence: 'Explicit executive dashboards tracking long-term performance trends and
+    ROI of security initiatives, plus audit-ready visibility into triage/remediation/developer
+    progress across quarters. Source: invicti.com/features/automate-remediation-workflows'
+  confidence: paper
+  timestamp: '2026-07-14T18:08:27.149051'
+- criterion_id: vulnerability-status-management
+  score: 4.5
+  evidence: 'Full finding-lifecycle workflow: auto-assignment, audit-ready triage/remediation
+    visibility, and automatic re-test-and-close on confirmed fix. Source: invicti.com/features/automate-remediation-workflows'
+  confidence: paper
+  timestamp: '2026-07-14T18:08:27.662690'
+- criterion_id: aspm-integration
+  score: 5.0
+  evidence: 'Invicti acquired Kondukto and now offers a dedicated ASPM product line
+    (Invicti ASPM) -- owns an ASPM platform outright rather than merely integrating
+    with a third-party one, the strongest possible fit for this criterion. Source:
+    invicti.com, appsecsanta.com/invicti-aspm'
+  confidence: paper
+  timestamp: '2026-07-14T18:08:28.091700'
+- criterion_id: deployment-model-data-residency
+  score: 4.5
+  evidence: 'Three deployment options: cloud-hosted, on-premises, and hybrid; on-prem
+    supports fully air-gapped networks with no internet connectivity and explicit
+    HIPAA/PCI-DSS/GDPR data-residency compliance. Source: invicti.com/pci-asv-scanner'
+  confidence: paper
+  timestamp: '2026-07-14T18:08:40.950803'
+- criterion_id: multi-tenancy-access-control
+  score: 4.0
+  evidence: Role-based access control explicitly marketed as part of its enterprise-focused
+    platform, described as 'broader RBAC' relative to smaller competitors; audit-log
+    capability not independently confirmed.
+  confidence: paper
+  timestamp: '2026-07-14T18:08:41.304182'
+- criterion_id: vendor-security-posture
+  score: 4.5
+  evidence: 'Real, verified certifications: SOC 2 Type 2 report, ISO 27001:2022 accreditation
+    (announced via press release, not just self-claimed), and PCI DSS -- best independently-verifiable
+    posture of any candidate evaluated so far. Source: invicti.com/compliance, invicti.com/blog/news/invicti-security-achieves-iso-27001-2022-accreditation-for-all-products'
+  confidence: paper
+  timestamp: '2026-07-14T18:08:41.731576'
+- criterion_id: licensing-model-predictability
+  score: 3.5
+  evidence: Licensed per-target (web app, API endpoint, or defined URL scope) across
+    Standard/Premium/Enterprise tiers -- a clear, transparent axis, but Enterprise-tier
+    pricing is fully customized/contact-sales, and approximate price ranges ($4k-6k
+    Standard, $7k-12k Premium per target/year) come from third-party pricing aggregators,
+    not Invicti's own published pricing page.
+  confidence: paper
+  timestamp: '2026-07-14T18:08:42.141695'
+hands_on_results: []
+observations:
+- context: discovery research
+  note: 'Stakeholder-seeded to fill a gap in the current 3-candidate list (ZAP/Nuclei/StackHawk):
+    no enterprise-incumbent-tier vendor. Proof-Based Scanning automatically re-exploits
+    detected vulnerabilities in a safe way to confirm they''re real, not theoretical,
+    claiming 99.98% accuracy -- directly relevant to finding-validation-proof-of-exploit
+    and automated-triage-fp-reduction. Source: invicti.com/features/proof-based-scanning.
+    Deployment flexibility: cloud-hosted, on-premises, or hybrid -- on-prem supports
+    air-gapped networks with no internet connectivity, explicit HIPAA/PCI-DSS/GDPR
+    data-residency compliance -- directly relevant to deployment-model-data-residency.
+    Source: invicti.com/pci-asv-scanner. Acquired Kondukto for ASPM capabilities --
+    a real, direct hit on the aspm-integration criterion, worth digging into further
+    at scoring time. Source: invicti.com. Built-in compliance reporting for PCI DSS,
+    ISO 27001, HIPAA, SOC 2 -- relevant to compliance-standards-mapping. Source: invicti.com/blog/web-security/how-dast-supports-compliance-pci-dss-iso27001-hipaa-soc2.'
+  tags:
+  - discovery
+  timestamp: '2026-07-14T18:02:59.979660'
