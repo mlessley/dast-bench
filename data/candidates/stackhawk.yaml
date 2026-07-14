@@ -220,6 +220,12 @@ scores:
     buyer would operate at.
   confidence: paper
   timestamp: '2026-07-14T16:15:02.661374'
+- criterion_id: auth-session-handling
+  score: 4.5
+  evidence: JWT, OAuth flows, most 3rd-party providers directly configurable in the
+    stackhawk YAML config without custom scripts -- strong, low-friction, well-documented.
+  confidence: paper
+  timestamp: '2026-07-14T17:31:42.063298'
 hands_on_results: []
 observations:
 - context: discovery research
