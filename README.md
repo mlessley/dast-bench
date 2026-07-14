@@ -41,9 +41,10 @@ experience, reporting, and deployment/data governance. Those three exist to
 exercise every phase of the pipeline end to end; they aren't a fixed or
 preferred vendor list — the framework is tool-agnostic, and `dast-discovery`
 can surface any number of additional candidates for a real procurement.
-See `reports/executive-summary.md` (generated locally via `dast-bench
-render` + the `dast-report` skill, not tracked in git) for current
-standings.
+See [`sample-report/`](sample-report/) for a committed snapshot of that
+evaluation's real output (executive summary, scorecards, comparison
+matrix) — the live version is `reports/`, generated locally via `dast-bench
+render` + the `dast-report` skill, not tracked in git.
 
 **CI benchmarking pipeline: built, live-verified, multi-tool.** A GitHub
 Actions `workflow_dispatch` pipeline (`.github/workflows/dast-benchmark.yml`)
@@ -121,7 +122,8 @@ core/                      # Python package: Pydantic models + CLI
     xlsx.py                    # comparison matrix (XLSX)
     html.py                    # self-contained, sortable comparison dashboard (HTML)
 data/                      # YAML source of truth (criteria.yaml, benchmarks.yaml, candidates/*.yaml)
-reports/                   # generated output — never hand-edited, regenerated via `dast-bench render` (plus `dast-report`'s skill-authored `executive-summary.md`)
+reports/                   # generated output — never hand-edited, regenerated via `dast-bench render` (plus `dast-report`'s skill-authored `executive-summary.md`); gitignored
+sample-report/             # committed, manually-updated snapshot of reports/ for reviewers who aren't running the tool
 .github/
   workflows/dast-benchmark.yml       # CI pipeline: ephemeral benchmark target + tool-dispatched active scan (ZAP or Nuclei)
   scripts/normalize/{zap,nuclei}.py  # per-tool report -> generic findings JSON
