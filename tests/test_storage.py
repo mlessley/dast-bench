@@ -5,7 +5,10 @@ from core.models import (
     BenchmarkVulnerability,
     Criterion,
     CriteriaTaxonomy,
+    CriterionResearchCache,
+    ResearchFinding,
     Vendor,
+    VendorResearchCache,
     VendorSource,
 )
 
@@ -62,3 +65,21 @@ def test_save_and_load_benchmarks_round_trips(tmp_path):
 
 def test_load_benchmarks_returns_empty_list_when_missing(tmp_path):
     assert storage.load_benchmarks(tmp_path / "missing.yaml") == []
+
+
+def test_save_and_load_research_cache_round_trips(tmp_path):
+    cache = VendorResearchCache(vendor_id="veracode")
+    cache.criteria["aspm-integration"] = CriterionResearchCache(
+        queries=["Veracode Risk Manager ASPM"],
+        findings=[ResearchFinding(url="veracode.com/risk-manager", snippet="ASPM platform")],
+    )
+    path = storage.research_cache_path(tmp_path, "veracode")
+    storage.save_research_cache(cache, path)
+    assert storage.load_research_cache(path, "veracode") == cache
+
+
+def test_load_research_cache_returns_empty_cache_when_missing(tmp_path):
+    path = storage.research_cache_path(tmp_path, "missing-vendor")
+    cache = storage.load_research_cache(path, "missing-vendor")
+    assert cache.vendor_id == "missing-vendor"
+    assert cache.criteria == {}

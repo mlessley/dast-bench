@@ -102,3 +102,21 @@ class Benchmark(BaseModel):
     name: str
     target_type: str
     known_vulnerabilities: list[BenchmarkVulnerability] = Field(default_factory=list)
+
+
+class ResearchFinding(BaseModel):
+    url: str
+    snippet: str
+
+
+class CriterionResearchCache(BaseModel):
+    researched_at: datetime = Field(default_factory=datetime.utcnow)
+    queries: list[str] = Field(default_factory=list)
+    findings: list[ResearchFinding] = Field(default_factory=list)
+    reviewed_by_gap_check: bool = False
+    stale: bool = False
+
+
+class VendorResearchCache(BaseModel):
+    vendor_id: str
+    criteria: dict[str, CriterionResearchCache] = Field(default_factory=dict)

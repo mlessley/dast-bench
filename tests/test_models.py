@@ -6,10 +6,13 @@ from core.models import (
     Confidence,
     Criterion,
     CriteriaTaxonomy,
+    CriterionResearchCache,
     HandsOnResult,
     Observation,
+    ResearchFinding,
     ScoreEntry,
     Vendor,
+    VendorResearchCache,
     VendorSource,
     VendorStatus,
 )
@@ -82,3 +85,21 @@ def test_benchmark_holds_known_vulnerabilities():
         known_vulnerabilities=[BenchmarkVulnerability(id="v1", name="SQLi", severity="high")],
     )
     assert bench.known_vulnerabilities[0].id == "v1"
+
+
+def test_criterion_research_cache_defaults():
+    entry = CriterionResearchCache()
+    assert entry.queries == []
+    assert entry.findings == []
+    assert entry.reviewed_by_gap_check is False
+    assert entry.stale is False
+
+
+def test_vendor_research_cache_holds_criteria_by_id():
+    cache = VendorResearchCache(vendor_id="veracode")
+    cache.criteria["aspm-integration"] = CriterionResearchCache(
+        queries=["Veracode Risk Manager ASPM"],
+        findings=[ResearchFinding(url="veracode.com/risk-manager", snippet="ASPM platform")],
+    )
+    assert cache.criteria["aspm-integration"].findings[0].url == "veracode.com/risk-manager"
+    assert cache.criteria["aspm-integration"].queries == ["Veracode Risk Manager ASPM"]

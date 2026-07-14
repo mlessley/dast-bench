@@ -5,7 +5,7 @@ from pathlib import Path
 
 import yaml
 
-from .models import Benchmark, CriteriaTaxonomy, Vendor
+from .models import Benchmark, CriteriaTaxonomy, Vendor, VendorResearchCache
 
 
 def load_criteria(path: Path) -> CriteriaTaxonomy:
@@ -51,3 +51,19 @@ def save_benchmarks(benchmarks: list[Benchmark], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {"benchmarks": [b.model_dump(mode="json") for b in benchmarks]}
     path.write_text(yaml.safe_dump(payload, sort_keys=False))
+
+
+def research_cache_path(base_dir: Path, vendor_id: str) -> Path:
+    return base_dir / f"{vendor_id}.yaml"
+
+
+def load_research_cache(path: Path, vendor_id: str) -> VendorResearchCache:
+    if not path.exists():
+        return VendorResearchCache(vendor_id=vendor_id)
+    data = yaml.safe_load(path.read_text()) or {}
+    return VendorResearchCache.model_validate(data)
+
+
+def save_research_cache(cache: VendorResearchCache, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.safe_dump(cache.model_dump(mode="json"), sort_keys=False))
