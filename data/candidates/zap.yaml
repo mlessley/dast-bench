@@ -208,6 +208,33 @@ scores:
     checkmarx.com/trust'
   confidence: paper
   timestamp: '2026-07-13T04:39:33.048224'
+- criterion_id: stateful-web-crawling
+  score: 4.5
+  evidence: ZAP's traditional Spider is one of its oldest, most mature features --
+    built specifically for multi-page, session-stateful crawling before SPAs existed,
+    with well-documented forms/session handling.
+  confidence: paper
+  timestamp: '2026-07-14T16:14:54.534184'
+- criterion_id: automated-triage-fp-reduction
+  score: 3.0
+  evidence: Alert Filters let you globally suppress a specific rule/pattern once flagged,
+    persisting across future scans -- static rule-based suppression, not adaptive
+    learning or PoC-based auto-confirmation.
+  confidence: paper
+  timestamp: '2026-07-14T16:14:54.885097'
+- criterion_id: aspm-integration
+  score: 4.0
+  evidence: DefectDojo (a named example ASPM platform) ships a native, documented
+    ZAP-report parser/importer -- a real first-party connector on the ASPM side, not
+    just generic export.
+  confidence: paper
+  timestamp: '2026-07-14T16:14:55.192090'
+- criterion_id: licensing-model-predictability
+  score: 5.0
+  evidence: Fully open-source (Apache 2.0); zero cost regardless of usage scale --
+    the most predictable possible model.
+  confidence: paper
+  timestamp: '2026-07-14T16:14:55.473997'
 hands_on_results:
 - test_id: scan-29200159094-juice-shop
   description: CI scan run 29200159094

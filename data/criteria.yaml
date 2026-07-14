@@ -5,7 +5,7 @@ criteria:
   name: API/SPA Coverage
   description: Detects vulnerabilities across REST APIs, GraphQL, and JavaScript-rendered
     single-page applications, not just traditional server-rendered pages.
-  weight: 6.0
+  weight: 5.0
   rubric: '1: Only scans traditional server-rendered HTML forms; no JS-rendered SPA
     crawling, no OpenAPI/GraphQL-aware scanning, no WebSocket/HTTP2/gRPC support.
     3: Crawls JS-rendered SPA content with a headless browser and supports REST via
@@ -29,7 +29,7 @@ criteria:
   name: Authentication & Session Handling
   description: Navigates login flows and holds authenticated session state through
     a scan.
-  weight: 7.0
+  weight: 6.0
   rubric: '1: No support for authenticated scanning; every scan is effectively unauthenticated.
     3: Supports basic scripted login (form-based or token-based) but session handling
     breaks on complex flows (MFA, SSO, refresh tokens), and custom scripting is required
@@ -42,7 +42,7 @@ criteria:
   category: Detection Quality
   name: Detection Accuracy
   description: True-positive rate against known benchmarks.
-  weight: 8.0
+  weight: 7.0
   rubric: '1: Detects only a small fraction of known vulnerabilities, well below OWASP
     Top 10 baseline coverage. 3: Detects most common vulnerability classes reliably
     but misses nuanced/logic-based vulnerabilities. 5: High detection rate across
@@ -52,7 +52,7 @@ criteria:
   category: Detection Quality
   name: Noise / False-Positive Rate
   description: How much triage overhead the findings create.
-  weight: 5.0
+  weight: 4.0
   rubric: '1: High false-positive rate requiring extensive manual triage. 3: Moderate
     false-positive rate; manageable triage. 5: Low false-positive rate; findings consistently
     actionable with minimal triage.'
@@ -125,7 +125,7 @@ criteria:
   name: Business Logic & Workflow Vulnerability Detection
   description: Detects multi-step, sequence-dependent, and authorization-state-aware
     vulnerabilities (e.g. BOLA via role-based testing) beyond generic parameter fuzzing.
-  weight: 5.0
+  weight: 4.0
   rubric: '1: Only tests individual endpoints/parameters in isolation; no multi-step
     or business-logic-aware testing. 3: Some multi-step workflow testing (e.g. basic
     BOLA checks via a second test account) but limited to common patterns. 5: Purpose-built
@@ -169,7 +169,7 @@ criteria:
   name: Compliance & Standards Mapping
   description: Mapping findings to recognized vulnerability and regulatory compliance
     frameworks.
-  weight: 5.0
+  weight: 4.0
   rubric: '1: Findings have no mapping to any standard taxonomy. 3: Maps findings
     to OWASP Top 10 only. 5: Maps findings to OWASP Top 10, OWASP API Security Top
     10, CWE, and CVE where applicable, plus regulatory-relevant frameworks for financial
@@ -248,7 +248,7 @@ criteria:
   name: Historical Risk Trend Dashboards
   description: Executive-level dashboards showing remediation velocity and risk-reduction
     trends over time.
-  weight: 3.0
+  weight: 2.0
   rubric: '1: No historical view; each scan''s results stand alone. 3: Some trend
     data available but not presented as an executive-level view. 5: Executive-level
     dashboards showing remediation velocity, risk-reduction curves, and SLA tracking
@@ -258,7 +258,7 @@ criteria:
   name: Vulnerability Status Management
   description: Native workflows for exception management, risk-acceptance tracking,
     false-positive tagging, and audit trail logging.
-  weight: 5.0
+  weight: 4.0
   rubric: '1: No workflow for managing a finding''s lifecycle; findings are just a
     static list. 3: Basic status marking (open/closed) but no formal exception or
     risk-acceptance workflow. 5: Native workflows for exception management, risk-acceptance
@@ -268,7 +268,7 @@ criteria:
   name: Deployment Model & Data Residency
   description: Flexibility of deployment topology (on-prem/SaaS/hybrid/air-gapped)
     and configurable control over where scan data is processed and stored.
-  weight: 6.0
+  weight: 5.0
   rubric: '1: Single fixed deployment model with no visibility into where scan data/traffic
     is processed or stored. 3: Offers more than one deployment model (e.g. SaaS +
     on-prem) but data residency isn''t configurable. 5: Flexible deployment (on-prem,
@@ -280,7 +280,7 @@ criteria:
   name: Multi-Tenancy & Access Control
   description: Role-based access control, audit logging, and business-unit/asset-portfolio
     isolation within the tool itself.
-  weight: 4.0
+  weight: 3.0
   rubric: '1: No role-based access control; every user has the same permissions. 3:
     Basic roles (admin/user) but no fine-grained permissions or audit log. 5: Fine-grained
     RBAC segregating Global Admins, Security Engineers, and Developers, plus an audit
@@ -290,8 +290,67 @@ criteria:
   name: Vendor Security Posture
   description: Whether the vendor publishes independently verifiable evidence of their
     own security posture (SOC 2, ISO 27001, penetration test results).
-  weight: 4.0
+  weight: 3.0
   rubric: '1: No visibility into the vendor''s own security posture. 3: Vendor claims
     certifications but doesn''t make reports available for review. 5: Vendor publishes
     a current SOC 2 Type II report, ISO 27001 certification, and a recent third-party
     penetration test summary.'
+- id: stateful-web-crawling
+  category: Coverage
+  name: Traditional Stateful Web Crawling
+  description: Multi-page, session-stateful form-handling crawling depth -- navigating
+    classic server-rendered multi-step forms, wizards, and dependent-field flows,
+    distinct from SPA/API-focused coverage.
+  weight: 3.0
+  rubric: '1: Crawler treats each page/form independently; loses session/cookie continuity
+    across multi-step flows, can''t follow wizard-style navigation or dependent form
+    fields. 3: Maintains session state across a multi-step flow and can complete simple
+    multi-page forms, but struggles with deeply nested wizards or fields whose valid
+    values depend on earlier steps. 5: Robust stateful crawling engine that reliably
+    completes complex multi-step, multi-page workflows (shopping-cart-style flows,
+    wizards with conditional branching, dependent field values) end to end, maintaining
+    session continuity throughout.'
+- id: automated-triage-fp-reduction
+  category: Detection Quality
+  name: Automated Triage / FP-Reduction Engine
+  description: Whether the tool has a learning/automation capability (historical pattern
+    learning across scans, automated proof-of-concept payload generation/replay) that
+    suppresses false positives over time, distinct from a single scan's static false-positive
+    rate.
+  weight: 3.0
+  rubric: '1: No triage automation; every scan''s findings must be manually re-triaged
+    from scratch with no memory of prior decisions. 3: Some automation exists (e.g.
+    suppressing previously-dismissed findings on re-scan) but no active proof-of-exploit
+    generation or cross-scan learning to reduce net-new noise. 5: Active automated-triage
+    engine -- generates/replays proof-of-concept payloads to auto-confirm exploitability
+    and/or learns from historical triage decisions across scans to measurably reduce
+    false positives over time without manual re-review.'
+- id: aspm-integration
+  category: Reporting & Extensibility
+  name: ASPM Integration
+  description: Native orchestration hooks into enterprise Application Security Posture
+    Management platforms (e.g. ArmorCode, DefectDojo, Snyk AppRisk) for cross-scanner
+    risk aggregation and prioritization.
+  weight: 2.0
+  rubric: '1: No API/webhook surface suitable for ASPM ingestion; findings can only
+    be manually exported. 3: Findings can be exported in a format an ASPM platform
+    can ingest (e.g. SARIF, generic JSON) via manual/scripted integration, but no
+    native/documented ASPM connector. 5: Native, documented integration with at least
+    one major ASPM platform (e.g. ArmorCode, DefectDojo, Snyk AppRisk) -- findings
+    flow automatically with metadata (asset, owner, risk score) preserved for cross-scanner
+    prioritization.'
+- id: licensing-model-predictability
+  category: Deployment & Data Governance
+  name: Predictability of Licensing Model
+  description: How well a vendor's commercial pricing model scales predictably with
+    actual technical footprint (per-user, per-target-asset, or flat-rate) for multi-year
+    enterprise budget planning.
+  weight: 3.0
+  rubric: '1: Licensing model is opaque or scales unpredictably (e.g. hidden usage
+    tiers, frequent renegotiation required, cost scales in a way disconnected from
+    actual usage), making multi-year budgeting difficult. 3: Licensing model is documented
+    and scales along one clear axis (e.g. per-seat or per-target), but with some friction
+    points (step-function pricing jumps, ambiguous asset-counting rules) that complicate
+    precise forecasting. 5: Licensing model is transparent, documented, and scales
+    smoothly and predictably with actual technical footprint (clear per-user/per-target/flat-rate
+    terms, no hidden tiers), enabling confident multi-year budget forecasting.'
