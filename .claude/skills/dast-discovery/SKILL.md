@@ -42,6 +42,18 @@ Cross-reference findings against the existing candidate list from Step 1
 so you don't waste effort re-discovering what's already known. These
 candidates get `--source discovered`.
 
+For every new candidate being researched (whether stakeholder-seeded from
+Step 2 or discovered here), also identify the vendor's own named major
+product lines or modules — not just its core DAST product (for example,
+a dedicated ASPM platform, an attack-surface-management module, or an
+analytics/reporting product with its own brand name). Log these in the
+discovery observation alongside the rest of the rationale. This matters
+downstream: `dast-shortlist`'s later criterion-by-criterion research
+searches using generic rubric language (e.g. "ASPM integration"), which
+can miss a vendor's own specifically-named product page if that name
+isn't already known going in — capturing it here lets that later
+research search precisely instead of generically.
+
 ## Step 4: Incorporate evaluator-supplied reference material
 
 If the evaluator hands you a URL or a local file path for a specific
