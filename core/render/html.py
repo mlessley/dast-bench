@@ -29,6 +29,14 @@ function sortTable(colIndex) {
 </script>
 """
 
+_DISCLAIMER_HTML = (
+    '<div style="border: 1px solid #c00; background: #fee; padding: 0.75rem; margin-bottom: 1rem;">\n'
+    "🚧 Draft/sample output demonstrating what dast-bench produces — not a final vendor "
+    "recommendation. Scores, weights, and evidence below are illustrative of a real "
+    "evaluation in progress.\n"
+    "</div>"
+)
+
 
 def write_html(taxonomy: CriteriaTaxonomy, vendors: list[Vendor], out_path: Path) -> None:
     header_cells = ["Criterion", "Category"] + [html_lib.escape(v.name) for v in vendors]
@@ -58,6 +66,7 @@ tfoot td {{ font-weight: bold; }}
 </head>
 <body>
 <h1>DAST Tool Comparison Matrix</h1>
+{_DISCLAIMER_HTML}
 <table>
 <thead><tr>{header_html}</tr></thead>
 <tbody>
