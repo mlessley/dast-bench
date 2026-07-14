@@ -36,6 +36,10 @@ fields, no new CLI commands, no change to what gets scored or how.
 - `dast-report`'s narrative links each vendor's name (in the "Where They
   Win" table and its own per-vendor section heading) to that vendor's
   `scorecard-<id>.md`.
+- `dast-report`'s narrative describes the criteria taxonomy's current
+  state only — count, categories, weights — and never narrates how it got
+  there (revision history, internal review provenance, "previously"
+  score comparisons).
 - `dast-shortlist`'s research instructions gain a soft nudge to include an
   actual source URL when one exists, so future evidence keeps benefiting
   from the same linkification.
@@ -117,6 +121,20 @@ deterministic code and skill-authored judgment:
   requirement, since some evidence is legitimately "inferred, low
   confidence" with no single citable source, and that's already a
   documented, acceptable pattern in existing data.
+- `.claude/skills/dast-report/SKILL.md`: Step 4 gains an explicit rule
+  that the narrative describes the *current* state of the criteria
+  taxonomy (count, categories, weights) and never narrates its revision
+  history (e.g. "expanded from 12 to 29 to 33 criteria," "a
+  senior-architect review added four criteria," score comparisons phrased
+  as "previously tied at X"). This surfaced as a real defect found by
+  inspecting the actual regenerated `executive-summary.md`: it narrated
+  the taxonomy's full revision history, which reads as internal process
+  trivia to an external reader and undermines the report reading as a
+  finished artifact. The existing "Methodology note" about ground-truth
+  scope is unaffected by this rule — it explains how to correctly
+  interpret a score (a legitimate, permanent caveat), not how the
+  taxonomy or process evolved over time; the rule targets only
+  evolution/history narration, not every methodological caveat.
 
 ## Disclaimer Wording
 
