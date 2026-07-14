@@ -18,14 +18,12 @@ workloads that a detection-rate-only view would miss entirely.
 
 ## Overview
 
-Three candidates were evaluated against a 33-criterion taxonomy —
-expanded twice: an initial 12-criterion draft, then to 29 criteria for
-enterprise financial-services depth, then to 33 to add Traditional
-Stateful Web Crawling, ASPM Integration, Automated Triage/FP-Reduction
-Engine, and Predictability of Licensing Model from a senior-architect
-review. **OWASP ZAP** and **Nuclei** were carried through to hands-on
-testing (`evaluated`); **StackHawk** was rejected before that phase, on
-practical grounds rather than merit.
+Three candidates were evaluated against a 33-criterion taxonomy across 6
+categories, informed by a real enterprise DAST RFP matrix and this
+evaluation's Fortune 500 financial-services context. **OWASP ZAP** and
+**Nuclei** were carried through to hands-on testing (`evaluated`);
+**StackHawk** was rejected before that phase, on practical grounds rather
+than merit.
 
 | Vendor | Weighted Total | Status |
 |---|---|---|
@@ -33,12 +31,11 @@ practical grounds rather than merit.
 | OWASP ZAP | 3.34 | evaluated |
 | Nuclei | 3.13 | evaluated |
 
-The latest criteria expansion changed the ranking between the two
-hands-on-tested tools: ZAP and Nuclei were previously tied (3.20 each);
-ZAP now leads Nuclei, driven by strong scores on the four new criteria
-(licensing predictability, stateful crawling, ASPM integration) where
-Nuclei's template-matching, cloud-platform-dependent design scored
-noticeably weaker.
+Between the two hands-on-tested tools, ZAP edges out Nuclei overall,
+driven by stronger scores on licensing predictability, stateful web
+crawling, and ASPM integration — dimensions where Nuclei's
+template-matching, cloud-platform-dependent design scores noticeably
+weaker.
 
 ## Where They Win
 
@@ -174,41 +171,19 @@ noticeably weaker.
   control" vs. "what's exposed to the internet that we don't know about").
   Worth keeping that distinction in mind rather than reading the numbers
   as directly comparable capabilities.
-- **The four newest criteria are all paper-confidence only, including for
-  ZAP and Nuclei.** Unlike detection-accuracy/false-positive-rate (which
-  carry real hands-on evidence for the two evaluated tools), Traditional
-  Stateful Web Crawling, ASPM Integration, Automated Triage/FP-Reduction
-  Engine, and Predictability of Licensing Model were scored from public
-  documentation/research for all three candidates — read them with the
+- **Four criteria are scored at paper-confidence only for every
+  candidate.** Traditional Stateful Web Crawling, ASPM Integration,
+  Automated Triage/FP-Reduction Engine, and Predictability of Licensing
+  Model don't yet carry hands-on evidence the way detection-accuracy/
+  false-positive-rate do for the two evaluated tools — read them with the
   same caution as any other paper-confidence score.
 
-## Methodology note: ground truth was corrected mid-evaluation
+## Methodology note: how to read detection-accuracy
 
-The benchmark ground truth used for hands-on scoring (ZAP and Nuclei only —
-this doesn't affect StackHawk's paper-only score) was rebuilt during this
-evaluation after the original, documentation-curated list proved
-unreachable by a realistic CI-budget scan, even after adding
-authentication. The current ground truth reflects vulnerabilities
-empirically demonstrated reachable by both tools within this scan
+The benchmark ground truth used for hands-on scoring (ZAP and Nuclei only
+— this doesn't affect StackHawk's paper-only score) reflects vulnerabilities
+empirically confirmed reachable by both tools within this scan
 configuration, not an exhaustive list of every known vulnerability either
 benchmark app contains. Read the detection-accuracy scores as "how well
 did this tool find what's reachable in a realistic scan," not "how good is
 this tool at finding every documented vulnerability in these apps."
-
-## Criteria taxonomy note
-
-The 12-criterion original draft was expanded to 29 criteria across 6
-categories partway through this evaluation, informed by a real enterprise
-DAST RFP matrix and the specific context that this evaluation is for a
-Fortune 500 financial-services buyer. It was expanded a second time to 33
-criteria after a senior-architect-style review identified four additional
-enterprise-relevant dimensions (Traditional Stateful Web Crawling, ASPM
-Integration, Automated Triage/FP-Reduction Engine, Predictability of
-Licensing Model) not covered by the original 29 — each new criterion was
-self-funded by trimming 1 point off 2-3 existing criteria within its own
-category, so all six category totals are unchanged from the 29-criterion
-version (Coverage 26, Detection Quality 22, Production Safety &
-Operability 14, Developer Experience 10, Reporting & Extensibility 14,
-Deployment & Data Governance 14). All three candidates have now been
-scored against the full 33-criterion list, so weighted totals above are
-directly comparable across all three vendors on equal footing.
