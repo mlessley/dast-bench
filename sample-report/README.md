@@ -5,10 +5,10 @@ committed here so it's visible without cloning and running the tool.
 
 **Snapshot date:** 2026-07-14 (refreshed), from the proof-of-concept
 evaluation described in the main [README](../README.md#status) — now
-four candidates (ZAP, Nuclei, StackHawk, and Invicti), scored against the
-full 33-criterion taxonomy, with the `dast-report` narrative including a
-Financial Sector Fit framing, a Where They Win comparison table, and
-per-category takeaways.
+five candidates (ZAP, Nuclei, StackHawk, Invicti, and Veracode Dynamic
+Analysis), scored against the full 33-criterion taxonomy, with the
+`dast-report` narrative including a Financial Sector Fit framing, a Where
+They Win comparison table, and per-category takeaways.
 
 This directory is *not* the live output — that's `reports/` (gitignored,
 regenerated on demand, always current for whatever's in `data/*.yaml` right
