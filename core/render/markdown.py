@@ -6,11 +6,28 @@ import re
 from ..models import CriteriaTaxonomy, Vendor
 
 _RUBRIC_MARKER = re.compile(r"(?<!\d)([135]):\s")
+_DOMAIN_TOKEN = re.compile(r"\b((?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:/[^\s,;]*)?)")
+
+_DISCLAIMER = (
+    "> 🚧 Draft/sample output demonstrating what dast-bench produces — "
+    "not a final vendor recommendation. Scores, weights, and evidence "
+    "below are illustrative of a real evaluation in progress."
+)
 
 
 def _md_cell(value: str) -> str:
     """Escape special characters in Markdown table cells."""
     return value.replace("|", "\\|").replace("\n", " ")
+
+
+def _linkify_sources(text: str) -> str:
+    def replace(match: re.Match[str]) -> str:
+        token = match.group(1)
+        stripped = token.rstrip(".,;:)")
+        trailing = token[len(stripped):]
+        return f"[{stripped}](https://{stripped}){trailing}"
+
+    return _DOMAIN_TOKEN.sub(replace, text)
 
 
 def weighted_score(taxonomy: CriteriaTaxonomy, vendor: Vendor) -> float:
@@ -62,14 +79,14 @@ def render_scoring_legend(taxonomy: CriteriaTaxonomy) -> str:
 
 
 def render_scorecard(taxonomy: CriteriaTaxonomy, vendor: Vendor) -> str:
-    lines = [f"# {_md_cell(vendor.name)} Scorecard", "", f"Status: {vendor.status.value}", ""]
+    lines = [f"# {_md_cell(vendor.name)} Scorecard", "", _DISCLAIMER, "", f"Status: {vendor.status.value}", ""]
     lines.append("| Criterion | Category | Weight | Score | Evidence | Confidence |")
     lines.append("|---|---|---|---|---|---|")
     for criterion in taxonomy.criteria:
         entry = vendor.score_for(criterion.id)
         if entry:
             lines.append(
-                f"| {_md_cell(criterion.name)} | {_md_cell(criterion.category)} | {criterion.weight:g} | {entry.score:g} | {_md_cell(entry.evidence)} | "
+                f"| {_md_cell(criterion.name)} | {_md_cell(criterion.category)} | {criterion.weight:g} | {entry.score:g} | {_md_cell(_linkify_sources(entry.evidence))} | "
                 f"{entry.confidence.value} |"
             )
         else:
@@ -92,7 +109,7 @@ def render_scorecard(taxonomy: CriteriaTaxonomy, vendor: Vendor) -> str:
 
 
 def render_comparison_matrix(taxonomy: CriteriaTaxonomy, vendors: list[Vendor]) -> str:
-    lines = ["# DAST Tool Comparison Matrix", ""]
+    lines = ["# DAST Tool Comparison Matrix", "", _DISCLAIMER, ""]
     lines.append(render_scoring_legend(taxonomy))
     lines.append("")
     header = "| Criterion | Weight | " + " | ".join(_md_cell(v.name) for v in vendors) + " |"

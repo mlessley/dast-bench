@@ -1,5 +1,6 @@
 from core.models import Confidence, Criterion, CriteriaTaxonomy, ScoreEntry, Vendor, VendorSource
 from core.render.markdown import (
+    _linkify_sources,
     _ordered_categories,
     category_weighted_score,
     render_comparison_matrix,
@@ -143,3 +144,89 @@ def test_render_comparison_matrix_includes_weight_column_and_category_breakdown(
     assert "| Coverage | 60 | 4.00 |" in matrix
     assert "| DX | 40 | 2.00 |" in matrix
     assert "| **Weighted Total** | 100 | 3.20 |" in matrix
+
+
+def test_linkify_sources_wraps_clean_url_citation():
+    text = "...weaker JS-rendered SPA content discovery than ZAP's AJAX Spider. Source: github.com/projectdiscovery/nuclei-templates"
+    result = _linkify_sources(text)
+    assert "[github.com/projectdiscovery/nuclei-templates](https://github.com/projectdiscovery/nuclei-templates)" in result
+
+
+def test_linkify_sources_wraps_bare_domain_with_no_path():
+    text = "...not scanning for unknown/rogue external assets like a network-based ASM tool. Source: docs.stackhawk.com"
+    result = _linkify_sources(text)
+    assert "[docs.stackhawk.com](https://docs.stackhawk.com)" in result
+
+
+def test_linkify_sources_handles_multiple_comma_separated_urls():
+    text = (
+        "...StackHawk's own marketed differentiator. Source: "
+        "stackhawk.com/blog/business-logic-testing, docs.stackhawk.com/hawkscan/business-logic-testing"
+    )
+    result = _linkify_sources(text)
+    assert (
+        "[stackhawk.com/blog/business-logic-testing](https://stackhawk.com/blog/business-logic-testing), "
+        "[docs.stackhawk.com/hawkscan/business-logic-testing](https://docs.stackhawk.com/hawkscan/business-logic-testing)"
+    ) in result
+
+
+def test_linkify_sources_stops_before_trailing_prose():
+    text = "...fully air-gapped operation not confirmed. Source: projectdiscovery.io platform docs"
+    result = _linkify_sources(text)
+    assert "[projectdiscovery.io](https://projectdiscovery.io) platform docs" in result
+
+
+def test_linkify_sources_strips_trailing_sentence_punctuation():
+    text = (
+        "...against a large community rule library). Source: ProjectDiscovery's own GitHub project "
+        "(github.com/projectdiscovery/nuclei)."
+    )
+    result = _linkify_sources(text)
+    assert "([github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))." in result
+
+
+def test_linkify_sources_ignores_version_numbers():
+    text = "v3.2 added real static + dynamic authentication"
+    assert _linkify_sources(text) == text
+
+
+def test_linkify_sources_ignores_dotted_version_numbers():
+    text = "PCI DSS v4.0.1 mapping blog post"
+    assert _linkify_sources(text) == text
+
+
+def test_linkify_sources_ignores_abbreviations():
+    text = "e.g. some example, i.e. another"
+    assert _linkify_sources(text) == text
+
+
+def test_linkify_sources_ignores_regulation_codes():
+    text = "23 NYCRR 500 guidance"
+    assert _linkify_sources(text) == text
+
+
+def test_render_scorecard_includes_disclaimer():
+    scorecard = render_scorecard(_sample_taxonomy(), _sample_vendor())
+    assert "Draft/sample output" in scorecard
+    assert "not a final vendor recommendation" in scorecard
+
+
+def test_render_comparison_matrix_includes_disclaimer():
+    matrix = render_comparison_matrix(_sample_taxonomy(), [_sample_vendor()])
+    assert "Draft/sample output" in matrix
+    assert "not a final vendor recommendation" in matrix
+
+
+def test_render_scorecard_linkifies_evidence_with_source_citation():
+    taxonomy = _sample_taxonomy()
+    vendor = Vendor(id="v3", name="Vendor Three", source=VendorSource.DISCOVERED)
+    vendor.scores.append(
+        ScoreEntry(
+            criterion_id="c1",
+            score=4,
+            evidence="Some finding. Source: example.com/docs/page",
+            confidence=Confidence.PAPER,
+        )
+    )
+    scorecard = render_scorecard(taxonomy, vendor)
+    assert "[example.com/docs/page](https://example.com/docs/page)" in scorecard
