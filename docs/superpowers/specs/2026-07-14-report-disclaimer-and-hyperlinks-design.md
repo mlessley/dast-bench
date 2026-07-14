@@ -167,10 +167,20 @@ quality question for whoever authored that evidence, not a crash risk.
 - `render_scorecard`/`render_comparison_matrix`/`write_html`/`write_xlsx`
   each gain an assertion that the disclaimer text is present in their
   output.
-- All existing tests in `tests/test_render_markdown.py`,
-  `tests/test_render_html.py`, `tests/test_render_xlsx.py` continue to
-  pass unmodified (all are substring/structural checks, none pin an exact
-  full-document string that a prepended disclaimer would break).
+- All existing tests in `tests/test_render_markdown.py` and
+  `tests/test_render_html.py` continue to pass unmodified — both are
+  substring/structural checks with no assertion on exact document
+  position, so a prepended disclaimer doesn't break them.
+- **`tests/test_render_xlsx.py` is the one exception**: its existing test
+  asserts the header row is exactly `ws[1]` and the first vendor's first
+  score is exactly `ws.cell(row=2, column=4)`. Inserting a disclaimer row
+  (row 1) and a blank spacer row (row 2) shifts the header to row 3 and
+  the first data row to row 4 — this existing test's row-position
+  assertions must be deliberately updated to match (not left as a
+  regression), since the row shift is an intended consequence of this
+  design, not an accidental side effect. The final `Weighted Total` row
+  assertion (`ws[ws.max_row]`) is already position-independent and needs
+  no change.
 
 **Track B (skill instructions, grep/diff-based, no pytest):** same
 verification pattern as the earlier `dast-report` narrative-template
