@@ -8,7 +8,7 @@ from ..models import CriteriaTaxonomy, Vendor
 from .markdown import weighted_score
 
 _DISCLAIMER = (
-    "🚧 Draft/sample output demonstrating what dast-bench produces -- "
+    "🚧 Draft/sample output demonstrating what dast-bench produces — "
     "not a final vendor recommendation. Scores, weights, and evidence "
     "below are illustrative of a real evaluation in progress."
 )
