@@ -63,6 +63,15 @@ criterion, say so explicitly in that criterion's evidence text (e.g.
 "limited public information; inferred from X") rather than presenting a
 falsely confident score.
 
+When a specific, locatable source exists — a blog post, a docs page, a
+GitHub repo, a vendor's own materials — cite its actual URL in the
+evidence text (e.g. "Source: vendor.com/docs/feature-page"). Rendered
+scorecards automatically turn these into clickable links, so a real
+citation is more useful evidence than a bare mention of a product or
+company name. This is guidance, not a hard requirement — some evidence is
+legitimately "inferred, low confidence" with no single citable source,
+and that's fine to say plainly instead of manufacturing a citation.
+
 ## Step 5: Present the complete proposed scoring for review
 
 Present every criterion's proposed score, evidence, and brief rationale
