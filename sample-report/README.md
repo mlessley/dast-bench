@@ -5,10 +5,10 @@ committed here so it's visible without cloning and running the tool.
 
 **Snapshot date:** 2026-07-14 (refreshed), from the proof-of-concept
 evaluation of ZAP, Nuclei, and StackHawk described in the main
-[README](../README.md#status) — now scored against the full 33-criterion
-taxonomy (expanded from 29 after a senior-architect review), with the
-`dast-report` narrative including a Financial Sector Fit framing, a Where
-They Win comparison table, and per-category takeaways.
+[README](../README.md#status) — scored against the full 33-criterion
+taxonomy, with the `dast-report` narrative including a Financial Sector
+Fit framing, a Where They Win comparison table, and per-category
+takeaways.
 
 This directory is *not* the live output — that's `reports/` (gitignored,
 regenerated on demand, always current for whatever's in `data/*.yaml` right

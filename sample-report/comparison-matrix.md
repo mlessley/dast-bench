@@ -1,5 +1,7 @@
 # DAST Tool Comparison Matrix
 
+> 🚧 Draft/sample output demonstrating what dast-bench produces — not a final vendor recommendation. Scores, weights, and evidence below are illustrative of a real evaluation in progress.
+
 ## Scoring Legend
 
 ### Coverage
