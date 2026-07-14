@@ -51,16 +51,83 @@ For each finalist/evaluated vendor, read its record directly
 (`data/candidates/<id>.yaml`) for full evidence: scores, evidence text,
 hands-on results, observations. Run `dast-bench criteria list` for rubric
 and weight context, and read the freshly-written
-`reports/comparison-matrix.md` so the narrative's weighted-total numbers
-match the deterministic render exactly, not a re-derived figure.
+`reports/comparison-matrix.md` so the narrative's weighted-total numbers,
+and its Category Breakdown numbers, match the deterministic render
+exactly, not a re-derived figure.
 
-Write a narrative that explains, in prose, who's leading and why — citing
-specific evidence, not just the weighted-total number — and any notable
-trade-offs among finalist/evaluated vendors (e.g. one leads on detection
-accuracy but another has a much lower false-positive rate). Mention
-rejected/still-candidate vendors in one line each (e.g. "excluded: X
-(insufficient API coverage), Y (still being scored)"), not with the same
-depth as finalist/evaluated vendors.
+Compose the summary in this order:
+
+**1. Financial Sector Fit.** Before any vendor-specific content, write 2-3
+sentences anchoring the whole report to the evaluator's actual buyer
+context (Fortune 500 financial services, unless the evaluator has
+specified a different context) — name the 2-3 dimensions that matter most
+for that risk profile (e.g. regulatory compliance mapping, business-logic/
+authorization testing, data-residency control) and note that a tool's
+ranking should be read through that lens, not just the raw weighted
+total. Keep this brief — a framing paragraph, not a new analysis section.
+
+**2. Overview.** Candidate count, taxonomy size, which vendors reached
+which phase, and the weighted-total comparison table — unchanged in
+substance from what this section always covered.
+
+**3. Where They Win.** A single table contrasting every finalist/evaluated
+vendor (plus any rejected vendor worth a comparison row — evaluator's
+judgment) side by side:
+
+```markdown
+## Where They Win
+
+| Vendor | Status | Core Strengths / Best For | Critical Enterprise Gaps |
+|---|---|---|---|
+| <name> | <status, e.g. "Evaluated" or "Paper only"> | <2-4 named strengths tied to specific criteria/scores> | <2-3 named gaps tied to specific criteria/scores> |
+```
+
+Ground every cell in specific evidence already recorded for that vendor (a
+criterion name and score, or a specific piece of evidence text) — never a
+vague adjective with nothing behind it.
+
+**4. Per-vendor sections.** Keep one section per finalist/evaluated
+vendor, but write each vendor's content as two bulleted groups instead of
+dense paragraphs:
+
+```markdown
+## <Vendor Name> — <one-line status/positioning>
+
+**The Wins:**
+- <specific strength, citing a criterion/score/evidence>
+- <specific strength, citing a criterion/score/evidence>
+
+**The Gaps:**
+- <specific weakness, citing a criterion/score/evidence>
+- <specific weakness, citing a criterion/score/evidence>
+```
+
+Still cite specific evidence, not just the weighted-total number, and
+still cover notable trade-offs among finalist/evaluated vendors — only the
+formatting changes (bullets under bold prefixes instead of prose
+paragraphs), not the depth or rigor of the analysis.
+
+**5. Category Takeaways.** One bullet per category, in the same order
+`dast-bench criteria list` reports them, each naming the category's weight
+and either which vendor(s) lead it and why, or a market-wide gap if every
+vendor scores low on it:
+
+```markdown
+## Category Takeaways
+
+- **<Category Name> (<weight>):** <one-sentence interpretive takeaway,
+  grounded in the Category Breakdown numbers from comparison-matrix.md>
+```
+
+**6. Trade-offs worth flagging.** Cross-cutting caveats about scoring
+methodology (e.g. false-positive-rate's coarseness), not per-vendor or
+per-category content — same purpose this section always served.
+
+Mention rejected/still-candidate vendors in one line each (in the Overview
+or the Where They Win table — evaluator's judgment on which reads better
+for a given evaluation), e.g. "excluded: X (insufficient API coverage), Y
+(still being scored)", not with the same depth as finalist/evaluated
+vendors.
 
 If the evaluator chose to proceed despite gaps in Step 1, include an
 explicit caveats section naming exactly which gaps were outstanding at
