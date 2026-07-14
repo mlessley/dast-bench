@@ -239,6 +239,55 @@ scores:
     enterprise tiers. Source: vendr.com/marketplace/veracode, underdefense.com/industry-pricings/veracode-pricing-2026-ultimate-guide-for-security-products'
   confidence: paper
   timestamp: '2026-07-14T19:55:42.209588'
+- criterion_id: asset-discovery-inventory
+  score: 4.5
+  evidence: 'Veracode EASM (External Attack Surface Management) is a real, dedicated
+    product performing static scans (predefined domains) and Deep Discovery scans
+    (all externally-accessible assets), automatically tracking internet-exposed APIs,
+    web apps, mobile apps, and cloud assets, many unknown/unmanaged. Verified by independent
+    gap-check after the original research missed this branded product. Source: veracode.com/veracode-external-attack-surface-management,
+    docs.veracode.com/r/Discover_your_attack_surface'
+  confidence: paper
+  timestamp: '2026-07-14T23:42:16.320950'
+- criterion_id: shadow-api-discovery
+  score: 4.0
+  evidence: 'Veracode EASM''s Deep Discovery scan specifically surfaces unknown/unmanaged
+    internet-facing assets and endpoints beyond a predefined list. Verified by independent
+    gap-check after the original research missed this branded product. Source: veracode.com/veracode-external-attack-surface-management,
+    docs.veracode.com/r/Discover_your_attack_surface'
+  confidence: paper
+  timestamp: '2026-07-14T23:42:16.649084'
+- criterion_id: historical-risk-trend-dashboards
+  score: 4.5
+  evidence: 'Veracode Analytics provides pre-built executive dashboards tracking MTTR
+    (Mean Time to Resolve) and remediation trends, with a single centralized view
+    of security metrics across assessments. Verified by independent gap-check after
+    the original research missed this branded product. Source: veracode.com/analytics,
+    veracode.com/blog/using-mean-time-to-resolve-mttr-effectively'
+  confidence: paper
+  timestamp: '2026-07-14T23:42:16.979124'
+- criterion_id: aspm-integration
+  score: 5.0
+  evidence: 'Veracode Risk Manager (VRM) is a real, named ASPM product -- not a third-party
+    integration but an owned platform -- aggregating findings from 50+ sources across
+    code, cloud, and infrastructure, with a confirmed Wiz integration. Veracode was
+    named a Leader in the 2025 IDC MarketScape for ASPM (third-party analyst validation).
+    Same reasoning already applied to Invicti''s Kondukto-owned ASPM (5/5). Verified
+    by independent gap-check after the original research missed this branded product.
+    Source: veracode.com/blog/introducing-veracode-risk-manager-new-chapter-aspm-built-scale,
+    veracode.com/blog/aspm-landscape-idc-marketscape, veracode.com/blog/veracode-risk-manager-now-with-wiz'
+  confidence: paper
+  timestamp: '2026-07-14T23:42:17.252554'
+- criterion_id: multi-tenancy-access-control
+  score: 4.0
+  evidence: 'Real, documented RBAC with named platform roles: Security Lead (cross-team
+    visibility), Workspace Administrator (SCA workspace access management), Mitigation
+    Approver (accepts/rejects proposed mitigations alongside Reviewer/Security Lead).
+    Verified by independent gap-check after the original research missed this. Audit-log
+    specifics not independently confirmed, so not scored higher. Source: docs.veracode.com/r/c_role_permissions,
+    docs.veracode.com/r/Manage_workspace_access'
+  confidence: paper
+  timestamp: '2026-07-14T23:42:17.506592'
 hands_on_results: []
 observations:
 - context: discovery research

@@ -1,0 +1,69 @@
+vendor_id: veracode
+criteria:
+  asset-discovery-inventory:
+    researched_at: '2026-07-14T23:42:34.477790'
+    queries:
+    - Veracode EASM External Attack Surface Management product
+    findings:
+    - url: veracode.com/veracode-external-attack-surface-management
+      snippet: Veracode EASM discovers, monitors, and prioritizes risk across all
+        internet-facing assets, giving the same visibility as attackers
+    - url: docs.veracode.com/r/Discover_your_attack_surface
+      snippet: Deep Discovery scan provides a comprehensive view of your organization's
+        digital footprint by scanning all externally accessible assets
+    reviewed_by_gap_check: true
+    stale: false
+  shadow-api-discovery:
+    researched_at: '2026-07-14T23:42:34.719392'
+    queries:
+    - Veracode EASM External Attack Surface Management product
+    findings:
+    - url: veracode.com/veracode-external-attack-surface-management
+      snippet: EASM tracks internet-exposed systems and services including APIs, web
+        apps, mobile applications, and cloud-based assets -- many unknown or unmanaged
+    reviewed_by_gap_check: true
+    stale: false
+  historical-risk-trend-dashboards:
+    researched_at: '2026-07-14T23:42:34.947521'
+    queries:
+    - Veracode Analytics dashboard MTTR remediation trend executive
+    findings:
+    - url: veracode.com/analytics
+      snippet: Veracode Analytics provides pre-built dashboards and data visualizations,
+        single centralized view of security metrics, identify trends and monitor progress
+    - url: veracode.com/blog/using-mean-time-to-resolve-mttr-effectively
+      snippet: Veracode helps monitor Mean Time to Resolve (MTTR), a key remediation
+        velocity metric
+    reviewed_by_gap_check: true
+    stale: false
+  aspm-integration:
+    researched_at: '2026-07-14T23:42:35.176539'
+    queries:
+    - Veracode Risk Manager ASPM
+    findings:
+    - url: veracode.com/blog/introducing-veracode-risk-manager-new-chapter-aspm-built-scale
+      snippet: Veracode Risk Manager (VRM) is an advanced ASPM solution aggregating
+        findings from over 50 sources across code, cloud, infrastructure, and security
+        systems
+    - url: veracode.com/blog/aspm-landscape-idc-marketscape
+      snippet: Veracode named a Leader in the 2025 IDC MarketScape for Application
+        Security Posture Management (ASPM)
+    - url: veracode.com/blog/veracode-risk-manager-now-with-wiz
+      snippet: Veracode Risk Manager Now Enhanced With Wiz -- confirmed real third-party
+        cloud integration
+    reviewed_by_gap_check: true
+    stale: false
+  multi-tenancy-access-control:
+    researched_at: '2026-07-14T23:42:35.409872'
+    queries:
+    - Veracode role-based access control roles
+    findings:
+    - url: docs.veracode.com/r/c_role_permissions
+      snippet: Security Lead role can review all applications and scans across all
+        teams without restriction; Mitigation Approver and Reviewer/Security Lead
+        can accept or reject proposed mitigations
+    - url: docs.veracode.com/r/Manage_workspace_access
+      snippet: To manage workspace access in SCA you must have the Security Lead,
+        Creator, or Workspace Administrator role
+    reviewed_by_gap_check: true
+    stale: false
