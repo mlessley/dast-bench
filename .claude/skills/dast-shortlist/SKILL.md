@@ -104,13 +104,18 @@ and that's fine to say plainly instead of manufacturing a citation.
 ## Step 5: Gap-check weak-scored criteria
 
 Once every criterion has an initial score, identify any that scored
-`≤2.5`. For each one, dispatch a **fresh subagent** — with no shared
-context from the research that produced the original score — instructed
-to independently investigate that specific vendor+criterion pair, using
-the vendor's own product terminology from `dast-discovery`'s
-observations, holding itself to the same real-citation discipline as the
-primary research (never presenting an unverifiable claim as settled
-fact).
+`≤2.5`. For each one, check its cache entry first
+(`dast-bench cache show --vendor-id <id> --criterion-id
+<criterion-id>`): if `reviewed_by_gap_check` is already `true`, skip
+re-dispatching — this criterion already survived an independent check,
+and re-investigating it again on every subsequent run would defeat the
+point of recording that flag. Otherwise, dispatch a **fresh subagent** —
+with no shared context from the research that produced the original
+score — instructed to independently investigate that specific
+vendor+criterion pair, using the vendor's own product terminology from
+`dast-discovery`'s observations, holding itself to the same
+real-citation discipline as the primary research (never presenting an
+unverifiable claim as settled fact).
 
 If the fresh reviewer finds real evidence that changes the picture (a
 documented feature the original research missed), record its findings
