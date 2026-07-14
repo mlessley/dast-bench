@@ -121,3 +121,25 @@ def test_render_scoring_legend_parses_rubric_anchors_grouped_by_category():
     assert "- 1: No API coverage at all." in legend
     assert "- 3: Covers REST but not GraphQL." in legend
     assert "- 5: Full REST and GraphQL coverage." in legend
+
+
+def test_render_scorecard_includes_weight_column_and_category_breakdown():
+    scorecard = render_scorecard(_sample_taxonomy(), _sample_vendor())
+    assert "| Criterion | Category | Weight | Score | Evidence | Confidence |" in scorecard
+    assert "## Category Breakdown" in scorecard
+    assert "| Category | Weight | Weighted Score |" in scorecard
+    # Coverage category has only c1 (weight 60), scored 4 -> category score 4.00
+    assert "| Coverage | 60 | 4.00 |" in scorecard
+    # DX category has only c2 (weight 40), scored 2 -> category score 2.00
+    assert "| DX | 40 | 2.00 |" in scorecard
+
+
+def test_render_comparison_matrix_includes_weight_column_and_category_breakdown():
+    matrix = render_comparison_matrix(_sample_taxonomy(), [_sample_vendor()])
+    assert "## Scoring Legend" in matrix
+    assert "| Criterion | Weight | Vendor One |" in matrix
+    assert "## Category Breakdown" in matrix
+    assert "| Category | Weight | Vendor One |" in matrix
+    assert "| Coverage | 60 | 4.00 |" in matrix
+    assert "| DX | 40 | 2.00 |" in matrix
+    assert "| **Weighted Total** | 100 | 3.20 |" in matrix

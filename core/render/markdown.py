@@ -63,17 +63,29 @@ def render_scoring_legend(taxonomy: CriteriaTaxonomy) -> str:
 
 def render_scorecard(taxonomy: CriteriaTaxonomy, vendor: Vendor) -> str:
     lines = [f"# {_md_cell(vendor.name)} Scorecard", "", f"Status: {vendor.status.value}", ""]
-    lines.append("| Criterion | Category | Score | Evidence | Confidence |")
-    lines.append("|---|---|---|---|---|")
+    lines.append("| Criterion | Category | Weight | Score | Evidence | Confidence |")
+    lines.append("|---|---|---|---|---|---|")
     for criterion in taxonomy.criteria:
         entry = vendor.score_for(criterion.id)
         if entry:
             lines.append(
-                f"| {_md_cell(criterion.name)} | {_md_cell(criterion.category)} | {entry.score:g} | {_md_cell(entry.evidence)} | "
+                f"| {_md_cell(criterion.name)} | {_md_cell(criterion.category)} | {criterion.weight:g} | {entry.score:g} | {_md_cell(entry.evidence)} | "
                 f"{entry.confidence.value} |"
             )
         else:
-            lines.append(f"| {_md_cell(criterion.name)} | {_md_cell(criterion.category)} | _unscored_ | | |")
+            lines.append(
+                f"| {_md_cell(criterion.name)} | {_md_cell(criterion.category)} | {criterion.weight:g} | _unscored_ | | |"
+            )
+    lines.append("")
+    lines.append("## Category Breakdown")
+    lines.append("")
+    lines.append("| Category | Weight | Weighted Score |")
+    lines.append("|---|---|---|")
+    for category in _ordered_categories(taxonomy):
+        category_weight = sum(c.weight for c in taxonomy.criteria if c.category == category)
+        lines.append(
+            f"| {_md_cell(category)} | {category_weight:g} | {category_weighted_score(taxonomy, vendor, category):.2f} |"
+        )
     lines.append("")
     lines.append(f"**Weighted score: {weighted_score(taxonomy, vendor):.2f} / 5.00**")
     return "\n".join(lines)
@@ -81,16 +93,31 @@ def render_scorecard(taxonomy: CriteriaTaxonomy, vendor: Vendor) -> str:
 
 def render_comparison_matrix(taxonomy: CriteriaTaxonomy, vendors: list[Vendor]) -> str:
     lines = ["# DAST Tool Comparison Matrix", ""]
-    header = "| Criterion | " + " | ".join(_md_cell(v.name) for v in vendors) + " |"
-    separator = "|---|" + "---|" * len(vendors)
+    lines.append(render_scoring_legend(taxonomy))
+    lines.append("")
+    header = "| Criterion | Weight | " + " | ".join(_md_cell(v.name) for v in vendors) + " |"
+    separator = "|---|---|" + "---|" * len(vendors)
     lines += [header, separator]
     for criterion in taxonomy.criteria:
-        row = [_md_cell(criterion.name)]
+        row = [_md_cell(criterion.name), f"{criterion.weight:g}"]
         for v in vendors:
             entry = v.score_for(criterion.id)
             row.append(f"{entry.score:g}" if entry else "-")
         lines.append("| " + " | ".join(row) + " |")
-    totals = ["**Weighted Total**"] + [f"{weighted_score(taxonomy, v):.2f}" for v in vendors]
+    lines.append("")
+    lines.append("## Category Breakdown")
+    lines.append("")
+    cat_header = "| Category | Weight | " + " | ".join(_md_cell(v.name) for v in vendors) + " |"
+    cat_separator = "|---|---|" + "---|" * len(vendors)
+    lines += [cat_header, cat_separator]
+    for category in _ordered_categories(taxonomy):
+        category_weight = sum(c.weight for c in taxonomy.criteria if c.category == category)
+        row = [_md_cell(category), f"{category_weight:g}"]
+        for v in vendors:
+            row.append(f"{category_weighted_score(taxonomy, v, category):.2f}")
+        lines.append("| " + " | ".join(row) + " |")
+    total_weight = sum(c.weight for c in taxonomy.criteria)
+    totals = ["**Weighted Total**", f"{total_weight:g}"] + [f"{weighted_score(taxonomy, v):.2f}" for v in vendors]
     lines.append("| " + " | ".join(totals) + " |")
     return "\n".join(lines)
 
