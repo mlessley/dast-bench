@@ -7,11 +7,19 @@ from openpyxl import Workbook
 from ..models import CriteriaTaxonomy, Vendor
 from .markdown import weighted_score
 
+_DISCLAIMER = (
+    "🚧 Draft/sample output demonstrating what dast-bench produces -- "
+    "not a final vendor recommendation. Scores, weights, and evidence "
+    "below are illustrative of a real evaluation in progress."
+)
+
 
 def write_xlsx(taxonomy: CriteriaTaxonomy, vendors: list[Vendor], out_path: Path) -> None:
     wb = Workbook()
     ws = wb.active
     ws.title = "Comparison"
+    ws.append([_DISCLAIMER])
+    ws.append([])
     ws.append(["Criterion", "Category", "Weight"] + [v.name for v in vendors])
     for criterion in taxonomy.criteria:
         row = [criterion.name, criterion.category, criterion.weight]
