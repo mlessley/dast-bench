@@ -1,0 +1,25 @@
+id: veracode
+name: Veracode Dynamic Analysis
+source: seeded
+status: candidate
+website: https://www.veracode.com/products/dynamic-analysis-dast/
+notes: Enterprise DAST recently rebranded from DAST Essentials to Veracode DAST; runs
+  on Veracode's unified AppSec platform alongside SAST/SCA with shared flaw tracking,
+  policy, and compliance reporting
+ci_tool_id: null
+scores: []
+hands_on_results: []
+observations:
+- context: discovery research
+  note: 'Stakeholder-seeded: the only candidate so far running DAST on a single unified
+    platform alongside SAST/SCA with unified flaw tracking, policy management, and
+    compliance reporting -- a real differentiator for a Fortune 500 buyer consolidating
+    their AppSec program rather than running point tools. Source: veracode.com/products/dynamic-analysis-dast.
+    Claims <5% false-positive rate with real-time actionable feedback. Same source.
+    Internal Scanning Management (ISM) lets you scan applications behind firewalls,
+    in staging environments, or within CI/CD pipelines. Same source. Scales to hundreds
+    of web applications, positioned as enterprise-grade. Same source. CI/CD pipeline
+    integration for daily/weekly automated scans across dev stages. Same source.'
+  tags:
+  - discovery
+  timestamp: '2026-07-14T19:49:47.988449'
