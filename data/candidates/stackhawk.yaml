@@ -226,6 +226,12 @@ scores:
     stackhawk YAML config without custom scripts -- strong, low-friction, well-documented.
   confidence: paper
   timestamp: '2026-07-14T17:31:42.063298'
+- criterion_id: legacy-app-protocol-support
+  score: 3.0
+  evidence: Explicit SOAP support alongside REST/GraphQL/gRPC (SOAP is often legacy-adjacent);
+    no legacy-framework-specific (older Microsoft web forms, JSP) testing confirmed.
+  confidence: paper
+  timestamp: '2026-07-14T17:40:33.380139'
 hands_on_results: []
 observations:
 - context: discovery research

@@ -235,6 +235,13 @@ scores:
     the most predictable possible model.
   confidence: paper
   timestamp: '2026-07-14T16:14:55.473997'
+- criterion_id: cicd-native-fit
+  score: 5.0
+  evidence: First-class docker CLI scripts (the zap-full-scan script, etc.), YAML
+    Automation Framework, clear exit codes, machine-readable JSON/XML output -- this
+    project's own CI pipeline uses it directly.
+  confidence: paper
+  timestamp: '2026-07-14T17:40:33.103094'
 hands_on_results:
 - test_id: scan-29200159094-juice-shop
   description: CI scan run 29200159094
