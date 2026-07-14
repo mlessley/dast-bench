@@ -64,7 +64,14 @@ specified a different context) — name the 2-3 dimensions that matter most
 for that risk profile (e.g. regulatory compliance mapping, business-logic/
 authorization testing, data-residency control) and note that a tool's
 ranking should be read through that lens, not just the raw weighted
-total. Keep this brief — a framing paragraph, not a new analysis section.
+total. Keep this brief — a framing paragraph, not a new analysis section:
+
+```markdown
+## Financial Sector Fit
+
+<2-3 sentences naming the dimensions that matter most for the buyer's
+risk profile and framing how to read the rankings below in light of it>
+```
 
 **2. Overview.** Candidate count, taxonomy size, which vendors reached
 which phase, and the weighted-total comparison table — unchanged in
