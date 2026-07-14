@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 
 from ..models import CriteriaTaxonomy, Vendor
+
+_RUBRIC_MARKER = re.compile(r"(?<!\d)([135]):\s")
 
 
 def _md_cell(value: str) -> str:
@@ -17,6 +20,45 @@ def weighted_score(taxonomy: CriteriaTaxonomy, vendor: Vendor) -> float:
         if entry:
             total += entry.score * (criterion.weight / 100.0)
     return total
+
+
+def _ordered_categories(taxonomy: CriteriaTaxonomy) -> list[str]:
+    seen: list[str] = []
+    for criterion in taxonomy.criteria:
+        if criterion.category not in seen:
+            seen.append(criterion.category)
+    return seen
+
+
+def category_weighted_score(taxonomy: CriteriaTaxonomy, vendor: Vendor, category: str) -> float:
+    total = 0.0
+    category_weight = 0.0
+    for criterion in taxonomy.criteria:
+        if criterion.category != category:
+            continue
+        category_weight += criterion.weight
+        entry = vendor.score_for(criterion.id)
+        if entry:
+            total += entry.score * criterion.weight
+    return total / category_weight if category_weight else 0.0
+
+
+def render_scoring_legend(taxonomy: CriteriaTaxonomy) -> str:
+    lines = ["## Scoring Legend", ""]
+    for category in _ordered_categories(taxonomy):
+        lines.append(f"### {category}")
+        lines.append("")
+        for criterion in taxonomy.criteria:
+            if criterion.category != category:
+                continue
+            lines.append(f"**{_md_cell(criterion.name)}**")
+            parts = _RUBRIC_MARKER.split(criterion.rubric)
+            for i in range(1, len(parts), 2):
+                marker = parts[i]
+                text = parts[i + 1].strip() if i + 1 < len(parts) else ""
+                lines.append(f"- {marker}: {_md_cell(text)}")
+            lines.append("")
+    return "\n".join(lines).rstrip("\n")
 
 
 def render_scorecard(taxonomy: CriteriaTaxonomy, vendor: Vendor) -> str:
