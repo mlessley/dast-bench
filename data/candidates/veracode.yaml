@@ -1,13 +1,244 @@
 id: veracode
 name: Veracode Dynamic Analysis
 source: seeded
-status: candidate
+status: finalist
 website: https://www.veracode.com/products/dynamic-analysis-dast/
 notes: Enterprise DAST recently rebranded from DAST Essentials to Veracode DAST; runs
   on Veracode's unified AppSec platform alongside SAST/SCA with shared flaw tracking,
   policy, and compliance reporting
 ci_tool_id: null
-scores: []
+scores:
+- criterion_id: api-spa-coverage
+  score: 3.5
+  evidence: 'REST/SOAP/GraphQL with OpenAPI import; SPA support (React/Angular/Vue)
+    added via 2022 Crashtest Security acquisition with full browser rendering and
+    DOM-based XSS detection -- but independent review notes DAST coverage is ''limited
+    for SPAs, GraphQL APIs, and complex authentication flows'' compared to specialized
+    alternatives. Source: docs.veracode.com/r/Scan_web_applications_and_APIs, securityscientist.net/blog/12-questions-and-answers-about-veracode-dast'
+  confidence: paper
+  timestamp: '2026-07-14T19:54:47.481416'
+- criterion_id: shadow-api-discovery
+  score: 2.0
+  evidence: No dedicated shadow/undocumented-endpoint discovery engine found in public
+    materials -- inferred absence.
+  confidence: paper
+  timestamp: '2026-07-14T19:54:47.731293'
+- criterion_id: auth-session-handling
+  score: 3.5
+  evidence: 'Selenium-based crawl scripts handle complex authentication and multi-step
+    workflows; form-based login, OAuth, and API tokens supported -- but the same independent
+    review flags complex authentication flows as a real limitation area. Source: securityscientist.net/blog/12-questions-and-answers-about-veracode-dast'
+  confidence: paper
+  timestamp: '2026-07-14T19:54:47.980103'
+- criterion_id: business-logic-workflow-detection
+  score: 3.0
+  evidence: 'Explicitly claims to probe endpoints and entire workflows to validate
+    business logic is developed securely, detecting business-logic vulnerabilities
+    SAST misses -- real but generic capability, not purpose-built like a dedicated
+    multi-role authorization-testing engine. Source: veracode.com/products/dynamic-analysis-dast'
+  confidence: paper
+  timestamp: '2026-07-14T19:54:48.246890'
+- criterion_id: legacy-app-protocol-support
+  score: 2.5
+  evidence: Generic SOAP API support confirmed; no legacy-framework-specific (ASP
+    WebForms/JSP) accuracy claims found beyond that.
+  confidence: paper
+  timestamp: '2026-07-14T19:54:48.494399'
+- criterion_id: third-party-partner-api-risk
+  score: 2.0
+  evidence: No dedicated vendor-risk-assessment output shaping for partner-facing
+    APIs found -- inferred absence.
+  confidence: paper
+  timestamp: '2026-07-14T19:54:48.753307'
+- criterion_id: asset-discovery-inventory
+  score: 2.0
+  evidence: No dedicated attack-surface-management or asset-discovery feature found
+    -- the unified platform's focus is correlating SAST/DAST/SCA findings on known
+    applications, not discovering unknown external assets.
+  confidence: paper
+  timestamp: '2026-07-14T19:54:48.971231'
+- criterion_id: stateful-web-crawling
+  score: 4.0
+  evidence: 'Selenium-based crawl scripts are explicitly built to handle complex,
+    multi-step workflows -- a real, specific signal for stateful multi-page crawling
+    depth. Source: docs.veracode.com/r/Veracode_Integrations, securityscientist.net/blog/12-questions-and-answers-about-veracode-dast'
+  confidence: paper
+  timestamp: '2026-07-14T19:54:49.210484'
+- criterion_id: detection-accuracy
+  score: 3.0
+  evidence: No specific detection-rate benchmark found in public materials; inferred
+    from general enterprise reputation as an established SAST/DAST/SCA platform, not
+    a specific accuracy claim.
+  confidence: paper
+  timestamp: '2026-07-14T19:54:59.494838'
+- criterion_id: false-positive-rate
+  score: 4.5
+  evidence: 'VENDOR CLAIM, not independently verified: <5% false-positive rate, with
+    real-time actionable feedback. Source: veracode.com/products/dynamic-analysis-dast'
+  confidence: paper
+  timestamp: '2026-07-14T19:54:59.727412'
+- criterion_id: compliance-standards-mapping
+  score: 4.5
+  evidence: 'Unified compliance reporting across SAST/DAST/SCA on one platform; real
+    FedRAMP Moderate Authority to Operate (ATO) granted March 2022, a government-grade
+    authorization uncommon among DAST vendors. Source: veracode.com/application-security-compliance,
+    veracode.com/about/certifications'
+  confidence: paper
+  timestamp: '2026-07-14T19:54:59.970589'
+- criterion_id: finding-validation-proof-of-exploit
+  score: 3.0
+  evidence: No dedicated proof-of-exploit/safe-re-exploitation engine found (unlike
+    Invicti's Proof-Based Scanning); DAST's dynamic/behavioral nature gives some inherent
+    evidence over static pattern matching, but no explicit confirmation-engine claim.
+  confidence: paper
+  timestamp: '2026-07-14T19:55:00.248385'
+- criterion_id: sensitive-financial-data-exposure
+  score: 2.0
+  evidence: No dedicated financial-data-pattern (account/routing number, card PAN)
+    detection capability found -- inferred absence.
+  confidence: paper
+  timestamp: '2026-07-14T19:55:00.499919'
+- criterion_id: automated-triage-fp-reduction
+  score: 2.5
+  evidence: 'Jira integration auto-closes tickets when findings are verified fixed
+    or a mitigation is documented -- real workflow automation, but not an active PoC-generation
+    or historical-learning FP-reduction engine. Source: marketplace.atlassian.com/apps/1218497/veracode-integration-for-jira-cloud'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:00.736474'
+- criterion_id: safe-prod-scanning
+  score: 3.0
+  evidence: 'Internal Scanning Management (ISM) enables scanning behind firewalls
+    and in staging environments, but no explicit passive-only/rate-limited safe-mode
+    claim for live production traffic found. Source: veracode.com/products/dynamic-analysis-dast'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:07.622397'
+- criterion_id: cicd-native-fit
+  score: 4.0
+  evidence: 'Explicit CI/CD pipeline integration supporting daily/weekly automated
+    scans across development stages; Pipeline Scan output format for automation. Source:
+    veracode.com/products/dynamic-analysis-dast'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:07.847540'
+- criterion_id: scan-performance-scalability
+  score: 4.0
+  evidence: 'Explicitly marketed as scaling to hundreds of web applications, enterprise-grade
+    positioning. Source: veracode.com/products/dynamic-analysis-dast'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:08.106571'
+- criterion_id: incremental-differential-scanning
+  score: 2.0
+  evidence: No incremental/differential/change-aware scanning mode found in public
+    materials -- inferred absence.
+  confidence: paper
+  timestamp: '2026-07-14T19:55:08.344125'
+- criterion_id: triage-remediation-guidance
+  score: 4.0
+  evidence: 'Line-of-code-specific findings identification with remediation instructions;
+    VeraCustomTriage community tool generates a custom remediation plan (.xlsx) with
+    internal workflow links, wiki references, and code snippets. Source: docs.veracode.com/r/Veracode_Integrations,
+    github.com/veracode/Veracode-Community-Projects'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:17.395359'
+- criterion_id: auto-remediation-pr
+  score: 2.0
+  evidence: Provides remediation guidance and custom remediation plans, but no automated
+    fix-diff generation or auto-opened pull request capability found -- inferred absence.
+  confidence: paper
+  timestamp: '2026-07-14T19:55:17.663467'
+- criterion_id: setup-onboarding-friction
+  score: 2.5
+  evidence: Enterprise platform with custom-quoted contracts and per-application-profile
+    licensing implies a real procurement/sales cycle, likely more setup friction than
+    a self-serve tool -- inferred from enterprise-sales-model positioning.
+  confidence: paper
+  timestamp: '2026-07-14T19:55:17.989142'
+- criterion_id: ide-local-dev-tooling
+  score: 3.0
+  evidence: 'IDE plugin support exists via Pipeline2DetailedReport format translation
+    for importing scan results into an IDE plugin -- real but somewhat indirect/tooling-assisted
+    rather than a native, polished plugin. Source: docs.veracode.com/r/Veracode_Integrations'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:18.261564'
+- criterion_id: reporting-exportability
+  score: 4.0
+  evidence: 'Unified reporting across SAST/DAST/SCA on one platform, plus custom .xlsx
+    remediation-plan export via community tooling. Source: github.com/veracode/Veracode-Community-Projects'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:29.459637'
+- criterion_id: extensibility-custom-rules
+  score: 2.5
+  evidence: Community integration tooling (Veracode-Community-Projects) exists for
+    automation/glue, but no detection-rule-authoring DSL comparable to ZAP's Zest
+    or Nuclei's YAML templates found.
+  confidence: paper
+  timestamp: '2026-07-14T19:55:29.718716'
+- criterion_id: ticketing-collaboration-integration
+  score: 4.5
+  evidence: 'Jira Cloud integration automatically creates a defect for each new security
+    finding with no manual steps, and closes tickets when findings are verified fixed
+    or a mitigation is documented -- a full bidirectional lifecycle. Source: marketplace.atlassian.com/apps/1218497/veracode-integration-for-jira-cloud'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:29.987765'
+- criterion_id: siem-soar-integration
+  score: 2.0
+  evidence: No confirmed native SIEM/SOAR integration found in research -- explicitly
+    a research gap rather than a confirmed absence; only community Slack-webhook-redirect
+    tooling for SCA agent results was found.
+  confidence: paper
+  timestamp: '2026-07-14T19:55:30.263368'
+- criterion_id: historical-risk-trend-dashboards
+  score: 2.5
+  evidence: No explicit executive trend-dashboard or remediation-velocity view found
+    in public materials -- inferred low confidence.
+  confidence: paper
+  timestamp: '2026-07-14T19:55:30.520652'
+- criterion_id: vulnerability-status-management
+  score: 4.0
+  evidence: 'Unified flaw tracking and policy management across the whole SAST/DAST/SCA
+    platform; Jira integration auto-closes tickets on verified fix or documented mitigation.
+    Source: veracode.com/products/dynamic-analysis-dast, marketplace.atlassian.com/apps/1218497/veracode-integration-for-jira-cloud'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:30.775224'
+- criterion_id: aspm-integration
+  score: 2.5
+  evidence: No named third-party ASPM-platform connector (ArmorCode/DefectDojo/Snyk
+    AppRisk) found; the unified SAST/DAST/SCA platform itself functions somewhat like
+    an internal ASPM by consolidating findings across scan types, though that's not
+    the same as a third-party ASPM integration this criterion asks about.
+  confidence: paper
+  timestamp: '2026-07-14T19:55:31.016683'
+- criterion_id: deployment-model-data-residency
+  score: 3.0
+  evidence: 'Internal Scanning Management (ISM) gives some on-prem-adjacent control
+    for behind-firewall/staging scanning, but the core platform is SaaS-first (cloud-based);
+    no full on-prem or air-gapped deployment option found like Invicti/ZAP offer.
+    Source: veracode.com/products/dynamic-analysis-dast'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:41.387083'
+- criterion_id: multi-tenancy-access-control
+  score: 2.5
+  evidence: No RBAC or multi-tenancy details found in public materials -- explicitly
+    a research gap rather than a confirmed absence.
+  confidence: paper
+  timestamp: '2026-07-14T19:55:41.679981'
+- criterion_id: vendor-security-posture
+  score: 5.0
+  evidence: 'SOC 2 Type II attestation, ISO 27001 standard support, and a real FedRAMP
+    Moderate Authority to Operate (ATO) granted March 2022 -- a government-grade authorization
+    none of the other four candidates in this evaluation have; the best-documented
+    and most independently-verifiable posture evaluated so far. Source: veracode.com/about/certifications'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:41.939463'
+- criterion_id: licensing-model-predictability
+  score: 3.0
+  evidence: 'Licensed per ''application profile'' (a clear, technical-footprint-aligned
+    axis -- decomposing into microservices means paying per profile), but pricing
+    is fully custom-quoted, not published. Third-party estimates suggest $500-1,200
+    per application at enterprise scale, $50k-300k annually depending on scan-method
+    mix and contract term -- similar transparency profile to Invicti/StackHawk''s
+    enterprise tiers. Source: vendr.com/marketplace/veracode, underdefense.com/industry-pricings/veracode-pricing-2026-ultimate-guide-for-security-products'
+  confidence: paper
+  timestamp: '2026-07-14T19:55:42.209588'
 hands_on_results: []
 observations:
 - context: discovery research
