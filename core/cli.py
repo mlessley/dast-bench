@@ -11,8 +11,10 @@ from .models import (
     BenchmarkVulnerability,
     Confidence,
     Criterion,
+    CriterionResearchCache,
     HandsOnResult,
     Observation,
+    ResearchFinding,
     ScoreEntry,
     Vendor,
     VendorSource,
@@ -33,6 +35,7 @@ CRITERIA_PATH = DATA_DIR / "criteria.yaml"
 CANDIDATES_DIR = DATA_DIR / "candidates"
 BENCHMARKS_PATH = DATA_DIR / "benchmarks.yaml"
 REPORTS_DIR = Path("reports")
+RESEARCH_CACHE_DIR = DATA_DIR / "research-cache"
 
 
 @criteria_app.command("add-criterion")
@@ -377,3 +380,130 @@ def render_command() -> None:
     write_xlsx(taxonomy, vendors, REPORTS_DIR / "comparison-matrix.xlsx")
     write_html(taxonomy, vendors, REPORTS_DIR / "dashboard.html")
     typer.echo(f"rendered reports to {REPORTS_DIR}/")
+
+
+cache_app = typer.Typer()
+app.add_typer(cache_app, name="cache")
+
+
+def _load_research_cache(vendor_id: str) -> "storage.VendorResearchCache":
+    path = storage.research_cache_path(RESEARCH_CACHE_DIR, vendor_id)
+    return storage.load_research_cache(path, vendor_id)
+
+
+def _print_cache_entry(criterion_id: str, entry: CriterionResearchCache) -> None:
+    typer.echo(
+        f"{criterion_id}\tresearched_at={entry.researched_at.isoformat()}\t"
+        f"stale={entry.stale}\treviewed_by_gap_check={entry.reviewed_by_gap_check}"
+    )
+    for q in entry.queries:
+        typer.echo(f"  query: {q}")
+    for f in entry.findings:
+        typer.echo(f"  finding: {f.url} -- {f.snippet}")
+
+
+@cache_app.command("record")
+def cache_record(
+    vendor_id: str = typer.Option(...),
+    criterion_id: str = typer.Option(...),
+    query: list[str] = typer.Option([]),
+    findings_file: Path = typer.Option(...),
+    reviewed_by_gap_check: bool = typer.Option(False),
+) -> None:
+    try:
+        findings_text = findings_file.read_text()
+    except FileNotFoundError:
+        typer.echo(f"error: findings file not found: {findings_file}")
+        raise typer.Exit(code=1)
+
+    try:
+        findings_data = json.loads(findings_text)
+    except json.JSONDecodeError as e:
+        typer.echo(f"error: invalid JSON in findings file: {e}")
+        raise typer.Exit(code=1)
+
+    if not isinstance(findings_data, list):
+        typer.echo("error: findings file must contain a JSON array")
+        raise typer.Exit(code=1)
+
+    findings = []
+    for f in findings_data:
+        if not isinstance(f, dict) or "url" not in f or "snippet" not in f:
+            typer.echo("error: each finding must be an object with 'url' and 'snippet'")
+            raise typer.Exit(code=1)
+        findings.append(ResearchFinding(url=f["url"], snippet=f["snippet"]))
+
+    cache = _load_research_cache(vendor_id)
+    cache.criteria[criterion_id] = CriterionResearchCache(
+        queries=list(query),
+        findings=findings,
+        reviewed_by_gap_check=reviewed_by_gap_check,
+        stale=False,
+    )
+    storage.save_research_cache(cache, storage.research_cache_path(RESEARCH_CACHE_DIR, vendor_id))
+    typer.echo(f"recorded research cache for '{vendor_id}' on '{criterion_id}'")
+
+
+@cache_app.command("show")
+def cache_show(
+    vendor_id: str = typer.Option(...),
+    criterion_id: str = typer.Option(None),
+) -> None:
+    path = storage.research_cache_path(RESEARCH_CACHE_DIR, vendor_id)
+    if not path.exists():
+        typer.echo(f"error: no research cache found for vendor '{vendor_id}'")
+        raise typer.Exit(code=1)
+    cache = storage.load_research_cache(path, vendor_id)
+    if criterion_id:
+        entry = cache.criteria.get(criterion_id)
+        if not entry:
+            typer.echo(f"error: no cache entry for '{vendor_id}' on criterion '{criterion_id}'")
+            raise typer.Exit(code=1)
+        _print_cache_entry(criterion_id, entry)
+    else:
+        if not cache.criteria:
+            typer.echo(f"no cache entries for vendor '{vendor_id}'")
+        for cid, entry in cache.criteria.items():
+            _print_cache_entry(cid, entry)
+
+
+@cache_app.command("invalidate")
+def cache_invalidate(
+    vendor_id: str = typer.Option(...),
+    criterion_id: str = typer.Option(None),
+    max_score: float = typer.Option(None),
+    all_: bool = typer.Option(False, "--all"),
+) -> None:
+    modes_selected = sum([criterion_id is not None, max_score is not None, all_])
+    if modes_selected != 1:
+        typer.echo("error: specify exactly one of --criterion-id, --max-score, or --all")
+        raise typer.Exit(code=1)
+
+    path = storage.research_cache_path(RESEARCH_CACHE_DIR, vendor_id)
+    if not path.exists():
+        typer.echo(f"error: no research cache found for vendor '{vendor_id}'")
+        raise typer.Exit(code=1)
+    cache = storage.load_research_cache(path, vendor_id)
+
+    if criterion_id is not None:
+        entry = cache.criteria.get(criterion_id)
+        if not entry:
+            typer.echo(f"error: no cache entry for '{vendor_id}' on criterion '{criterion_id}'")
+            raise typer.Exit(code=1)
+        entry.stale = True
+        count = 1
+    elif all_:
+        for entry in cache.criteria.values():
+            entry.stale = True
+        count = len(cache.criteria)
+    else:
+        vendor = _load_vendor_or_exit(vendor_id)
+        count = 0
+        for cid, entry in cache.criteria.items():
+            score_entry = vendor.score_for(cid)
+            if score_entry is not None and score_entry.score <= max_score:
+                entry.stale = True
+                count += 1
+
+    storage.save_research_cache(cache, path)
+    typer.echo(f"invalidated {count} cache entr{'y' if count == 1 else 'ies'} for '{vendor_id}'")
