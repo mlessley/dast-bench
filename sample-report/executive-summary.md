@@ -12,53 +12,83 @@ regulatory compliance mapping (PCI-DSS, SOC 2, and financial-specific
 frameworks), business-logic/authorization testing (BOLA-style fraud
 vectors), sensitive financial data exposure detection, and deployment
 model/data residency control matter as much as raw detection rate. Read
-the rankings below with that lens — StackHawk's paper-only lead is driven
-heavily by governance and compliance-oriented criteria that carry
-disproportionate weight for this buyer, while ZAP's fully self-hosted
-deployment model is a genuine differentiator for data-residency-sensitive
-workloads that a detection-rate-only view would miss entirely.
+the rankings below with that lens — Invicti and StackHawk's leads are
+driven heavily by governance, compliance, and proof-of-exploit
+capabilities that carry disproportionate weight for this buyer, while
+ZAP's fully self-hosted deployment model remains a genuine differentiator
+for data-residency-sensitive workloads that a detection-rate-only view
+would miss entirely.
 
 ## Overview
 
-Three candidates were evaluated against a 33-criterion taxonomy across 6
+Four candidates were evaluated against a 33-criterion taxonomy across 6
 categories, informed by a real enterprise DAST RFP matrix and this
 evaluation's Fortune 500 financial-services context. **OWASP ZAP** and
 **Nuclei** were carried through to hands-on testing (`evaluated`);
-**StackHawk** was rejected before that phase, on practical grounds rather
-than merit.
+**Invicti** is a `finalist` on paper scoring alone; **StackHawk** was
+rejected before the hands-on phase, on practical grounds rather than
+merit.
 
 | Vendor | Weighted Total | Status |
 |---|---|---|
-| StackHawk | **3.55** | rejected (practical access reasons — see below) |
+| [Invicti](scorecard-invicti.md) | **3.94** | finalist (paper only — no hands-on testing yet) |
+| StackHawk | 3.55 | rejected (practical access reasons — see below) |
 | OWASP ZAP | 3.34 | evaluated |
 | Nuclei | 3.13 | evaluated |
 
-Between the two hands-on-tested tools, ZAP edges out Nuclei overall,
-driven by stronger scores on licensing predictability, stateful web
-crawling, and ASPM integration — dimensions where Nuclei's
-template-matching, cloud-platform-dependent design scores noticeably
-weaker.
+Invicti's lead is driven by its Proof-Based Scanning architecture, which
+directly targets several of the highest-value criteria in this taxonomy
+(automated exploit confirmation, finding validation, ASPM integration),
+plus independently-verifiable security certifications. Among the two
+hands-on-tested tools, ZAP edges out Nuclei, driven by stronger scores on
+licensing predictability, stateful web crawling, and ASPM integration.
 
 ## Where They Win
 
 | Vendor | Status | Core Strengths / Best For | Critical Enterprise Gaps |
 |---|---|---|---|
-| [StackHawk](scorecard-stackhawk.md) | Paper only (rejected — no trial access) | Intelligent Business Logic Testing (4.5/5), Compliance & Standards Mapping (4.5/5), Vulnerability Status Management (4/5, Jira-tied finding lifecycle) | Deployment Model & Data Residency (2/5, cloud-only); detection-accuracy/false-positive-rate rest on unverified vendor claims, never hands-on validated |
+| [Invicti](scorecard-invicti.md) | Finalist (paper only) | Finding Validation/Proof-of-Exploit (5/5), Automated Triage/FP-Reduction (5/5), ASPM Integration (5/5, owns Kondukto outright), Ticketing Integration (5/5) | Never hands-on tested; Business Logic Detection (2/5), no IDE tooling or custom-rule engine found |
+| StackHawk | Paper only (rejected — no trial access) | Intelligent Business Logic Testing (4.5/5), Compliance & Standards Mapping (4.5/5), Vulnerability Status Management (4/5, Jira-tied finding lifecycle) | Deployment Model & Data Residency (2/5, cloud-only); detection-accuracy/false-positive-rate rest on unverified vendor claims, never hands-on validated |
 | [OWASP ZAP](scorecard-zap.md) | Evaluated | Deployment Model & Data Residency (5/5, fully self-hostable), Predictability of Licensing Model (5/5, free/Apache 2.0), CI/CD-Native Fit (5/5) | Vulnerability Status Management (1/5), Multi-Tenancy & Access Control (1/5) |
 | [Nuclei](scorecard-nuclei.md) | Evaluated | Asset Discovery & Inventory Tracking (5/5), SIEM/SOAR Integration (4.5/5), Setup & Onboarding Friction (5/5) | Detection Accuracy (2/5 hands-on), Automated Triage/FP-Reduction Engine (1.5/5) |
 
-## [StackHawk](scorecard-stackhawk.md) — highest score, but not hands-on tested
+## [Invicti](scorecard-invicti.md) — highest score, but not hands-on tested
+
+**The Wins:**
+- Finding Validation/Proof-of-Exploit (5/5) and Automated Triage/FP-Reduction
+  Engine (5/5) — Proof-Based Scanning is the product's core design, not an
+  add-on: it automatically and safely re-exploits every detected
+  vulnerability to confirm it's real before it ever reaches a triage
+  queue, the strongest fit of any candidate on both criteria.
+- ASPM Integration (5/5) — owns an ASPM platform outright via the Kondukto
+  acquisition, rather than merely integrating with a third-party one.
+- Vendor Security Posture (4.5/5) — real, independently-verifiable SOC 2
+  Type 2, ISO 27001:2022, and PCI DSS certifications (announced via press
+  release, not just self-claimed) — the best-documented posture of any
+  candidate evaluated.
+
+**The Gaps:**
+- Never hands-on tested — a finalist on paper scoring alone; its
+  detection-accuracy (4/5) rests on a vendor-claimed 99.98% accuracy
+  figure, not independent evidence.
+- Business Logic & Workflow Detection (2/5) — no dedicated multi-step
+  authorization-testing engine found, unlike StackHawk's purpose-built
+  offering.
+- No IDE plugin (2/5) or custom-rule-authoring engine (2/5) found — a
+  closed commercial platform without ZAP/Nuclei's extensibility model.
+
+## StackHawk — paper-only, strongest on business logic and compliance depth
 
 **The Wins:**
 - Intelligent Business Logic Testing (4.5/5) — purpose-built,
   multi-user-perspective testing for authorization flaws (BOLA-style),
-  a capability neither ZAP nor Nuclei has an equivalent for.
+  a capability none of the other three candidates has an equivalent for.
 - Compliance & Standards Mapping (4.5/5) — explicit, well-documented
   pre-built PCI-DSS/HIPAA/SOC2 reports, including a dedicated PCI DSS
-  v4.0.1 guide — best-documented of the three candidates.
+  v4.0.1 guide.
 - Vulnerability Status Management (4/5) — a real finding-lifecycle
   workflow (Assigned/Risk Accepted/False Positive) tied directly to
-  Jira, a governance capability the other two candidates lack entirely.
+  Jira.
 
 **The Gaps:**
 - Deployment Model & Data Residency (2/5) — cloud-only execution with no
@@ -67,8 +97,7 @@ weaker.
   external infrastructure.
 - Never hands-on tested — requires a paid SaaS account/API key not
   available for this evaluation; its detection-accuracy (4/5) and
-  false-positive-rate (4/5) scores rest on unverified vendor claims, not
-  independent evidence.
+  false-positive-rate (4/5) scores rest on unverified vendor claims.
 - Vendor Security Posture (2.5/5) — extensive marketing about helping
   *customers* comply with PCI-DSS/HIPAA/SOC2, a different claim from
   StackHawk's own certification status, which isn't independently
@@ -89,9 +118,7 @@ weaker.
 
 **The Gaps:**
 - Vulnerability Status Management (1/5) and Multi-Tenancy & Access
-  Control (1/5) — a scan-and-report tool, not a governance platform;
-  would need to be paired with separate tooling (a ticketing system, a
-  GRC platform) for those functions rather than providing them natively.
+  Control (1/5) — a scan-and-report tool, not a governance platform.
 - Automated Triage / FP-Reduction Engine (3/5) — Alert Filters allow
   static rule-based suppression once a rule is flagged, but no adaptive
   learning or proof-of-concept auto-confirmation.
@@ -111,81 +138,77 @@ weaker.
 **The Gaps:**
 - Detection Accuracy (2/5 hands-on) — 4/15 (27%) known vulnerabilities
   detected across both benchmark targets; signature-matching strength
-  (known CVEs/exposures) doesn't align well with this ground truth's
-  misconfiguration-heavy composition.
+  doesn't align well with this ground truth's misconfiguration-heavy
+  composition.
 - Automated Triage / FP-Reduction Engine (1.5/5) — a deterministic
   template matcher with no historical-learning or PoC-generation
-  capability, the weakest score of the three candidates on this new
-  criterion.
+  capability.
 - Traditional Stateful Web Crawling (2/5) — no native crawling;
-  fundamentally a template-matcher against known/discovered URLs, not a
-  stateful multi-step workflow engine.
+  fundamentally a template-matcher against known/discovered URLs.
 
 ## Category Takeaways
 
-- **Coverage (26):** StackHawk leads (3.69) on the strength of its
-  business-logic and auth-flow depth; ZAP (3.37) and Nuclei (3.06) trail
-  mainly on stateful-crawling and business-logic dimensions, where
-  signature/template-based and API-first designs structurally
-  underperform a purpose-built crawler.
-- **Detection Quality (22):** StackHawk's paper-only lead (3.82) rests on
-  unverified vendor claims; between the two hands-on-tested tools, ZAP
-  (3.34) meaningfully outperforms Nuclei (2.34) on real,
+- **Coverage (26):** StackHawk leads (3.69) narrowly over Invicti (3.62)
+  on business-logic and auth-flow depth; ZAP (3.37) and Nuclei (3.06)
+  trail on stateful-crawling and business-logic dimensions.
+- **Detection Quality (22):** Invicti leads decisively (4.23), driven by
+  Proof-Based Scanning's direct hit on finding-validation and
+  automated-triage criteria — though still paper-only. Among
+  hands-on-tested tools, ZAP (3.34) outperforms Nuclei (2.34) on real,
   ground-truth-validated detection.
 - **Production Safety & Operability (14):** ZAP leads (4.14) on safe
-  production-scanning maturity and CI/CD-native fit; all three are
-  workable in a pipeline — the narrowest real gap of any category.
+  production-scanning maturity and CI/CD-native fit; Invicti (3.64) and
+  Nuclei (3.61) are close behind — the narrowest real spread of any
+  category.
 - **Developer Experience (10):** StackHawk leads (3.75) on remediation
-  guidance and low onboarding friction; ZAP trails (2.95), mainly on
-  auto-remediation — a capability none of the three has fully solved.
-- **Reporting & Extensibility (14):** Nuclei and StackHawk are close
-  (3.32 / 3.64) on integration breadth (SIEM/SOAR, ticketing); ZAP is
-  the clear laggard here (2.43), lacking the governance-platform
-  features (vulnerability status management, ASPM integration) the
-  other two partially cover.
-- **Deployment & Data Governance (14):** Nuclei (3.86) and ZAP (3.71)
-  lead, largely on licensing predictability and flexible/self-hosted
-  deployment options; StackHawk trails (2.64), reflecting its
-  cloud-only execution model — a real constraint for a
-  data-residency-sensitive buyer, regardless of its other strengths.
+  guidance and low onboarding friction; Invicti (3.60) is close behind on
+  AI-driven fix guidance; ZAP trails (2.95) on auto-remediation.
+- **Reporting & Extensibility (14):** Invicti leads clearly (4.39) —
+  owning an ASPM platform outright and a full auto-close ticketing
+  lifecycle set it apart; ZAP is the clear laggard (2.43), lacking the
+  governance-platform features the other three partially cover.
+- **Deployment & Data Governance (14):** Invicti leads (4.18) on flexible
+  deployment (cloud/on-prem/hybrid with air-gap support) plus verified
+  certifications; StackHawk trails (2.64), reflecting its cloud-only
+  execution model — a real constraint for a data-residency-sensitive
+  buyer.
 
 ## Trade-offs worth flagging
 
 - **False-positive-rate's hands-on number is coarser than it looks.** It
   counts any finding not on the ground-truth list as a false positive,
   including legitimate low-value fingerprinting — this affects Nuclei's
-  count more than ZAP's, since its default output includes far more
-  fingerprinting-style findings. Its 2/5 score should be read with that
-  in mind.
+  count more than ZAP's. Its 2/5 score should be read with that in mind.
 - **"Vendor Security Posture" scoring reflects what's independently
-  verifiable, not what's marketed.** ZAP scored moderately (3/5) on the
-  strength of Checkmarx's corporate backing and published (if
-  request-gated) SOC 2 audits; StackHawk scored lower (2.5/5) despite
-  extensive marketing about compliance, because that marketing is about
-  helping *customers* comply with PCI-DSS/HIPAA/SOC2 — a different claim
-  from StackHawk's own certification status, which isn't independently
-  confirmed either way.
-- **"Asset Discovery" measures two different things across candidates.**
-  Nuclei's strength here is network-based (scanning IP ranges/domains for
-  unknown, rogue assets). StackHawk's discovery mechanism is source-driven
-  (mapping known GitHub/GitLab/Bitbucket/Azure repos to applications) —
-  real, but answers a different question ("what apps do we have in version
-  control" vs. "what's exposed to the internet that we don't know about").
-  Worth keeping that distinction in mind rather than reading the numbers
-  as directly comparable capabilities.
-- **Four criteria are scored at paper-confidence only for every
+  verifiable, not what's marketed.** Invicti and ZAP both have real,
+  checkable certifications (ISO 27001/SOC 2 announcements, Checkmarx's
+  audits respectively); StackHawk's marketing is about helping
+  *customers* comply, a different claim from its own certification
+  status, which isn't independently confirmed either way.
+- **"Asset Discovery" measures different things across candidates.**
+  Nuclei's strength is network-based (scanning for unknown, rogue
+  assets). StackHawk's and Invicti's discovery mechanisms are
+  source/ecosystem-driven (mapping known repos/APIs to applications) —
+  a different question than "what's exposed that we don't know about."
+- **Invicti's entire scorecard is paper-confidence, same caveat class as
+  StackHawk.** Unlike ZAP/Nuclei's hands-on-refined detection-accuracy/
+  false-positive-rate, none of Invicti's scores — including its
+  standout 99.98%-accuracy and Proof-Based Scanning claims — have been
+  independently verified in this evaluation. Read its lead with that in
+  mind; it's the strongest *candidate for* hands-on testing next, not
+  yet a confirmed result.
+- **Four newer criteria remain paper-confidence only for every
   candidate.** Traditional Stateful Web Crawling, ASPM Integration,
   Automated Triage/FP-Reduction Engine, and Predictability of Licensing
-  Model don't yet carry hands-on evidence the way detection-accuracy/
-  false-positive-rate do for the two evaluated tools — read them with the
-  same caution as any other paper-confidence score.
+  Model don't yet carry hands-on evidence for any vendor.
 
 ## Methodology note: how to read detection-accuracy
 
 The benchmark ground truth used for hands-on scoring (ZAP and Nuclei only
-— this doesn't affect StackHawk's paper-only score) reflects vulnerabilities
-empirically confirmed reachable by both tools within this scan
-configuration, not an exhaustive list of every known vulnerability either
-benchmark app contains. Read the detection-accuracy scores as "how well
-did this tool find what's reachable in a realistic scan," not "how good is
-this tool at finding every documented vulnerability in these apps."
+— this doesn't affect Invicti's or StackHawk's paper-only scores) reflects
+vulnerabilities empirically confirmed reachable by both tools within this
+scan configuration, not an exhaustive list of every known vulnerability
+either benchmark app contains. Read the detection-accuracy scores as "how
+well did this tool find what's reachable in a realistic scan," not "how
+good is this tool at finding every documented vulnerability in these
+apps."
