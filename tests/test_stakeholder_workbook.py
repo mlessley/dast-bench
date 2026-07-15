@@ -174,6 +174,25 @@ def test_generate_workbook_adds_score_data_validation_and_locks_pending_rows(tmp
     assert ws.protection.sheet is True
 
 
+def test_generate_workbook_writes_provisional_note_above_header(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={"v1": {"c2"}},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    row1 = [c.value for c in ws[1]]
+    row2 = [c.value for c in ws[2]]
+    note = "Provisional — ranking may shift once pending dast-scan results land."
+    assert note in row1 or note in row2
+
+
 def test_generate_workbook_writes_delta_formula_and_partial_completeness_total(tmp_path):
     out_path = tmp_path / "review.xlsx"
     taxonomy = _taxonomy_two_criteria()

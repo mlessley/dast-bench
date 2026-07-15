@@ -1,6 +1,7 @@
 from datetime import date
 
 from openpyxl import load_workbook
+from openpyxl.styles import Protection
 
 from core.models import Confidence, Criterion, CriteriaTaxonomy, ScoreEntry, Vendor, VendorResearchCache, VendorSource
 from core.render.stakeholder_workbook import HEADER_ROW, generate_workbook
@@ -281,6 +282,40 @@ def test_validate_workbook_flags_dispute_without_rationale_and_invalid_score(tmp
 def test_validate_workbook_returns_empty_list_for_clean_file(tmp_path):
     file_path = _generate_two_stakeholders(tmp_path, "review.xlsx")
     assert validate_workbook(file_path) == []
+
+
+def test_validate_workbook_flags_pending_row_with_data_entered(tmp_path):
+    out_path = _generate_with_c2_pending(tmp_path)
+    wb = load_workbook(out_path)
+    ws = wb["v1"]
+    cols = _column_map(ws)
+    row = _row_for(ws, cols, "c2")
+    # Tamper: enter a score on the pending row without touching its lock.
+    ws[f"{cols['DAST SME Score']}{row}"] = 3.0
+    wb.save(out_path)
+
+    issues = validate_workbook(out_path)
+    assert any("tampered" in issue for issue in issues)
+
+
+def test_validate_workbook_flags_pending_row_with_lock_removed(tmp_path):
+    out_path = _generate_with_c2_pending(tmp_path)
+    wb = load_workbook(out_path)
+    ws = wb["v1"]
+    cols = _column_map(ws)
+    row = _row_for(ws, cols, "c2")
+    # Tamper: remove the lock but leave the cell blank (no data entered).
+    ws[f"{cols['DAST SME Score']}{row}"].protection = Protection(locked=False)
+    wb.save(out_path)
+
+    issues = validate_workbook(out_path)
+    assert any("tampered" in issue for issue in issues)
+
+
+def test_validate_workbook_does_not_flag_untouched_pending_row(tmp_path):
+    out_path = _generate_with_c2_pending(tmp_path)
+    issues = validate_workbook(out_path)
+    assert not any("tampered" in issue for issue in issues)
 
 
 def test_snapshot_copies_file_into_archive_dir(tmp_path):

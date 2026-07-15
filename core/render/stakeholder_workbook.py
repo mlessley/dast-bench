@@ -78,7 +78,7 @@ def generate_workbook(
     headers = _all_headers(stakeholders)
     for vendor in vendors:
         ws = wb.create_sheet(title=vendor.id[:31])
-        ws.append([])
+        ws.append(["Provisional — ranking may shift once pending dast-scan results land."])
         ws.append([])
         ws.append(headers)
         pending_for_vendor = pending_criteria.get(vendor.id, set())

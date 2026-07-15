@@ -175,6 +175,28 @@ def validate_workbook(file_path: Path) -> list[str]:
             resolved_ts = ws[f"{cols[ts_h]}{row}"].value
             if resolved is not None and not (resolved_by and resolved_ts):
                 issues.append(f"{sheet_name}/{criterion_id}: resolved score present without Resolved By/Timestamp")
+
+        pending_col = cols["_pending"]
+        for row in range(FIRST_DATA_ROW, ws.max_row + 1):
+            criterion_id = ws[f"{crit_col}{row}"].value
+            if not criterion_id:
+                continue
+            if ws[f"{pending_col}{row}"].value != 1:
+                continue
+            tampered = False
+            for base in _stakeholder_bases(cols):
+                for suffix in (" Score", " Dispute?", " Rationale"):
+                    cell = ws[f"{cols[base + suffix]}{row}"]
+                    if cell.value is not None or cell.protection.locked is False:
+                        tampered = True
+                        break
+                if tampered:
+                    break
+            if tampered:
+                issues.append(
+                    f"{sheet_name}/{criterion_id}: pending row has been tampered with "
+                    "(lock removed or data entered before Round 2)"
+                )
     return issues
 
 
