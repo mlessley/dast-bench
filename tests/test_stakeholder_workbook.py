@@ -1,3 +1,7 @@
+from pathlib import Path
+
+from openpyxl import load_workbook
+
 from core.models import (
     Confidence,
     Criterion,
@@ -8,7 +12,7 @@ from core.models import (
     VendorResearchCache,
     VendorSource,
 )
-from core.render.stakeholder_workbook import compute_priority_order
+from core.render.stakeholder_workbook import compute_priority_order, generate_workbook
 
 
 def _taxonomy():
@@ -49,3 +53,98 @@ def test_priority_order_pulls_up_gap_checked_criteria_even_with_high_score():
     )
     order = compute_priority_order(taxonomy, vendor, cache)
     assert order == ["high-weight-shaky", "high-weight-confident", "low-weight"]
+
+
+def _taxonomy_two_criteria():
+    return CriteriaTaxonomy(
+        criteria=[
+            Criterion(id="c1", category="Coverage", name="Coverage One", description="d", weight=60, rubric="r"),
+            Criterion(id="c2", category="DX", name="DX One", description="d", weight=40, rubric="r"),
+        ]
+    )
+
+
+def _vendor_two_criteria(vendor_id="v1", name="Vendor One"):
+    vendor = Vendor(id=vendor_id, name=name, source=VendorSource.DISCOVERED)
+    vendor.scores.append(ScoreEntry(criterion_id="c1", score=4.0, evidence="ev1", confidence=Confidence.PAPER))
+    vendor.scores.append(ScoreEntry(criterion_id="c2", score=2.0, evidence="ev2", confidence=Confidence.PAPER))
+    return vendor
+
+
+def test_generate_workbook_writes_one_sheet_per_vendor_with_headers(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[("Jane Doe", "DAST SME"), (None, "Dev Lead")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    wb = load_workbook(out_path)
+    assert wb.sheetnames == ["v1"]
+    ws = wb["v1"]
+    header = [c.value for c in ws[3]]
+    assert header[:6] == ["Criterion", "Category", "Weight", "Automated Score", "Automated Evidence", "Automated Confidence"]
+    assert "Jane Doe (DAST SME) Score" in header
+    assert "Jane Doe (DAST SME) Dispute?" in header
+    assert "Jane Doe (DAST SME) Rationale" in header
+    assert "Dev Lead Score" in header
+    assert "Resolved Score" in header
+    assert "Resolved By" in header
+    assert "Resolved Timestamp" in header
+    assert "_criterion_id" in header
+
+
+def test_generate_workbook_orders_rows_by_priority_and_fills_automated_data(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[3]]
+    crit_col = header.index("Criterion") + 1
+    score_col = header.index("Automated Score") + 1
+    crit_id_col = header.index("_criterion_id") + 1
+    # c2 (weight 40, score 2.0 <= 2.5) outranks c1 (weight 60, score 4.0)
+    # under the priority rule -- wait: weight sorts first, so c1 (60)
+    # comes before c2 (40) here since neither ties on weight.
+    assert ws.cell(row=4, column=crit_col).value == "Coverage One"
+    assert ws.cell(row=4, column=score_col).value == 4.0
+    assert ws.cell(row=4, column=crit_id_col).value == "c1"
+    assert ws.cell(row=5, column=crit_id_col).value == "c2"
+
+
+def test_generate_workbook_marks_pending_criteria_with_placeholder_and_no_automated_data(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={"v1": {"c2"}},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[3]]
+    score_col = header.index("Automated Score") + 1
+    evidence_col = header.index("Automated Evidence") + 1
+    crit_id_col = header.index("_criterion_id") + 1
+    pending_col = header.index("_pending") + 1
+    row = next(r for r in range(4, ws.max_row + 1) if ws.cell(row=r, column=crit_id_col).value == "c2")
+    assert ws.cell(row=row, column=pending_col).value == 1
+    assert "Pending" in ws.cell(row=row, column=evidence_col).value
+    assert ws.cell(row=row, column=score_col).value is None
+    non_pending_row = next(r for r in range(4, ws.max_row + 1) if ws.cell(row=r, column=crit_id_col).value == "c1")
+    assert ws.cell(row=non_pending_row, column=pending_col).value == 0
