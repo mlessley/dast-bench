@@ -97,6 +97,9 @@ _EXEC_LEGEND_LINES_TEMPLATE = [
     "Weighted Avg Score is normalized to a 0-5 scale and is comparable across vendors even when the "
     "number of pending criteria differs. Row order below is fixed when this workbook is generated and "
     "does not auto-resort if scores change later.",
+    "Weight (on each vendor sheet) is each criterion's relative importance in the overall weighted "
+    "score — the same value used in the actual score calculation, set by the evaluator when the "
+    "criteria taxonomy was defined, not something a reviewer sets.",
 ]
 
 EXEC_TABLE_HEADER_ROW = _EXEC_LEGEND_FIRST_ROW + len(_EXEC_LEGEND_LINES_TEMPLATE) + 1

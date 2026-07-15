@@ -667,3 +667,22 @@ def test_generate_workbook_rollup_block_has_summary_header(tmp_path):
     assert cell.value == "Summary"
     assert cell.font.bold is True
     assert cell.fill.fgColor.rgb == "001F4E78"
+
+
+def test_generate_workbook_executive_summary_legend_explains_weight(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=1,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["Executive Summary"]
+    weight_legend_row = _EXEC_LEGEND_FIRST_ROW + 5
+    legend_text = ws.cell(row=weight_legend_row, column=1).value
+    assert "Weight" in legend_text
+    assert "set by the evaluator" in legend_text
