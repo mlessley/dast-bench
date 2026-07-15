@@ -6,9 +6,16 @@ from pathlib import Path
 
 from openpyxl import load_workbook
 from openpyxl.styles import Protection
+from openpyxl.utils import get_column_letter
 
 from .models import Vendor
-from .render.stakeholder_workbook import FIRST_DATA_ROW, HEADER_ROW, SCORE_VALUES
+from .render.stakeholder_workbook import (
+    FIRST_DATA_ROW,
+    HEADER_ROW,
+    SCORE_VALUES,
+    _reviewer_slot_columns,
+    _reviewer_slot_count_from_headers,
+)
 
 _DISPUTE_YES_VALUES = {"y", "yes"}
 
@@ -25,6 +32,15 @@ def _column_map(ws) -> dict[str, str]:
     return mapping
 
 
+def _slot_letters(ws) -> list[tuple[str, str, str]]:
+    headers = [c.value for c in ws[HEADER_ROW]]
+    reviewer_slots = _reviewer_slot_count_from_headers(headers)
+    return [
+        (get_column_letter(score_col), get_column_letter(dispute_col), get_column_letter(rationale_col))
+        for score_col, dispute_col, rationale_col in _reviewer_slot_columns(reviewer_slots)
+    ]
+
+
 def populate(vendor: Vendor, file_path: Path) -> str:
     wb = load_workbook(file_path)
     sheet_name = vendor.id[:31]
@@ -37,6 +53,7 @@ def populate(vendor: Vendor, file_path: Path) -> str:
     score_col = cols["Automated Score"]
     evidence_col = cols["Automated Evidence"]
     confidence_col = cols["Automated Confidence"]
+    slot_letters = _slot_letters(ws)
 
     filled = 0
     for row in range(FIRST_DATA_ROW, ws.max_row + 1):
@@ -52,23 +69,13 @@ def populate(vendor: Vendor, file_path: Path) -> str:
         ws[f"{evidence_col}{row}"] = entry.evidence
         ws[f"{confidence_col}{row}"] = entry.confidence.value
         ws[f"{pending_col}{row}"] = 0
-        for header in cols:
-            if header in ("Automated Score", "Resolved Score"):
-                continue
-            if header.endswith((" Score", " Dispute?", " Rationale")):
-                ws[f"{cols[header]}{row}"].protection = Protection(locked=False)
+        for score_letter, dispute_letter, rationale_letter in slot_letters:
+            for letter in (score_letter, dispute_letter, rationale_letter):
+                ws[f"{letter}{row}"].protection = Protection(locked=False)
         filled += 1
 
     wb.save(file_path)
     return f"populated {filled} pending row(s) for '{vendor.id}'"
-
-
-def _stakeholder_bases(cols: dict[str, str]) -> list[str]:
-    bases = []
-    for header in cols:
-        if header.endswith(" Score") and header not in ("Automated Score", "Resolved Score"):
-            bases.append(header[: -len(" Score")])
-    return bases
 
 
 def _conflicts(existing, incoming) -> bool:
@@ -82,7 +89,6 @@ def merge(master_path: Path, from_path: Path) -> str:
     merged = 0
     invalid = 0
     conflicts = 0
-    unrecognized: list[str] = []
 
     for sheet_name in master_wb.sheetnames:
         if sheet_name not in from_wb.sheetnames:
@@ -111,19 +117,17 @@ def merge(master_path: Path, from_path: Path) -> str:
             if f_ws[f"{f_crit_col}{r}"].value
         }
 
-        m_bases = set(_stakeholder_bases(m_cols))
-        f_bases = set(_stakeholder_bases(f_cols))
-        for base in sorted(f_bases - m_bases):
-            unrecognized.append(f"{base} Score")
+        m_slot_letters = _slot_letters(m_ws)
+        f_slot_letters = _slot_letters(f_ws)
+        shared_slot_count = min(len(m_slot_letters), len(f_slot_letters))
 
-        for base in _stakeholder_bases(m_cols):
-            score_h, dispute_h, rationale_h = f"{base} Score", f"{base} Dispute?", f"{base} Rationale"
-            if score_h not in f_cols:
-                continue
+        for slot_index in range(shared_slot_count):
+            score_letter, dispute_letter, rationale_letter = m_slot_letters[slot_index]
+            f_score_letter, f_dispute_letter, f_rationale_letter = f_slot_letters[slot_index]
             for criterion_id, f_row in f_row_by_crit.items():
-                f_score = f_ws[f"{f_cols[score_h]}{f_row}"].value
-                f_dispute = f_ws[f"{f_cols[dispute_h]}{f_row}"].value
-                f_rationale = f_ws[f"{f_cols[rationale_h]}{f_row}"].value
+                f_score = f_ws[f"{f_score_letter}{f_row}"].value
+                f_dispute = f_ws[f"{f_dispute_letter}{f_row}"].value
+                f_rationale = f_ws[f"{f_rationale_letter}{f_row}"].value
                 if f_score is None and f_dispute is None and f_rationale is None:
                     continue
                 m_row = m_row_by_crit.get(criterion_id)
@@ -136,9 +140,9 @@ def merge(master_path: Path, from_path: Path) -> str:
                     invalid += 1
                     continue
 
-                existing_score = m_ws[f"{m_cols[score_h]}{m_row}"].value
-                existing_dispute = m_ws[f"{m_cols[dispute_h]}{m_row}"].value
-                existing_rationale = m_ws[f"{m_cols[rationale_h]}{m_row}"].value
+                existing_score = m_ws[f"{score_letter}{m_row}"].value
+                existing_dispute = m_ws[f"{dispute_letter}{m_row}"].value
+                existing_rationale = m_ws[f"{rationale_letter}{m_row}"].value
                 if (
                     _conflicts(existing_score, f_score)
                     or _conflicts(existing_dispute, f_dispute)
@@ -146,13 +150,13 @@ def merge(master_path: Path, from_path: Path) -> str:
                 ):
                     conflicts += 1
                     continue
-                m_ws[f"{m_cols[score_h]}{m_row}"] = f_score
-                m_ws[f"{m_cols[dispute_h]}{m_row}"] = f_dispute
-                m_ws[f"{m_cols[rationale_h]}{m_row}"] = f_rationale
+                m_ws[f"{score_letter}{m_row}"] = f_score
+                m_ws[f"{dispute_letter}{m_row}"] = f_dispute
+                m_ws[f"{rationale_letter}{m_row}"] = f_rationale
                 merged += 1
 
     master_wb.save(master_path)
-    return f"merged {merged} cell(s), {invalid} invalid, {conflicts} conflict(s), unrecognized: {unrecognized}"
+    return f"merged {merged} cell(s), {invalid} invalid, {conflicts} conflict(s)"
 
 
 def validate_workbook(file_path: Path) -> list[str]:
@@ -165,19 +169,20 @@ def validate_workbook(file_path: Path) -> list[str]:
             # Not a per-vendor rollup sheet (e.g. the Executive Summary tab).
             continue
         crit_col = cols["_criterion_id"]
-        for base in _stakeholder_bases(cols):
-            score_h, dispute_h, rationale_h = f"{base} Score", f"{base} Dispute?", f"{base} Rationale"
+        slot_letters = _slot_letters(ws)
+
+        for slot_number, (score_letter, dispute_letter, rationale_letter) in enumerate(slot_letters, start=1):
             for row in range(FIRST_DATA_ROW, ws.max_row + 1):
                 criterion_id = ws[f"{crit_col}{row}"].value
                 if not criterion_id:
                     continue
-                score = ws[f"{cols[score_h]}{row}"].value
-                dispute = ws[f"{cols[dispute_h]}{row}"].value
-                rationale = ws[f"{cols[rationale_h]}{row}"].value
+                score = ws[f"{score_letter}{row}"].value
+                dispute = ws[f"{dispute_letter}{row}"].value
+                rationale = ws[f"{rationale_letter}{row}"].value
                 if score is not None and score not in SCORE_VALUES:
-                    issues.append(f"{sheet_name}/{criterion_id}: '{base}' score {score!r} is not a valid value")
+                    issues.append(f"{sheet_name}/{criterion_id}: Reviewer {slot_number} score {score!r} is not a valid value")
                 if _is_dispute_yes(dispute) and not rationale:
-                    issues.append(f"{sheet_name}/{criterion_id}: '{base}' disputed with no rationale")
+                    issues.append(f"{sheet_name}/{criterion_id}: Reviewer {slot_number} disputed with no rationale")
         resolved_h = "Resolved Score"
         by_h = "Resolved By"
         ts_h = "Resolved Timestamp"
@@ -199,9 +204,9 @@ def validate_workbook(file_path: Path) -> list[str]:
             if ws[f"{pending_col}{row}"].value != 1:
                 continue
             tampered = False
-            for base in _stakeholder_bases(cols):
-                for suffix in (" Score", " Dispute?", " Rationale"):
-                    cell = ws[f"{cols[base + suffix]}{row}"]
+            for score_letter, dispute_letter, rationale_letter in slot_letters:
+                for letter in (score_letter, dispute_letter, rationale_letter):
+                    cell = ws[f"{letter}{row}"]
                     if cell.value is not None or cell.protection.locked is False:
                         tampered = True
                         break
