@@ -12,6 +12,8 @@ from core.models import (
     VendorResearchCache,
     VendorSource,
 )
+from openpyxl.utils import get_column_letter
+
 from core.render.stakeholder_workbook import compute_priority_order, generate_workbook
 
 
@@ -218,3 +220,31 @@ def test_generate_workbook_writes_delta_formula_and_partial_completeness_total(t
     total_score_cell = ws.cell(row=ws.max_row, column=header.index("Automated Score") + 1).value
     assert total_score_cell.startswith("=")
     assert "available points" in total_score_cell
+
+
+def test_generate_workbook_applies_column_widths_freeze_panes_and_header_style(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    assert ws.freeze_panes == "C4"
+    assert ws.column_dimensions["A"].width == 32  # Criterion
+
+    header = [c.value for c in ws[3]]
+    evidence_letter = get_column_letter(header.index("Automated Evidence") + 1)
+    assert ws.column_dimensions[evidence_letter].width == 45
+
+    header_cell = ws.cell(row=3, column=1)
+    assert header_cell.font.bold is True
+    assert header_cell.font.color.rgb == "00FFFFFF"
+    assert header_cell.fill.fgColor.rgb == "001F4E78"
+    assert header_cell.alignment.wrap_text is True
+    assert header_cell.border.top.style == "thin"

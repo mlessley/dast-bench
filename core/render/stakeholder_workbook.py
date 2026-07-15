@@ -4,7 +4,7 @@ from pathlib import Path
 
 from openpyxl import Workbook
 from openpyxl.formatting.rule import CellIsRule
-from openpyxl.styles import PatternFill, Protection
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Protection, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 
@@ -29,6 +29,45 @@ _HIDDEN_HEADERS = ["_criterion_id", "_pending", "_effective_score"]
 
 _TIER_FILL = PatternFill(start_color="FFF2CC", end_color="FFF2CC", fill_type="solid")
 _UNFILLED_FILL = PatternFill(start_color="FCE4D6", end_color="FCE4D6", fill_type="solid")
+
+_HEADER_FILL_COLOR = "1F4E78"
+_HEADER_FONT = Font(bold=True, color="FFFFFF")
+_HEADER_FILL = PatternFill(start_color=_HEADER_FILL_COLOR, end_color=_HEADER_FILL_COLOR, fill_type="solid")
+_HEADER_BORDER = Border(
+    left=Side(style="thin"),
+    right=Side(style="thin"),
+    top=Side(style="thin"),
+    bottom=Side(style="thin"),
+)
+_HEADER_ALIGNMENT = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+_FIXED_COLUMN_WIDTHS = {
+    "Criterion": 32,
+    "Category": 16,
+    "Weight": 10,
+    "Automated Score": 14,
+    "Automated Evidence": 45,
+    "Automated Confidence": 16,
+    "Resolved Score": 14,
+    "Resolved By": 16,
+    "Resolved Timestamp": 18,
+    "Automated vs. Resolved Delta": 14,
+}
+_COLUMN_WIDTHS_BY_SUFFIX = [
+    (" Rationale", 40),
+    (" Dispute?", 12),
+    (" Score", 12),
+]
+
+
+def _column_width_for(header: str) -> float | None:
+    if header in _FIXED_COLUMN_WIDTHS:
+        return _FIXED_COLUMN_WIDTHS[header]
+    for suffix, width in _COLUMN_WIDTHS_BY_SUFFIX:
+        if header.endswith(suffix):
+            return width
+    return None
+
 
 HEADER_ROW = 3
 FIRST_DATA_ROW = 4
@@ -81,6 +120,17 @@ def generate_workbook(
         ws.append(["Provisional — ranking may shift once pending dast-scan results land."])
         ws.append([])
         ws.append(headers)
+        ws.freeze_panes = "C4"
+        for col_idx, header_name in enumerate(headers, start=1):
+            width = _column_width_for(header_name)
+            if width is not None:
+                ws.column_dimensions[get_column_letter(col_idx)].width = width
+        for col_idx in range(1, len(headers) + 1):
+            cell = ws.cell(row=HEADER_ROW, column=col_idx)
+            cell.font = _HEADER_FONT
+            cell.fill = _HEADER_FILL
+            cell.border = _HEADER_BORDER
+            cell.alignment = _HEADER_ALIGNMENT
         pending_for_vendor = pending_criteria.get(vendor.id, set())
         cache = research_caches.get(vendor.id) or VendorResearchCache(vendor_id=vendor.id)
         order = compute_priority_order(taxonomy, vendor, cache)
