@@ -20,6 +20,7 @@ from core.render.stakeholder_workbook import (
     _EXEC_LEGEND_FIRST_ROW,
     _EXEC_LEGEND_HEADER_ROW,
     _EXEC_LEGEND_LINES_TEMPLATE,
+    _reviewer_slot_columns,
     _rollup_row_numbers,
     compute_priority_order,
     EXEC_TABLE_FIRST_DATA_ROW,
@@ -91,7 +92,7 @@ def test_generate_workbook_writes_one_sheet_per_vendor_with_headers(tmp_path):
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[("Jane Doe", "DAST SME"), (None, "Dev Lead")],
+        reviewer_slots=2,
         pending_criteria={},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
@@ -101,14 +102,63 @@ def test_generate_workbook_writes_one_sheet_per_vendor_with_headers(tmp_path):
     ws = wb["v1"]
     header = [c.value for c in ws[3]]
     assert header[:6] == ["Criterion", "Category", "Weight", "Automated Score", "Automated Evidence", "Automated Confidence"]
-    assert "Jane Doe (DAST SME) Score" in header
-    assert "Jane Doe (DAST SME) Dispute?" in header
-    assert "Jane Doe (DAST SME) Rationale" in header
-    assert "Dev Lead Score" in header
+    assert header.count("Score") == 2
+    assert header.count("Dispute?") == 2
+    assert header.count("Rationale") == 2
     assert "Resolved Score" in header
     assert "Resolved By" in header
     assert "Resolved Timestamp" in header
     assert "_criterion_id" in header
+
+
+def test_generate_workbook_adds_merged_reviewer_slot_group_headers(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=2,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    slot_columns = _reviewer_slot_columns(2)
+
+    slot1_score_col, _, slot1_rationale_col = slot_columns[0]
+    slot1_range = f"{get_column_letter(slot1_score_col)}2:{get_column_letter(slot1_rationale_col)}2"
+    assert slot1_range in [str(r) for r in ws.merged_cells.ranges]
+    slot1_cell = ws.cell(row=2, column=slot1_score_col)
+    assert slot1_cell.value == "Reviewer 1"
+    assert slot1_cell.font.bold is True
+    assert slot1_cell.fill.fgColor.rgb == "001F4E78"
+
+    slot2_score_col, _, slot2_rationale_col = slot_columns[1]
+    slot2_range = f"{get_column_letter(slot2_score_col)}2:{get_column_letter(slot2_rationale_col)}2"
+    assert slot2_range in [str(r) for r in ws.merged_cells.ranges]
+    assert ws.cell(row=2, column=slot2_score_col).value == "Reviewer 2"
+
+
+def test_generate_workbook_with_zero_reviewer_slots_has_no_reviewer_columns(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=0,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[3]]
+    assert "Score" not in header
+    assert "Dispute?" not in header
+    assert "Rationale" not in header
+    assert header[:6] == ["Criterion", "Category", "Weight", "Automated Score", "Automated Evidence", "Automated Confidence"]
+    assert header[6] == "Resolved Score"
 
 
 def test_generate_workbook_orders_rows_by_priority_and_fills_automated_data(tmp_path):
@@ -118,7 +168,7 @@ def test_generate_workbook_orders_rows_by_priority_and_fills_automated_data(tmp_
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
@@ -144,7 +194,7 @@ def test_generate_workbook_marks_pending_criteria_with_placeholder_and_no_automa
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={"v1": {"c2"}},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
@@ -170,7 +220,7 @@ def test_generate_workbook_adds_score_data_validation_and_locks_pending_rows(tmp
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={"v1": {"c2"}},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
@@ -178,7 +228,7 @@ def test_generate_workbook_adds_score_data_validation_and_locks_pending_rows(tmp
     ws = load_workbook(out_path)["v1"]
     header = [c.value for c in ws[3]]
     assert len(ws.data_validations.dataValidation) >= 1
-    score_col = header.index("DAST SME Score") + 1
+    score_col = header.index("Score") + 1
     crit_id_col = header.index("_criterion_id") + 1
     pending_row = next(r for r in range(4, ws.max_row + 1) if ws.cell(row=r, column=crit_id_col).value == "c2")
     non_pending_row = next(r for r in range(4, ws.max_row + 1) if ws.cell(row=r, column=crit_id_col).value == "c1")
@@ -194,16 +244,15 @@ def test_generate_workbook_writes_provisional_note_above_header(tmp_path):
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={"v1": {"c2"}},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
     )
     ws = load_workbook(out_path)["v1"]
     row1 = [c.value for c in ws[1]]
-    row2 = [c.value for c in ws[2]]
     note = "Provisional — ranking may shift once pending dast-scan results land."
-    assert note in row1 or note in row2
+    assert note in row1
 
 
 def test_generate_workbook_writes_delta_formula_and_partial_completeness_total(tmp_path):
@@ -213,7 +262,7 @@ def test_generate_workbook_writes_delta_formula_and_partial_completeness_total(t
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={"v1": {"c2"}},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
@@ -240,7 +289,7 @@ def test_generate_workbook_applies_column_widths_freeze_panes_and_header_style(t
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
@@ -270,7 +319,7 @@ def test_generate_workbook_applies_number_formats_banding_border_and_tab_color(t
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
@@ -304,14 +353,14 @@ def test_generate_workbook_adds_dispute_dropdown(tmp_path):
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
     )
     ws = load_workbook(out_path)["v1"]
     header = [c.value for c in ws[3]]
-    dispute_col_letter = get_column_letter(header.index("DAST SME Dispute?") + 1)
+    dispute_col_letter = get_column_letter(header.index("Dispute?") + 1)
     dispute_dvs = [dv for dv in ws.data_validations.dataValidation if dv.formula1 == '"Yes"']
     assert len(dispute_dvs) == 1
     assert f"{dispute_col_letter}4" in str(dispute_dvs[0].sqref)
@@ -330,7 +379,7 @@ def test_generate_workbook_adds_executive_summary_sheet_first_with_legend_and_ra
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor_b, vendor_a],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={},
         research_caches={
             "a": VendorResearchCache(vendor_id="a"),
@@ -354,7 +403,7 @@ def test_generate_workbook_adds_executive_summary_sheet_first_with_legend_and_ra
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW + 1, column=1).value == "Vendor B"
 
     category_rows, weighted_total_row = _rollup_row_numbers(taxonomy)
-    vendor_headers = _all_headers([(None, "DAST SME")])
+    vendor_headers = _all_headers(1)
     weight_col = get_column_letter(_column_index(vendor_headers, "Weight"))
     evidence_col = get_column_letter(_column_index(vendor_headers, "Automated Evidence"))
     score_col = get_column_letter(_column_index(vendor_headers, "Automated Score"))
@@ -387,7 +436,7 @@ def test_generate_workbook_executive_summary_ranks_by_normalized_average_not_raw
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor_y, vendor_x],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={"x": {"c2"}},
         research_caches={
             "x": VendorResearchCache(vendor_id="x"),
@@ -397,13 +446,6 @@ def test_generate_workbook_executive_summary_ranks_by_normalized_average_not_raw
     )
 
     ws = load_workbook(out_path)["Executive Summary"]
-    # Vendor X: c2 is pending, so only c1 (weight 60) counts -> normalized avg = 5.0.
-    #   Raw achieved points (weight*score, uncorrected): 60*5 = 300.
-    # Vendor Y: both criteria count -> normalized avg = (60*4 + 40*4) / 100 = 4.0.
-    #   Raw achieved points: 60*4 + 40*4 = 400 -- MORE raw points than Vendor X.
-    # A correct (normalized-average) ranking puts Vendor X first despite Vendor Y
-    # having more raw achieved points; a regression to raw-achieved-points ranking
-    # would put Vendor Y first instead. This is the case the other two tests can't catch.
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1).value == "Vendor X"
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW + 1, column=1).value == "Vendor Y"
 
@@ -421,7 +463,7 @@ def test_generate_workbook_executive_summary_sorts_all_pending_vendor_last(tmp_p
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor_a, vendor_b],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={"b": {"c1", "c2"}},
         research_caches={
             "a": VendorResearchCache(vendor_id="a"),
@@ -431,8 +473,6 @@ def test_generate_workbook_executive_summary_sorts_all_pending_vendor_last(tmp_p
     )
 
     ws = load_workbook(out_path)["Executive Summary"]
-    # Vendor B has nothing scored yet (fully pending), so it must not
-    # outrank Vendor A's real (if low) score.
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1).value == "Vendor A"
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW + 1, column=1).value == "Vendor B"
 
@@ -446,7 +486,7 @@ def test_generate_workbook_executive_summary_includes_bar_chart(tmp_path):
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
@@ -463,7 +503,7 @@ def test_generate_workbook_freeze_panes_include_weight_column(tmp_path):
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
@@ -479,7 +519,7 @@ def test_generate_workbook_wraps_evidence_and_rationale_text(tmp_path):
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
@@ -487,7 +527,7 @@ def test_generate_workbook_wraps_evidence_and_rationale_text(tmp_path):
     ws = load_workbook(out_path)["v1"]
     header = [c.value for c in ws[3]]
     evidence_col = header.index("Automated Evidence") + 1
-    rationale_col = header.index("DAST SME Rationale") + 1
+    rationale_col = header.index("Rationale") + 1
     score_col = header.index("Automated Score") + 1
 
     assert ws.cell(row=4, column=evidence_col).alignment.wrap_text is True
@@ -513,16 +553,13 @@ def test_generate_workbook_bands_continuously_under_tier_highlight(tmp_path):
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
         top_tier_count=2,
     )
     ws = load_workbook(out_path)["v1"]
-    # All four scores are equal (4.0) and above the needs-attention
-    # threshold, so priority order is purely descending weight:
-    # c1 (row 4), c2 (row 5), c3 (row 6), c4 (row 7).
     assert ws.cell(row=4, column=1).fill.fgColor.rgb == "00FFF2CC"  # tier, even (i=0)
     assert ws.cell(row=5, column=1).fill.fgColor.rgb == "00F9E79F"  # tier, odd (i=1)
     assert ws.cell(row=6, column=1).fill.fgColor.rgb == "00000000"  # non-tier, even (i=2) -- no fill
@@ -536,7 +573,7 @@ def test_generate_workbook_executive_summary_legend_has_border_and_fill(tmp_path
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={},
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
@@ -566,7 +603,7 @@ def test_generate_workbook_executive_summary_highlights_top_vendor_row(tmp_path)
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor_b, vendor_a],
-        stakeholders=[(None, "DAST SME")],
+        reviewer_slots=1,
         pending_criteria={},
         research_caches={
             "a": VendorResearchCache(vendor_id="a"),
@@ -576,7 +613,6 @@ def test_generate_workbook_executive_summary_highlights_top_vendor_row(tmp_path)
     )
 
     ws = load_workbook(out_path)["Executive Summary"]
-    # Vendor A scored higher on every criterion, so it ranks first (row EXEC_TABLE_FIRST_DATA_ROW).
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1).value == "Vendor A"
     top_row_cell = ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1)
     assert top_row_cell.font.bold is True

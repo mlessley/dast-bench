@@ -56,9 +56,9 @@ _FIXED_COLUMN_WIDTHS = {
     "Automated vs. Resolved Delta": 14,
 }
 _COLUMN_WIDTHS_BY_SUFFIX = [
-    (" Rationale", 40),
-    (" Dispute?", 12),
-    (" Score", 12),
+    ("Rationale", 40),
+    ("Dispute?", 12),
+    ("Score", 12),
 ]
 
 
@@ -75,7 +75,7 @@ _BAND_FILL = PatternFill(start_color="F2F2F2", end_color="F2F2F2", fill_type="so
 _ROLLUP_BORDER = Border(top=Side(style="medium"))
 
 _RIGHT_ALIGN_NUMERIC_HEADERS_EXACT = {"Weight", "Automated vs. Resolved Delta"}
-_RIGHT_ALIGN_NUMERIC_HEADERS_SUFFIX = " Score"
+_RIGHT_ALIGN_NUMERIC_HEADERS_SUFFIX = "Score"
 
 _TAB_COLOR_PALETTE = ["2E86AB", "A23B72", "F18F01", "C73E1D", "3B1F2B", "6A994E"]
 
@@ -238,7 +238,7 @@ def _is_right_aligned_numeric(header_name: str) -> bool:
 
 
 def _is_wrapped_text(header_name: str) -> bool:
-    return header_name == "Automated Evidence" or header_name.endswith(" Rationale")
+    return header_name == "Automated Evidence" or header_name.endswith("Rationale")
 
 
 HEADER_ROW = 3
@@ -259,16 +259,46 @@ def compute_priority_order(
     return [c.id for c in sorted(taxonomy.criteria, key=sort_key)]
 
 
-def stakeholder_headers(stakeholders: list[tuple[str | None, str]]) -> list[str]:
-    headers: list[str] = []
-    for name, role in stakeholders:
-        label = f"{name} ({role})" if name else role
-        headers += [f"{label} Score", f"{label} Dispute?", f"{label} Rationale"]
-    return headers
+_REVIEWER_SLOT_SUB_HEADERS = ["Score", "Dispute?", "Rationale"]
 
 
-def _all_headers(stakeholders: list[tuple[str | None, str]]) -> list[str]:
-    return _BASE_HEADERS + stakeholder_headers(stakeholders) + _RESOLUTION_HEADERS + _HIDDEN_HEADERS
+def _reviewer_slot_headers(reviewer_slots: int) -> list[str]:
+    return _REVIEWER_SLOT_SUB_HEADERS * reviewer_slots
+
+
+def _reviewer_slot_columns(reviewer_slots: int) -> list[tuple[int, int, int]]:
+    base = len(_BASE_HEADERS)
+    return [
+        (base + i * 3 + 1, base + i * 3 + 2, base + i * 3 + 3)
+        for i in range(reviewer_slots)
+    ]
+
+
+def _reviewer_slot_count_from_headers(headers: list[str]) -> int:
+    count = 0
+    idx = len(_BASE_HEADERS)
+    while idx + 2 < len(headers) and headers[idx:idx + 3] == _REVIEWER_SLOT_SUB_HEADERS:
+        count += 1
+        idx += 3
+    return count
+
+
+def _unclaimed_reviewer_label(slot_number: int) -> str:
+    return f"Reviewer {slot_number}"
+
+
+def _write_reviewer_slot_group_headers(ws, reviewer_slots: int) -> None:
+    for i, (score_col, _dispute_col, rationale_col) in enumerate(_reviewer_slot_columns(reviewer_slots), start=1):
+        ws.merge_cells(start_row=2, start_column=score_col, end_row=2, end_column=rationale_col)
+        anchor = ws.cell(row=2, column=score_col, value=_unclaimed_reviewer_label(i))
+        anchor.font = _HEADER_FONT
+        anchor.fill = _HEADER_FILL
+        anchor.border = _HEADER_BORDER
+        anchor.alignment = _HEADER_ALIGNMENT
+
+
+def _all_headers(reviewer_slots: int) -> list[str]:
+    return _BASE_HEADERS + _reviewer_slot_headers(reviewer_slots) + _RESOLUTION_HEADERS + _HIDDEN_HEADERS
 
 
 def _column_index(headers: list[str], name: str) -> int:
@@ -278,7 +308,7 @@ def _column_index(headers: list[str], name: str) -> int:
 def generate_workbook(
     taxonomy: CriteriaTaxonomy,
     vendors: list[Vendor],
-    stakeholders: list[tuple[str | None, str]],
+    reviewer_slots: int,
     pending_criteria: dict[str, set[str]],
     research_caches: dict[str, VendorResearchCache],
     out_path: Path,
@@ -286,7 +316,7 @@ def generate_workbook(
 ) -> None:
     wb = Workbook()
     wb.remove(wb.active)
-    headers = _all_headers(stakeholders)
+    headers = _all_headers(reviewer_slots)
     _add_executive_summary_sheet(wb, taxonomy, vendors, pending_criteria, headers, top_tier_count)
     for vendor_index, vendor in enumerate(vendors):
         ws = wb.create_sheet(title=vendor.id[:31])
@@ -305,13 +335,13 @@ def generate_workbook(
             cell.fill = _HEADER_FILL
             cell.border = _HEADER_BORDER
             cell.alignment = _HEADER_ALIGNMENT
+        _write_reviewer_slot_group_headers(ws, reviewer_slots)
         pending_for_vendor = pending_criteria.get(vendor.id, set())
         cache = research_caches.get(vendor.id) or VendorResearchCache(vendor_id=vendor.id)
         order = compute_priority_order(taxonomy, vendor, cache)
 
-        score_cols = [
-            _column_index(headers, h) for h in stakeholder_headers(stakeholders) if h.endswith(" Score")
-        ] + [_column_index(headers, "Resolved Score")]
+        slot_columns = _reviewer_slot_columns(reviewer_slots)
+        score_cols = [score_col for score_col, _, _ in slot_columns] + [_column_index(headers, "Resolved Score")]
 
         dv = DataValidation(
             type="list",
@@ -320,9 +350,7 @@ def generate_workbook(
         )
         ws.add_data_validation(dv)
 
-        dispute_cols = [
-            _column_index(headers, h) for h in stakeholder_headers(stakeholders) if h.endswith(" Dispute?")
-        ]
+        dispute_cols = [dispute_col for _, dispute_col, _ in slot_columns]
         dispute_dv = DataValidation(type="list", formula1='"Yes"', allow_blank=True)
         ws.add_data_validation(dispute_dv)
 
@@ -336,7 +364,7 @@ def generate_workbook(
                 row += [None, _PENDING_TEXT, None]
             else:
                 row += [entry.score if entry else None, entry.evidence if entry else None, entry.confidence.value if entry else None]
-            row += [None] * len(stakeholder_headers(stakeholders))
+            row += [None] * len(_reviewer_slot_headers(reviewer_slots))
             row += [None, None, None, None]
             row += [criterion_id, 1 if is_pending else 0, None]
             ws.append(row)
@@ -373,7 +401,7 @@ def generate_workbook(
                 dispute_dv.add(ws.cell(row=row_num, column=col))
 
             editable_non_score_cols = [
-                _column_index(headers, h) for h in stakeholder_headers(stakeholders) if not h.endswith(" Score")
+                col for _, dispute_col, rationale_col in slot_columns for col in (dispute_col, rationale_col)
             ] + [_column_index(headers, h) for h in ("Resolved By", "Resolved Timestamp")]
             for col in editable_non_score_cols:
                 ws.cell(row=row_num, column=col).protection = Protection(locked=is_pending)
