@@ -1,7 +1,7 @@
 from openpyxl import load_workbook
 
 from core.models import Confidence, Criterion, CriteriaTaxonomy, ScoreEntry, Vendor, VendorResearchCache, VendorSource
-from core.render.stakeholder_workbook import generate_workbook
+from core.render.stakeholder_workbook import HEADER_ROW, generate_workbook
 from core.stakeholder_review import _column_map, merge, populate
 
 
@@ -170,6 +170,78 @@ def test_merge_flags_conflict_without_overwriting(tmp_path):
     summary = merge(master_path, copy_path)
     assert "1 conflict" in summary
     assert load_workbook(master_path)["v1"][f"{mcols['Jane Doe (DAST SME) Score']}{mrow}"].value == 3.0
+
+
+def _generate_one_stakeholder(tmp_path, filename):
+    out_path = tmp_path / filename
+    taxonomy = _taxonomy()
+    vendor = Vendor(id="v1", name="Vendor One", source=VendorSource.DISCOVERED)
+    vendor.scores.append(ScoreEntry(criterion_id="c1", score=4.0, evidence="ev1", confidence=Confidence.PAPER))
+    vendor.scores.append(ScoreEntry(criterion_id="c2", score=2.0, evidence="ev2", confidence=Confidence.PAPER))
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    return out_path
+
+
+def test_merge_flags_unrecognized_stakeholder_column_and_does_not_write_it(tmp_path):
+    master_path = _generate_one_stakeholder(tmp_path, "master.xlsx")
+    copy_path = _generate_one_stakeholder(tmp_path, "copy.xlsx")
+
+    copy_wb = load_workbook(copy_path)
+    copy_ws = copy_wb["v1"]
+    # Simulate a stakeholder in the returned copy that master has no header for,
+    # by writing new header cells directly into row 3 and giving it a value.
+    header_row = copy_ws[HEADER_ROW]
+    next_col = len(header_row) + 1
+    copy_ws.cell(row=HEADER_ROW, column=next_col, value="New Reviewer Score")
+    copy_ws.cell(row=HEADER_ROW, column=next_col + 1, value="New Reviewer Dispute?")
+    copy_ws.cell(row=HEADER_ROW, column=next_col + 2, value="New Reviewer Rationale")
+    cols = _column_map(copy_ws)
+    row = _row_for(copy_ws, cols, "c1")
+    copy_ws.cell(row=row, column=next_col, value=4.0)
+    copy_wb.save(copy_path)
+
+    summary = merge(master_path, copy_path)
+    assert "New Reviewer Score" in summary
+
+    master_ws = load_workbook(master_path)["v1"]
+    master_header = [c.value for c in master_ws[HEADER_ROW]]
+    assert "New Reviewer Score" not in master_header
+    assert "New Reviewer Dispute?" not in master_header
+    assert "New Reviewer Rationale" not in master_header
+
+
+def test_merge_flags_conflict_on_rationale_alone_when_score_is_blank(tmp_path):
+    master_path = _generate_two_stakeholders(tmp_path, "master.xlsx")
+    copy_path = _generate_two_stakeholders(tmp_path, "jane-copy.xlsx")
+
+    master_wb = load_workbook(master_path)
+    master_ws = master_wb["v1"]
+    mcols = _column_map(master_ws)
+    mrow = _row_for(master_ws, mcols, "c1")
+    # Master's Score is left blank, but Rationale already has a note.
+    master_ws[f"{mcols['Jane Doe (DAST SME) Rationale']}{mrow}"] = "already had a note"
+    master_wb.save(master_path)
+
+    copy_wb = load_workbook(copy_path)
+    copy_ws = copy_wb["v1"]
+    cols = _column_map(copy_ws)
+    row = _row_for(copy_ws, cols, "c1")
+    # Returned copy has a different, non-blank Rationale for the same row; Score stays blank.
+    copy_ws[f"{cols['Jane Doe (DAST SME) Rationale']}{row}"] = "a totally different note"
+    copy_wb.save(copy_path)
+
+    summary = merge(master_path, copy_path)
+    assert "1 conflict" in summary
+
+    master_after = load_workbook(master_path)["v1"]
+    assert master_after[f"{mcols['Jane Doe (DAST SME) Rationale']}{mrow}"].value == "already had a note"
 
 
 def test_merge_flags_invalid_score_and_dispute_without_rationale(tmp_path):

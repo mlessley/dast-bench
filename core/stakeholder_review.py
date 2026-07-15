@@ -63,6 +63,10 @@ def _stakeholder_bases(cols: dict[str, str]) -> list[str]:
     return bases
 
 
+def _conflicts(existing, incoming) -> bool:
+    return existing is not None and incoming is not None and existing != incoming
+
+
 def merge(master_path: Path, from_path: Path) -> str:
     master_wb = load_workbook(master_path)
     from_wb = load_workbook(from_path)
@@ -95,11 +99,14 @@ def merge(master_path: Path, from_path: Path) -> str:
             if f_ws[f"{f_crit_col}{r}"].value
         }
 
+        m_bases = set(_stakeholder_bases(m_cols))
+        f_bases = set(_stakeholder_bases(f_cols))
+        for base in sorted(f_bases - m_bases):
+            unrecognized.append(f"{base} Score")
+
         for base in _stakeholder_bases(m_cols):
             score_h, dispute_h, rationale_h = f"{base} Score", f"{base} Dispute?", f"{base} Rationale"
-            if score_h not in m_cols or score_h not in f_cols:
-                if score_h not in m_cols:
-                    unrecognized.append(score_h)
+            if score_h not in f_cols:
                 continue
             for criterion_id, f_row in f_row_by_crit.items():
                 f_score = f_ws[f"{f_cols[score_h]}{f_row}"].value
@@ -114,8 +121,15 @@ def merge(master_path: Path, from_path: Path) -> str:
                 if not valid:
                     invalid += 1
                     continue
-                existing = m_ws[f"{m_cols[score_h]}{m_row}"].value
-                if existing is not None and f_score is not None and existing != f_score:
+
+                existing_score = m_ws[f"{m_cols[score_h]}{m_row}"].value
+                existing_dispute = m_ws[f"{m_cols[dispute_h]}{m_row}"].value
+                existing_rationale = m_ws[f"{m_cols[rationale_h]}{m_row}"].value
+                if (
+                    _conflicts(existing_score, f_score)
+                    or _conflicts(existing_dispute, f_dispute)
+                    or _conflicts(existing_rationale, f_rationale)
+                ):
                     conflicts += 1
                     continue
                 m_ws[f"{m_cols[score_h]}{m_row}"] = f_score
