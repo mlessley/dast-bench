@@ -10,6 +10,12 @@ from openpyxl.styles import Protection
 from .models import Vendor
 from .render.stakeholder_workbook import FIRST_DATA_ROW, HEADER_ROW, SCORE_VALUES
 
+_DISPUTE_YES_VALUES = {"y", "yes"}
+
+
+def _is_dispute_yes(value) -> bool:
+    return isinstance(value, str) and value.strip().lower() in _DISPUTE_YES_VALUES
+
 
 def _column_map(ws) -> dict[str, str]:
     mapping: dict[str, str] = {}
@@ -119,7 +125,9 @@ def merge(master_path: Path, from_path: Path) -> str:
                 m_row = m_row_by_crit.get(criterion_id)
                 if m_row is None or m_ws[f"{m_pending_col}{m_row}"].value == 1:
                     continue
-                valid = (f_score is None or f_score in SCORE_VALUES) and (f_dispute != "Y" or bool(f_rationale))
+                valid = (f_score is None or f_score in SCORE_VALUES) and (
+                    not _is_dispute_yes(f_dispute) or bool(f_rationale)
+                )
                 if not valid:
                     invalid += 1
                     continue
@@ -161,7 +169,7 @@ def validate_workbook(file_path: Path) -> list[str]:
                 rationale = ws[f"{cols[rationale_h]}{row}"].value
                 if score is not None and score not in SCORE_VALUES:
                     issues.append(f"{sheet_name}/{criterion_id}: '{base}' score {score!r} is not a valid value")
-                if dispute == "Y" and not rationale:
+                if _is_dispute_yes(dispute) and not rationale:
                     issues.append(f"{sheet_name}/{criterion_id}: '{base}' disputed with no rationale")
         resolved_h = "Resolved Score"
         by_h = "Resolved By"

@@ -284,3 +284,23 @@ def test_generate_workbook_applies_number_formats_banding_border_and_tab_color(t
     assert ws.cell(row=first_rollup_row, column=1).border.top.style == "medium"
 
     assert ws.sheet_properties.tabColor.rgb == "00" + _TAB_COLOR_PALETTE[0]
+
+
+def test_generate_workbook_adds_dispute_dropdown(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[3]]
+    dispute_col_letter = get_column_letter(header.index("DAST SME Dispute?") + 1)
+    dispute_dvs = [dv for dv in ws.data_validations.dataValidation if dv.formula1 == '"Yes"']
+    assert len(dispute_dvs) == 1
+    assert f"{dispute_col_letter}4" in str(dispute_dvs[0].sqref)

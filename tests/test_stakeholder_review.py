@@ -355,3 +355,53 @@ def test_snapshot_copies_file_into_archive_dir(tmp_path):
     assert "v1" in result.name
     assert "baseline" in result.name
     assert result.read_bytes() == file_path.read_bytes()
+
+
+def test_merge_accepts_case_insensitive_dispute_yes_value(tmp_path):
+    master_path = _generate_two_stakeholders(tmp_path, "master.xlsx")
+    copy_path = _generate_two_stakeholders(tmp_path, "jane-copy.xlsx")
+
+    copy_wb = load_workbook(copy_path)
+    copy_ws = copy_wb["v1"]
+    cols = _column_map(copy_ws)
+    row = _row_for(copy_ws, cols, "c1")
+    copy_ws[f"{cols['Jane Doe (DAST SME) Dispute?']}{row}"] = "yes"
+    copy_ws[f"{cols['Jane Doe (DAST SME) Rationale']}{row}"] = "Confirmed with vendor demo"
+    copy_wb.save(copy_path)
+
+    summary = merge(master_path, copy_path)
+    assert "merged 1 cell" in summary
+
+    master_ws = load_workbook(master_path)["v1"]
+    mcols = _column_map(master_ws)
+    mrow = _row_for(master_ws, mcols, "c1")
+    assert master_ws[f"{mcols['Jane Doe (DAST SME) Dispute?']}{mrow}"].value == "yes"
+
+
+def test_merge_flags_mixed_case_dispute_without_rationale_as_invalid(tmp_path):
+    master_path = _generate_two_stakeholders(tmp_path, "master.xlsx")
+    copy_path = _generate_two_stakeholders(tmp_path, "jane-copy.xlsx")
+
+    copy_wb = load_workbook(copy_path)
+    copy_ws = copy_wb["v1"]
+    cols = _column_map(copy_ws)
+    row2 = _row_for(copy_ws, cols, "c2")
+    copy_ws[f"{cols['Jane Doe (DAST SME) Dispute?']}{row2}"] = "Yes"
+    copy_wb.save(copy_path)
+
+    summary = merge(master_path, copy_path)
+    assert "1 invalid" in summary
+
+
+def test_validate_workbook_flags_lowercase_dispute_without_rationale(tmp_path):
+    file_path = _generate_two_stakeholders(tmp_path, "review.xlsx")
+    wb = load_workbook(file_path)
+    ws = wb["v1"]
+    cols = _column_map(ws)
+    row = _row_for(ws, cols, "c1")
+    ws[f"{cols['Jane Doe (DAST SME) Dispute?']}{row}"] = "yes"
+    wb.save(file_path)
+
+    issues = validate_workbook(file_path)
+    assert len(issues) == 1
+    assert "disputed with no rationale" in issues[0]

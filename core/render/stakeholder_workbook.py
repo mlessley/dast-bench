@@ -167,6 +167,12 @@ def generate_workbook(
         )
         ws.add_data_validation(dv)
 
+        dispute_cols = [
+            _column_index(headers, h) for h in stakeholder_headers(stakeholders) if h.endswith(" Dispute?")
+        ]
+        dispute_dv = DataValidation(type="list", formula1='"Yes"', allow_blank=True)
+        ws.add_data_validation(dispute_dv)
+
         for i, criterion_id in enumerate(order):
             row_num = FIRST_DATA_ROW + i
             criterion = taxonomy.get(criterion_id)
@@ -208,6 +214,9 @@ def generate_workbook(
                         cell.coordinate,
                         CellIsRule(operator="equal", formula=['""'], fill=_UNFILLED_FILL),
                     )
+
+            for col in dispute_cols:
+                dispute_dv.add(ws.cell(row=row_num, column=col))
 
             editable_non_score_cols = [
                 _column_index(headers, h) for h in stakeholder_headers(stakeholders) if not h.endswith(" Score")
