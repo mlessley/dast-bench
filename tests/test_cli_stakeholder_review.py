@@ -38,13 +38,33 @@ def test_cli_stakeholder_review_generate_creates_workbook(tmp_path, monkeypatch)
         [
             "stakeholder-review", "generate",
             "--vendor-id", "v1",
-            "--stakeholder", ":DAST SME",
+            "--reviewer-slots", "2",
             "--out", str(out_path),
         ],
     )
     assert result.exit_code == 0, result.output
     wb = load_workbook(out_path)
     assert "v1" in wb.sheetnames
+    ws = wb["v1"]
+    header = [c.value for c in ws[3]]
+    assert header.count("Score") == 2
+
+
+def test_cli_stakeholder_review_generate_defaults_to_three_reviewer_slots(tmp_path, monkeypatch):
+    _setup_repo(tmp_path, monkeypatch)
+    out_path = tmp_path / "review.xlsx"
+    result = runner.invoke(
+        app,
+        [
+            "stakeholder-review", "generate",
+            "--vendor-id", "v1",
+            "--out", str(out_path),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[3]]
+    assert header.count("Score") == 3
 
 
 def test_cli_stakeholder_review_generate_fails_on_unscored_criterion(tmp_path, monkeypatch):
@@ -59,7 +79,6 @@ def test_cli_stakeholder_review_generate_fails_on_unscored_criterion(tmp_path, m
         [
             "stakeholder-review", "generate",
             "--vendor-id", "v1",
-            "--stakeholder", ":DAST SME",
             "--out", str(tmp_path / "review.xlsx"),
         ],
     )

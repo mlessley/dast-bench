@@ -519,11 +519,6 @@ stakeholder_review_app = typer.Typer()
 app.add_typer(stakeholder_review_app, name="stakeholder-review")
 
 
-def _parse_stakeholder(raw: str) -> tuple[str | None, str]:
-    name, _, role = raw.partition(":")
-    return (name or None, role)
-
-
 def _parse_pending_criteria(raw_list: list[str]) -> dict[str, set[str]]:
     result: dict[str, set[str]] = {}
     for raw in raw_list:
@@ -535,7 +530,7 @@ def _parse_pending_criteria(raw_list: list[str]) -> dict[str, set[str]]:
 @stakeholder_review_app.command("generate")
 def stakeholder_review_generate(
     vendor_id: list[str] = typer.Option(..., "--vendor-id"),
-    stakeholder: list[str] = typer.Option(..., "--stakeholder"),
+    reviewer_slots: int = typer.Option(3, "--reviewer-slots"),
     pending_criteria: list[str] = typer.Option([], "--pending-criteria"),
     out: Path = typer.Option(...),
 ) -> None:
@@ -553,13 +548,12 @@ def stakeholder_review_generate(
                 raise typer.Exit(code=1)
         vendors.append(vendor)
 
-    stakeholders = [_parse_stakeholder(s) for s in stakeholder]
     pending = _parse_pending_criteria(pending_criteria)
     research_caches = {
         v.id: storage.load_research_cache(storage.research_cache_path(RESEARCH_CACHE_DIR, v.id), v.id)
         for v in vendors
     }
-    generate_workbook(taxonomy, vendors, stakeholders, pending, research_caches, out)
+    generate_workbook(taxonomy, vendors, reviewer_slots, pending, research_caches, out)
     typer.echo(f"generated stakeholder review workbook at {out}")
 
 
