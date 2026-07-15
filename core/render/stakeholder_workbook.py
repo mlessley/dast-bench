@@ -223,6 +223,10 @@ def _is_right_aligned_numeric(header_name: str) -> bool:
     )
 
 
+def _is_wrapped_text(header_name: str) -> bool:
+    return header_name == "Automated Evidence" or header_name.endswith(" Rationale")
+
+
 HEADER_ROW = 3
 FIRST_DATA_ROW = 4
 
@@ -338,7 +342,7 @@ def generate_workbook(
                     cell.number_format = "0.0"
                     cell.alignment = Alignment(horizontal="right")
                 else:
-                    cell.alignment = Alignment(horizontal="left")
+                    cell.alignment = Alignment(horizontal="left", wrap_text=_is_wrapped_text(header_name))
 
             for col in score_cols:
                 cell = ws.cell(row=row_num, column=col)

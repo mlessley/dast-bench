@@ -467,3 +467,27 @@ def test_generate_workbook_freeze_panes_include_weight_column(tmp_path):
     )
     ws = load_workbook(out_path)["v1"]
     assert ws.freeze_panes == "D4"
+
+
+def test_generate_workbook_wraps_evidence_and_rationale_text(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[3]]
+    evidence_col = header.index("Automated Evidence") + 1
+    rationale_col = header.index("DAST SME Rationale") + 1
+    score_col = header.index("Automated Score") + 1
+
+    assert ws.cell(row=4, column=evidence_col).alignment.wrap_text is True
+    assert ws.cell(row=4, column=rationale_col).alignment.wrap_text is True
+    assert ws.cell(row=4, column=score_col).alignment.wrap_text is not True
+    assert ws.row_dimensions[4].height is None
