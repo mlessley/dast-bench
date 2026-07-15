@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from openpyxl import Workbook
+from openpyxl.chart import BarChart, Reference
 from openpyxl.formatting.rule import CellIsRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Protection, Side
 from openpyxl.utils import get_column_letter
@@ -200,6 +201,19 @@ def _add_executive_summary_sheet(
         ws.column_dimensions[get_column_letter(col_idx)].width = 40 if header_name == "Vendor" else 20
 
     ws.protection.sheet = True
+
+    if ranked_vendors:
+        last_row = EXEC_TABLE_FIRST_DATA_ROW + len(ranked_vendors) - 1
+        chart = BarChart()
+        chart.type = "bar"
+        chart.title = "Weighted Avg Score by Vendor"
+        chart.x_axis.title = "Weighted Avg Score (0-5)"
+        chart.y_axis.title = "Vendor"
+        data = Reference(ws, min_col=avg_col, min_row=EXEC_TABLE_HEADER_ROW, max_row=last_row)
+        cats = Reference(ws, min_col=1, min_row=EXEC_TABLE_FIRST_DATA_ROW, max_row=last_row)
+        chart.add_data(data, titles_from_data=True)
+        chart.set_categories(cats)
+        ws.add_chart(chart, f"A{last_row + 3}")
 
 
 def _is_right_aligned_numeric(header_name: str) -> bool:

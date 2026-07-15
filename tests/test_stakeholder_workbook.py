@@ -432,3 +432,22 @@ def test_generate_workbook_executive_summary_sorts_all_pending_vendor_last(tmp_p
     # outrank Vendor A's real (if low) score.
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1).value == "Vendor A"
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW + 1, column=1).value == "Vendor B"
+
+
+def test_generate_workbook_executive_summary_includes_bar_chart(tmp_path):
+    from openpyxl.chart import BarChart
+
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["Executive Summary"]
+    assert len(ws._charts) == 1
+    assert isinstance(ws._charts[0], BarChart)
