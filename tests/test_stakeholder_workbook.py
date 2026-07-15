@@ -645,3 +645,25 @@ def test_generate_workbook_writes_updated_pending_row_scope_text(tmp_path):
         "Pending — dast-scan results not yet available. "
         "Do not score or edit this row; it will be populated in Round 2."
     )
+
+
+def test_generate_workbook_rollup_block_has_summary_header(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=1,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    category_rows, _ = _rollup_row_numbers(taxonomy)
+    summary_header_row = min(category_rows.values()) - 1
+
+    cell = ws.cell(row=summary_header_row, column=1)
+    assert cell.value == "Summary"
+    assert cell.font.bold is True
+    assert cell.fill.fgColor.rgb == "001F4E78"

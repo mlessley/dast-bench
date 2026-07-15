@@ -451,7 +451,11 @@ def generate_workbook(
                 f'=TEXT({weight_ref},"0.0")&"/"&TEXT({evidence_ref},"0")&" available points"'
             )
 
-        ws.append([])
+        ws.append(["Summary"] + [None] * (len(headers) - 1))
+        summary_header_row = ws.max_row
+        summary_cell = ws.cell(row=summary_header_row, column=1)
+        summary_cell.font = _HEADER_FONT
+        summary_cell.fill = _HEADER_FILL
         category_rows_for_border, _ = _rollup_row_numbers(taxonomy)
         first_rollup_row = category_rows_for_border[_ordered_categories(taxonomy)[0]]
         for category in _ordered_categories(taxonomy):
