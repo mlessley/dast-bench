@@ -2,7 +2,7 @@ from openpyxl import load_workbook
 
 from core.models import Confidence, Criterion, CriteriaTaxonomy, ScoreEntry, Vendor, VendorResearchCache, VendorSource
 from core.render.stakeholder_workbook import generate_workbook
-from core.stakeholder_review import populate
+from core.stakeholder_review import _column_map, merge, populate
 
 
 def _taxonomy():
@@ -101,3 +101,89 @@ def test_populate_is_a_no_op_when_vendor_has_no_pending_rows(tmp_path):
     )
     summary = populate(vendor, out_path)
     assert "populated 0" in summary
+
+
+def _generate_two_stakeholders(tmp_path, filename="master.xlsx"):
+    out_path = tmp_path / filename
+    taxonomy = _taxonomy()
+    vendor = Vendor(id="v1", name="Vendor One", source=VendorSource.DISCOVERED)
+    vendor.scores.append(ScoreEntry(criterion_id="c1", score=4.0, evidence="ev1", confidence=Confidence.PAPER))
+    vendor.scores.append(ScoreEntry(criterion_id="c2", score=2.0, evidence="ev2", confidence=Confidence.PAPER))
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[("Jane Doe", "DAST SME"), (None, "Dev Lead")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    return out_path
+
+
+def _row_for(ws, cols, criterion_id):
+    crit_col = cols["_criterion_id"]
+    for r in range(4, ws.max_row + 1):
+        if ws[f"{crit_col}{r}"].value == criterion_id:
+            return r
+    raise AssertionError(f"row for {criterion_id} not found")
+
+
+def test_merge_fills_blank_master_cells_from_a_valid_returned_copy(tmp_path):
+    master_path = _generate_two_stakeholders(tmp_path, "master.xlsx")
+    copy_path = _generate_two_stakeholders(tmp_path, "jane-copy.xlsx")
+
+    copy_wb = load_workbook(copy_path)
+    copy_ws = copy_wb["v1"]
+    cols = _column_map(copy_ws)
+    row = _row_for(copy_ws, cols, "c1")
+    copy_ws[f"{cols['Jane Doe (DAST SME) Score']}{row}"] = 4.5
+    copy_ws[f"{cols['Jane Doe (DAST SME) Rationale']}{row}"] = "Confirmed with vendor demo"
+    copy_wb.save(copy_path)
+
+    summary = merge(master_path, copy_path)
+    assert "merged 1 cell" in summary
+
+    master_ws = load_workbook(master_path)["v1"]
+    mcols = _column_map(master_ws)
+    mrow = _row_for(master_ws, mcols, "c1")
+    assert master_ws[f"{mcols['Jane Doe (DAST SME) Score']}{mrow}"].value == 4.5
+
+
+def test_merge_flags_conflict_without_overwriting(tmp_path):
+    master_path = _generate_two_stakeholders(tmp_path, "master.xlsx")
+    copy_path = _generate_two_stakeholders(tmp_path, "jane-copy.xlsx")
+
+    master_wb = load_workbook(master_path)
+    master_ws = master_wb["v1"]
+    mcols = _column_map(master_ws)
+    mrow = _row_for(master_ws, mcols, "c1")
+    master_ws[f"{mcols['Jane Doe (DAST SME) Score']}{mrow}"] = 3.0
+    master_wb.save(master_path)
+
+    copy_wb = load_workbook(copy_path)
+    copy_ws = copy_wb["v1"]
+    cols = _column_map(copy_ws)
+    row = _row_for(copy_ws, cols, "c1")
+    copy_ws[f"{cols['Jane Doe (DAST SME) Score']}{row}"] = 4.5
+    copy_wb.save(copy_path)
+
+    summary = merge(master_path, copy_path)
+    assert "1 conflict" in summary
+    assert load_workbook(master_path)["v1"][f"{mcols['Jane Doe (DAST SME) Score']}{mrow}"].value == 3.0
+
+
+def test_merge_flags_invalid_score_and_dispute_without_rationale(tmp_path):
+    master_path = _generate_two_stakeholders(tmp_path, "master.xlsx")
+    copy_path = _generate_two_stakeholders(tmp_path, "jane-copy.xlsx")
+
+    copy_wb = load_workbook(copy_path)
+    copy_ws = copy_wb["v1"]
+    cols = _column_map(copy_ws)
+    row = _row_for(copy_ws, cols, "c1")
+    copy_ws[f"{cols['Jane Doe (DAST SME) Score']}{row}"] = 9.0
+    row2 = _row_for(copy_ws, cols, "c2")
+    copy_ws[f"{cols['Jane Doe (DAST SME) Dispute?']}{row2}"] = "Y"
+    copy_wb.save(copy_path)
+
+    summary = merge(master_path, copy_path)
+    assert "2 invalid" in summary

@@ -6,7 +6,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Protection
 
 from .models import Vendor
-from .render.stakeholder_workbook import FIRST_DATA_ROW, HEADER_ROW
+from .render.stakeholder_workbook import FIRST_DATA_ROW, HEADER_ROW, SCORE_VALUES
 
 
 def _column_map(ws) -> dict[str, str]:
@@ -53,3 +53,75 @@ def populate(vendor: Vendor, file_path: Path) -> str:
 
     wb.save(file_path)
     return f"populated {filled} pending row(s) for '{vendor.id}'"
+
+
+def _stakeholder_bases(cols: dict[str, str]) -> list[str]:
+    bases = []
+    for header in cols:
+        if header.endswith(" Score") and header not in ("Automated Score", "Resolved Score"):
+            bases.append(header[: -len(" Score")])
+    return bases
+
+
+def merge(master_path: Path, from_path: Path) -> str:
+    master_wb = load_workbook(master_path)
+    from_wb = load_workbook(from_path)
+
+    merged = 0
+    invalid = 0
+    conflicts = 0
+    unrecognized: list[str] = []
+
+    for sheet_name in master_wb.sheetnames:
+        if sheet_name not in from_wb.sheetnames:
+            continue
+        m_ws = master_wb[sheet_name]
+        f_ws = from_wb[sheet_name]
+        m_cols = _column_map(m_ws)
+        f_cols = _column_map(f_ws)
+
+        m_crit_col = m_cols["_criterion_id"]
+        f_crit_col = f_cols["_criterion_id"]
+        m_pending_col = m_cols["_pending"]
+
+        m_row_by_crit = {
+            m_ws[f"{m_crit_col}{r}"].value: r
+            for r in range(FIRST_DATA_ROW, m_ws.max_row + 1)
+            if m_ws[f"{m_crit_col}{r}"].value
+        }
+        f_row_by_crit = {
+            f_ws[f"{f_crit_col}{r}"].value: r
+            for r in range(FIRST_DATA_ROW, f_ws.max_row + 1)
+            if f_ws[f"{f_crit_col}{r}"].value
+        }
+
+        for base in _stakeholder_bases(m_cols):
+            score_h, dispute_h, rationale_h = f"{base} Score", f"{base} Dispute?", f"{base} Rationale"
+            if score_h not in m_cols or score_h not in f_cols:
+                if score_h not in m_cols:
+                    unrecognized.append(score_h)
+                continue
+            for criterion_id, f_row in f_row_by_crit.items():
+                f_score = f_ws[f"{f_cols[score_h]}{f_row}"].value
+                f_dispute = f_ws[f"{f_cols[dispute_h]}{f_row}"].value
+                f_rationale = f_ws[f"{f_cols[rationale_h]}{f_row}"].value
+                if f_score is None and f_dispute is None and f_rationale is None:
+                    continue
+                m_row = m_row_by_crit.get(criterion_id)
+                if m_row is None or m_ws[f"{m_pending_col}{m_row}"].value == 1:
+                    continue
+                valid = (f_score is None or f_score in SCORE_VALUES) and (f_dispute != "Y" or bool(f_rationale))
+                if not valid:
+                    invalid += 1
+                    continue
+                existing = m_ws[f"{m_cols[score_h]}{m_row}"].value
+                if existing is not None and f_score is not None and existing != f_score:
+                    conflicts += 1
+                    continue
+                m_ws[f"{m_cols[score_h]}{m_row}"] = f_score
+                m_ws[f"{m_cols[dispute_h]}{m_row}"] = f_dispute
+                m_ws[f"{m_cols[rationale_h]}{m_row}"] = f_rationale
+                merged += 1
+
+    master_wb.save(master_path)
+    return f"merged {merged} cell(s), {invalid} invalid, {conflicts} conflict(s), unrecognized: {unrecognized}"
