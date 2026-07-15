@@ -7,226 +7,104 @@
 
 ## Financial Sector Fit
 
-This evaluation is framed for a Fortune 500 financial-services buyer:
-regulatory compliance mapping (PCI-DSS, SOC 2, FedRAMP, and other
-financial-specific frameworks), business-logic/authorization testing
-(BOLA-style fraud vectors), sensitive financial data exposure detection,
-and deployment model/data residency control matter as much as raw
-detection rate. Read the rankings below with that lens — Invicti and
-StackHawk's leads are driven heavily by governance, compliance, and
-proof-of-exploit capabilities that carry disproportionate weight for this
-buyer; Veracode's real FedRAMP authorization is a differentiator no
-detection-rate-only view would surface; ZAP's fully self-hosted deployment
-model remains genuinely valuable for data-residency-sensitive workloads.
+This evaluation is framed around a Fortune 500 financial-services buyer,
+where regulatory compliance mapping (PCI-DSS/GLBA/SOX/FFIEC/NYDFS),
+business-logic and authorization testing (the classic vector for
+BOLA-style account-takeover and fraud losses), and data-residency control
+over scan traffic and findings matter more than raw feature count. Read
+the rankings below through that lens: a tool with a slightly lower
+weighted total but real regulatory certifications and configurable data
+residency may be the safer buy for this profile than a nominally
+higher-scoring tool without them.
 
 ## Overview
 
-Five candidates were evaluated against a 33-criterion taxonomy across 6
-categories, informed by a real enterprise DAST RFP matrix and this
-evaluation's Fortune 500 financial-services context. **OWASP ZAP** and
-**Nuclei** were carried through to hands-on testing (`evaluated`);
-**Invicti** and **Veracode Dynamic Analysis** are `finalist`s on paper
-scoring alone; **StackHawk** was rejected before the hands-on phase, on
-practical grounds rather than merit.
+Five candidates were evaluated against a 33-criterion taxonomy spanning
+six categories: Coverage (26), Detection Quality (22), Production Safety
+& Operability (14), Developer Experience (10), Reporting & Extensibility
+(14), and Deployment & Data Governance (14). OWASP ZAP and Nuclei were
+hands-on tested in this project's own CI pipeline; Invicti and Veracode
+Dynamic Analysis are finalists evaluated on paper research only, pending
+hands-on testing; StackHawk was rejected for this round on practical
+grounds (its cloud-backed execution model needs a paid account not
+available for this dogfood exercise), not on merit.
 
-| Vendor | Weighted Total | Status |
+| Vendor | Status | Weighted Total |
 |---|---|---|
-| [Invicti](scorecard-invicti.md) | **3.94** | finalist (paper only — no hands-on testing yet) |
-| StackHawk | 3.55 | rejected (practical access reasons — see below) |
-| [OWASP ZAP](scorecard-zap.md) | 3.34 | evaluated |
-| [Veracode Dynamic Analysis](scorecard-veracode.md) | 3.26 | finalist (paper only — kept in play for further review, see below) |
-| [Nuclei](scorecard-nuclei.md) | 3.13 | evaluated |
-
-Invicti's lead is driven by Proof-Based Scanning directly targeting
-several of the highest-value criteria in this taxonomy. Veracode ranks
-4th on paper, but was deliberately kept as a finalist rather than
-rejected: several of its lower scores reflect research gaps (no
-confirmed SIEM integration, no confirmed RBAC details) rather than
-demonstrated weaknesses, and it holds the single strongest
-Vendor-Security-Posture score of any candidate (a real FedRAMP Moderate
-authorization) — worth deeper diligence before a rejection call.
+| Invicti | Finalist (paper) | 4.13 |
+| StackHawk | Rejected (practical/procurement) | 3.85 |
+| Veracode Dynamic Analysis | Finalist (paper) | 3.63 |
+| OWASP ZAP | Evaluated (hands-on) | 3.44 |
+| Nuclei | Evaluated (hands-on) | 3.41 |
 
 ## Where They Win
 
 | Vendor | Status | Core Strengths / Best For | Critical Enterprise Gaps |
 |---|---|---|---|
-| [Invicti](scorecard-invicti.md) | Finalist (paper only) | Finding Validation/Proof-of-Exploit (5/5), Automated Triage/FP-Reduction (5/5), ASPM Integration (5/5, owns Kondukto outright), Ticketing Integration (5/5) | Never hands-on tested; Business Logic Detection (2/5), no IDE tooling or custom-rule engine found |
-| StackHawk | Paper only (rejected — no trial access) | Intelligent Business Logic Testing (4.5/5), Compliance & Standards Mapping (4.5/5), Vulnerability Status Management (4/5, Jira-tied finding lifecycle) | Deployment Model & Data Residency (2/5, cloud-only); detection-accuracy/false-positive-rate rest on unverified vendor claims, never hands-on validated |
-| [OWASP ZAP](scorecard-zap.md) | Evaluated | Deployment Model & Data Residency (5/5, fully self-hostable), Predictability of Licensing Model (5/5, free/Apache 2.0), CI/CD-Native Fit (5/5) | Vulnerability Status Management (1/5), Multi-Tenancy & Access Control (1/5) |
-| [Veracode Dynamic Analysis](scorecard-veracode.md) | Finalist (paper only, under further review) | Vendor Security Posture (5/5, real FedRAMP Moderate ATO), Ticketing Integration (4.5/5, Jira auto-create/auto-close), unified SAST/DAST/SCA compliance reporting (4.5/5) | Coverage (3.06, tied for last — independent reviews flag SPA/GraphQL/complex-auth limitations); SIEM and RBAC support unconfirmed, not researched to a conclusion |
-| [Nuclei](scorecard-nuclei.md) | Evaluated | Asset Discovery & Inventory Tracking (5/5), SIEM/SOAR Integration (4.5/5), Setup & Onboarding Friction (5/5) | Detection Accuracy (2/5 hands-on), Automated Triage/FP-Reduction Engine (1.5/5) |
+| [Invicti](scorecard-invicti.md) | Finalist (paper) | Proof-Based Scanning auto-confirms exploits (Finding Validation 5.0, Automated Triage 5.0); Incremental Scan (5.0) and Custom Security Checks scripting (5.0); owns an ASPM platform via Kondukto (5.0); real SOC2 + ISO27001 certs (Vendor Security Posture 4.5) | No partner/vendor-risk-specific API scanning (2.0); no true IDE plugin, only Docker CLI (3.0) |
+| [Veracode Dynamic Analysis](scorecard-veracode.md) | Finalist (paper) | Real FedRAMP Moderate ATO plus SOC2/ISO27001 (Vendor Security Posture 5.0); Veracode Fix opens real auto-remediation PRs (5.0); owns an IDC-MarketScape-Leader ASPM platform, Risk Manager (5.0); unified SAST/DAST/SCA flaw tracking | FP reduction is human-analyst-driven, not automated (2.5); no native SIEM/SOAR connector (2.0); no dedicated financial-data-pattern detection (2.0) |
+| [Nuclei](scorecard-nuclei.md) | Evaluated (hands-on) | Lowest setup friction of any candidate, single static binary (5.0); the entire tool is a community-authored custom-rule engine (5.0); ProjectDiscovery's cloud platform is a real attack-surface-management product, RSAC 2025 Innovation Sandbox finalist (5.0) | Hands-on CI testing found only 4/15 known vulnerabilities detected with 17 false positives (2.0/2.0) — signature-matching design is a weak fit for this benchmark's misconfiguration-heavy composition |
+| [OWASP ZAP](scorecard-zap.md) | Evaluated (hands-on) | Free, fully open-source and self-hostable (Licensing Predictability 5.0, Data Residency 5.0); best hands-on detection rate tested, 11/15 known vulnerabilities in real CI runs (3.5); mature stateful crawling engine (4.5) | No historical trend dashboards or vulnerability-lifecycle workflow at all (1.0/1.0); no RBAC or asset-discovery capability (1.0/1.0) — free tool, not a governance platform |
+| [StackHawk](scorecard-stackhawk.md) | Rejected (practical) | Highest raw score of any candidate (3.85) — granular production-safe scan controls (4.5), documented Kotlin scripting extensibility (4.5), real DefectDojo ASPM integration (4.0) | Cloud-only execution, no on-prem/data-residency option (Deployment & Data Governance category weakest of all candidates, 2.86); excluded this round for needing a paid account, not for capability gaps |
 
-## [Invicti](scorecard-invicti.md) — highest score, but not hands-on tested
-
-**The Wins:**
-- Finding Validation/Proof-of-Exploit (5/5) and Automated Triage/FP-Reduction
-  Engine (5/5) — Proof-Based Scanning is the product's core design, not an
-  add-on: it automatically and safely re-exploits every detected
-  vulnerability to confirm it's real before it ever reaches a triage
-  queue, the strongest fit of any candidate on both criteria.
-- ASPM Integration (5/5) — owns an ASPM platform outright via the Kondukto
-  acquisition, rather than merely integrating with a third-party one.
-- Vendor Security Posture (4.5/5) — real, independently-verifiable SOC 2
-  Type 2, ISO 27001:2022, and PCI DSS certifications.
-
-**The Gaps:**
-- Never hands-on tested — a finalist on paper scoring alone; its
-  detection-accuracy (4/5) rests on a vendor-claimed 99.98% accuracy
-  figure, not independent evidence.
-- Business Logic & Workflow Detection (2/5) — no dedicated multi-step
-  authorization-testing engine found, unlike StackHawk's purpose-built
-  offering.
-- No IDE plugin (2/5) or custom-rule-authoring engine (2/5) found.
-
-## StackHawk — paper-only, strongest on business logic and compliance depth
+## [Invicti](scorecard-invicti.md) — Finalist, enterprise incumbent-tier platform
 
 **The Wins:**
-- Intelligent Business Logic Testing (4.5/5) — purpose-built,
-  multi-user-perspective testing for authorization flaws (BOLA-style),
-  a capability none of the other candidates has an equivalent for.
-- Compliance & Standards Mapping (4.5/5) — explicit pre-built
-  PCI-DSS/HIPAA/SOC2 reports, including a dedicated PCI DSS v4.0.1 guide.
-- Vulnerability Status Management (4/5) — a real finding-lifecycle
-  workflow tied directly to Jira.
+- Proof-Based Scanning automatically re-exploits every detected vulnerability to confirm it's real before it reaches a triage queue — the strongest fit of any candidate for both Finding Validation (5.0) and Automated Triage/FP-Reduction (5.0), and drives a 4.5 False-Positive Rate.
+- A named "Incremental Scan" feature automatically detects and attacks only pages changed since the prior scan (5.0), and "Custom Security Checks via Scripting" is a well-documented, no-vendor-involvement way to author new detection rules (5.0).
+- Owns an ASPM platform outright via the Kondukto acquisition (ASPM Integration 5.0) and offers cloud/on-prem/hybrid deployment with a fully air-gapped option plus real SOC2 and ISO 27001:2022 certifications (Deployment & Data Residency 4.5, Vendor Security Posture 4.5).
 
 **The Gaps:**
-- Deployment Model & Data Residency (2/5) — cloud-only execution, a real
-  concern for a regulated buyer that can't send production traffic to
-  external infrastructure.
-- Never hands-on tested — requires a paid SaaS account/API key not
-  available for this evaluation; detection-accuracy/false-positive-rate
-  rest on unverified vendor claims.
-- Vendor Security Posture (2.5/5) — marketing about helping *customers*
-  comply is a different claim from StackHawk's own certification status.
+- No partner/third-party-facing API risk-assessment output found even after independent verification (Third-Party/Partner API Risk 2.0).
+- No true IDE plugin — the one "VS Code" marketplace listing is actually an Azure DevOps/Pipelines integration, not an in-editor tool (IDE/Local Dev Tooling 3.0).
+- No explicit passive-only/rate-limited safe-mode documentation or scan-speed/concurrency benchmark found (Safe Production Scanning 3.0, Scan Performance & Scalability 3.0).
 
-## [OWASP ZAP](scorecard-zap.md) — evaluated, strongest on deployment control and cost
+## [Veracode Dynamic Analysis](scorecard-veracode.md) — Finalist, unified AppSec-platform incumbent
 
 **The Wins:**
-- Deployment Model & Data Residency (5/5) — fully self-hostable,
-  complete data control by default.
-- Predictability of Licensing Model (5/5) — fully open-source (Apache
-  2.0); zero cost regardless of usage scale.
-- Hands-on detection: 11/15 (73%) known vulnerabilities detected across
-  both benchmark targets, 5 false positives, against ground truth
-  rebuilt from real observed scan output.
+- The only candidate running DAST on one unified platform alongside SAST/SCA with shared flaw tracking and compliance reporting, backed by a real FedRAMP Moderate Authority to Operate granted in 2022 plus SOC2/ISO27001 — the best-documented, most independently verifiable security posture of any candidate evaluated (Vendor Security Posture 5.0).
+- The Veracode Fix GitHub Action opens real pull requests with proposed fixes (Auto-Remediation/Auto-PR 5.0), and Veracode Risk Manager is a named-Leader-in-the-2025-IDC-MarketScape ASPM product it owns outright (ASPM Integration 5.0).
+- Veracode EASM performs Deep Discovery scans that surface unknown/unmanaged internet-facing assets (Asset Discovery 4.5), and Veracode Analytics gives executive dashboards tracking Mean Time to Resolve (Historical Risk Trend Dashboards 4.5).
 
 **The Gaps:**
-- Vulnerability Status Management (1/5) and Multi-Tenancy & Access
-  Control (1/5) — a scan-and-report tool, not a governance platform.
-- Automated Triage/FP-Reduction Engine (3/5) — static rule-based
-  suppression only, no adaptive learning.
+- Veracode's own methodology documentation confirms false-positive reduction is done by human security analysts manually verifying output, not an automated triage engine (Automated Triage/FP-Reduction 2.5).
+- No native SIEM/SOAR connector was found (the one Splunk bridge in use is third-party, not Veracode-authored) and no dedicated pattern detection exists for financial data types (account/routing numbers, card PANs, SSNs) beyond generic sensitive-data CWEs (SIEM/SOAR Integration 2.0, Sensitive Financial Data Exposure 2.0).
+- Custom-rule capability is scoped to SCA license/component policy controls, not new DAST detection logic (Extensibility/Custom Rules 2.5).
 
-## [Veracode Dynamic Analysis](scorecard-veracode.md) — paper-only, kept for further review
+## [Nuclei](scorecard-nuclei.md) — Evaluated, template-based OSS scanner
 
 **The Wins:**
-- Vendor Security Posture (5/5) — SOC 2 Type II, ISO 27001, and a real
-  **FedRAMP Moderate Authority to Operate**, a government-grade
-  authorization no other candidate in this evaluation holds.
-- Ticketing & Collaboration Integration (4.5/5) — Jira Cloud integration
-  auto-creates a defect for every finding and auto-closes it once
-  verified fixed or a mitigation is documented.
-- Compliance & Standards Mapping (4.5/5) — unified compliance reporting
-  across a single SAST/DAST/SCA platform with shared flaw tracking.
+- Lowest onboarding friction of any candidate — a single static Go binary with auto-updating templates (Setup & Onboarding Friction 5.0) — and the entire tool is itself a community-authored YAML custom-rule engine, no vendor involvement needed (Extensibility/Custom Rules 5.0).
+- ProjectDiscovery's cloud platform is a genuine attack-surface-management product and a 2025 RSAC Innovation Sandbox finalist for that capability (Asset Discovery & Inventory 5.0), fast and concurrent by design at scale (Scan Performance & Scalability 4.5).
+- DefectDojo ships a native parser for Nuclei's JSON output (ASPM Integration 4.0), and ProjectDiscovery's "Neo" product posts PR comments with suggested fixes (Auto-Remediation/Auto-PR 3.0).
 
 **The Gaps:**
-- Coverage (3.06) is tied for last of all five candidates — independent
-  reviews (not just vendor marketing) explicitly flag DAST coverage as
-  "limited for SPAs, GraphQL APIs, and complex authentication flows"
-  versus specialized alternatives.
-- SIEM/SOAR Integration (2/5) and Multi-Tenancy/Access Control (2.5/5) —
-  no confirmed capability found in research; this is an honest gap in
-  available public information, not a confirmed absence, and is the
-  main reason this candidate stayed a finalist rather than being
-  rejected — it's a "needs more digging" result, not a "confirmed weak"
-  one.
-- Deployment Model & Data Residency (3/5) — Internal Scanning Management
-  allows behind-firewall/staging scans, but the core platform is
-  SaaS-first with no full on-prem/air-gapped option found.
+- Real hands-on CI testing against this project's own benchmarks found only 4 of 15 known vulnerabilities detected, with 17 false positives against those 4 real detections (Detection Accuracy 2.0, False-Positive Rate 2.0) — template/signature matching is a weak fit for this benchmark's misconfiguration-heavy composition rather than known-CVE targets.
+- Workflow templates only chain predefined, pre-authored multi-step patterns rather than true dynamic business-logic testing (Business Logic & Workflow Detection 3.0), and the companion crawler's automatic form-fill capability is explicitly experimental (Stateful Web Crawling 3.0).
 
-## [Nuclei](scorecard-nuclei.md) — evaluated, strongest on discovery and integration
+## [OWASP ZAP](scorecard-zap.md) — Evaluated, free open-source baseline
 
 **The Wins:**
-- Asset Discovery & Inventory Tracking (5/5) — ProjectDiscovery's cloud
-  platform is a genuine attack-surface-management product.
-- SIEM/SOAR Integration (4.5/5) and Ticketing & Collaboration
-  Integration (4.5/5) — native, documented integrations to Splunk,
-  Elasticsearch, Jira, and GitHub/GitLab.
-- Setup & Onboarding Friction (5/5) — a single static Go binary.
+- Fully open-source at zero cost regardless of scale (Licensing Model Predictability 5.0) and inherently self-hostable, so all scan data and traffic stay wherever it's run (Deployment Model & Data Residency 5.0).
+- The best hands-on detection result of the two tools tested this way — 11 of 15 known vulnerabilities detected in real CI runs against this project's own benchmarks (Detection Accuracy 3.5) — with one of the most mature stateful, multi-page crawling engines evaluated, built before SPAs existed (Traditional Stateful Web Crawling 4.5).
+- Highly extensible via Zest/Python/JS/Groovy scripting and a large add-on marketplace (Extensibility/Custom Rules 5.0), including a real "Access Control Testing" add-on that automatically attacks every discovered URL as each configured role to flag authorization violations (Business Logic & Workflow Detection 3.5).
 
 **The Gaps:**
-- Detection Accuracy (2/5 hands-on) — 4/15 (27%) known vulnerabilities
-  detected across both benchmark targets.
-- Automated Triage/FP-Reduction Engine (1.5/5) — deterministic template
-  matcher, no historical-learning or PoC-generation capability.
-- Traditional Stateful Web Crawling (2/5) — no native crawling.
+- No historical trend dashboard or vulnerability-lifecycle/exception-management workflow exists in the free tool at all (Historical Risk Trend Dashboards 1.0, Vulnerability Status Management 1.0), and there is no RBAC, audit logging, or asset-discovery capability (Multi-Tenancy & Access Control 1.0, Asset Discovery & Inventory 1.0) — it's a scan-and-report tool, not a governance platform.
+- No auto-remediation capability of any kind (Auto-Remediation/Auto-PR 1.0), and no native SIEM/SOAR integration beyond third-party bridging tools (SIEM/SOAR Integration 2.0).
+
+Excluded this round: **StackHawk** (insufficient — its cloud-backed execution model needs a paid SaaS account/API key not available for this dogfood exercise; rejected on practical grounds despite the highest raw weighted score of any candidate, 3.85).
 
 ## Category Takeaways
 
-- **Coverage (26):** StackHawk leads (3.69) narrowly over Invicti (3.62)
-  on business-logic and auth-flow depth; Veracode and Nuclei tie for
-  last (3.06) — Veracode's independently-flagged SPA/GraphQL/complex-auth
-  limitations show up directly here.
-- **Detection Quality (22):** Invicti leads decisively (4.23) via
-  Proof-Based Scanning's direct hit on finding-validation and
-  automated-triage criteria — still paper-only. Among hands-on-tested
-  tools, ZAP (3.34) outperforms Nuclei (2.34); Veracode (3.39) sits
-  between them on paper claims alone.
-- **Production Safety & Operability (14):** ZAP leads (4.14); Invicti
-  (3.64), Nuclei (3.61), and StackHawk (3.57) cluster close behind;
-  Veracode trails slightly (3.43) — the narrowest real spread of any
-  category.
-- **Developer Experience (10):** StackHawk leads (3.75); Invicti (3.60)
-  is close behind on AI-driven fix guidance; Veracode (3.05) and ZAP
-  (2.95) trail, both on auto-remediation gaps.
-- **Reporting & Extensibility (14):** Invicti leads clearly (4.39) —
-  owning an ASPM platform outright set it apart; ZAP is the clear
-  laggard (2.43); Veracode (3.39) sits mid-pack, held back by
-  unconfirmed SIEM integration.
-- **Deployment & Data Governance (14):** Invicti leads (4.18) on
-  flexible deployment plus verified certifications; StackHawk trails
-  (2.64) on its cloud-only model; Veracode (3.32) sits mid-pack, its
-  FedRAMP authorization not fully offsetting an unconfirmed RBAC story
-  and SaaS-first deployment.
+- **Coverage (26):** Invicti leads (3.92) on full browser-engine crawling and GraphQL introspection; third-party/partner-API-risk-assessment-formatted output remains a market-wide gap, with every candidate scoring at or below 3.0 on that specific criterion.
+- **Detection Quality (22):** Invicti leads by a wide margin (4.41), driven by Proof-Based Scanning's automated exploit confirmation; Nuclei trails badly (2.70), a hands-on-verified weak spot where template/signature matching doesn't align well with this benchmark's misconfiguration-heavy vulnerability mix.
+- **Production Safety & Operability (14):** StackHawk (4.50) and OWASP ZAP (4.36) lead across all five candidates — free/open-source ZAP's documented passive-scanning mode and StackHawk's granular rate-limit configuration both outscore every paid finalist here.
+- **Developer Experience (10):** Veracode leads among the finalists (4.10), helped by its new auto-remediation GitHub Action and fast Quick Scan onboarding; ZAP trails the group (3.05), driven mainly by its 1.0 auto-remediation score.
+- **Reporting & Extensibility (14):** Invicti leads (4.61); ZAP is the clear outlier at 2.50 — the free, open-source tool has no native historical-trend dashboard or vulnerability-lifecycle-management workflow.
+- **Deployment & Data Governance (14):** Invicti leads (4.18) on flexible multi-model deployment plus real ISO 27001/SOC2 certifications; StackHawk is weakest here (2.86), being cloud-only with no configurable data-residency option.
 
 ## Trade-offs worth flagging
 
-- **False-positive-rate's hands-on number is coarser than it looks.** It
-  counts any finding not on the ground-truth list as a false positive —
-  this affects Nuclei's count more than ZAP's. Its 2/5 score should be
-  read with that in mind.
-- **"Vendor Security Posture" scoring reflects what's independently
-  verifiable, not what's marketed.** Veracode's FedRAMP ATO and Invicti's
-  ISO 27001/SOC 2 announcements are real, checkable certifications;
-  StackHawk's marketing is about helping *customers* comply, a different
-  claim from its own certification status.
-- **Veracode's finalist status reflects incomplete research, not a
-  confirmed strong result.** Several of its lower scores (SIEM
-  integration, RBAC/multi-tenancy) are marked as research gaps rather
-  than demonstrated absences — deeper diligence (vendor docs, a trial,
-  or a direct sales conversation) could move these scores meaningfully
-  in either direction. Its ranking here should be read as provisional
-  more than any other candidate's.
-- **"Asset Discovery" measures different things across candidates.**
-  Nuclei's strength is network-based (unknown, rogue assets). StackHawk's
-  and Invicti's discovery mechanisms are source/ecosystem-driven (known
-  repos/APIs) — a different question than "what's exposed that we don't
-  know about."
-- **Invicti's entire scorecard is paper-confidence, same caveat class as
-  StackHawk and Veracode.** None of its scores — including its standout
-  Proof-Based Scanning claims — have been independently verified in this
-  evaluation.
-- **Four newer criteria remain paper-confidence only for every
-  candidate.** Traditional Stateful Web Crawling, ASPM Integration,
-  Automated Triage/FP-Reduction Engine, and Predictability of Licensing
-  Model don't yet carry hands-on evidence for any vendor.
-
-## Methodology note: how to read detection-accuracy
-
-The benchmark ground truth used for hands-on scoring (ZAP and Nuclei only
-— this doesn't affect the three paper-only candidates' scores) reflects
-vulnerabilities empirically confirmed reachable by both tools within this
-scan configuration, not an exhaustive list of every known vulnerability
-either benchmark app contains. Read the detection-accuracy scores as "how
-well did this tool find what's reachable in a realistic scan," not "how
-good is this tool at finding every documented vulnerability in these
-apps."
+- False-positive-rate remains a coarse metric for the two hands-on-tested vendors (ZAP, Nuclei): it counts every finding not on the ground-truth list as a false positive, including legitimate info-level fingerprinting (tech detection, missing-header notices) that isn't really a false alarm, just not itself a tracked vulnerability.
+- ZAP's low governance-related scores (historical dashboards, vulnerability-status workflow, multi-tenancy RBAC) describe the free, open-source tool specifically. Checkmarx — which now employs ZAP's core development team — sells a separate commercial platform, Checkmarx One, with real dashboard, RBAC, and lifecycle-management features; those were deliberately excluded from ZAP's scores here since they are not part of the free tool a team running `zap-full-scan.py` actually gets, and conflating the two would misrepresent what the open-source project provides on its own.

@@ -288,6 +288,42 @@ scores:
     docs.veracode.com/r/Manage_workspace_access'
   confidence: paper
   timestamp: '2026-07-14T23:42:17.506592'
+- criterion_id: auto-remediation-pr
+  score: 5.0
+  evidence: 'Veracode Fix GitHub Action, configured with fixType:batch and createPR:true,
+    creates a new branch and opens an actual pull request with proposed fixes for
+    review/approval/merge. Source: docs.veracode.com/r/Veracode_Fix_GitHub_Action,
+    veracode.com/blog/bringing-veracode-fix-github'
+  confidence: paper
+  timestamp: '2026-07-15T00:59:53.492942'
+- criterion_id: setup-onboarding-friction
+  score: 4.0
+  evidence: 'Veracode DAST Essentials'' ''Quick Scan'' delivers results in as early
+    as 5 minutes after a no-credit-card free-trial signup and target creation. Full
+    authenticated/API scan setup is closer to ~30 minutes per Veracode''s own quickstart
+    learning path -- splits the rubric between minutes (basic scan) and under an hour
+    (fully configured). Source: veracode.com/blog/getting-started-guide-veracode-dast-essentials,
+    docs.veracode.com/r/Dynamic_Analysis_onboarding'
+  confidence: paper
+  timestamp: '2026-07-15T00:59:54.122883'
+- criterion_id: legacy-app-protocol-support
+  score: 3.0
+  evidence: 'Veracode DAST scans SOAP APIs after translating the WSDL specification
+    into a Veracode-supported spec format (Postman Collection/OpenAPI) -- real coverage
+    with real translation friction, matching rubric level 3 rather than full parity.
+    Modern JS SPA support came via the 2022 Crashtest Security acquisition, underscoring
+    legacy-stack support is comparatively less native. Source: appsecsanta.com/veracode-dast,
+    docs.veracode.com/r/Scan_APIs'
+  confidence: paper
+  timestamp: '2026-07-15T00:59:55.023033'
+- criterion_id: incremental-differential-scanning
+  score: 3.0
+  evidence: 'Veracode DAST scan configuration supports allowlist/blocklist and subdirectory-level
+    URL scoping to restrict scans to specific paths, matching rubric level 3 exactly.
+    No automatic change-detection-since-last-scan found -- the ''Similarity Threshold''
+    feature dedupes within one scan, not across scans. Source: docs.veracode.com/r/Scan_Web_Applications'
+  confidence: paper
+  timestamp: '2026-07-15T00:59:56.250099'
 hands_on_results: []
 observations:
 - context: discovery research

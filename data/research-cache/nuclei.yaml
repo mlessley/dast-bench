@@ -1,0 +1,136 @@
+vendor_id: nuclei
+criteria:
+  detection-accuracy:
+    researched_at: '2026-07-15T00:59:36.225847'
+    queries:
+    - Nuclei detection accuracy hands-on CI benchmark (confirmation, no new research)
+    findings:
+    - url: internal://ci-benchmark
+      snippet: Hands-on CI scan data (4/15 known vulnerabilities detected against
+        Juice Shop/VAmPI) is real empirical evidence and supersedes paper/marketing
+        research.
+    reviewed_by_gap_check: true
+    stale: false
+  false-positive-rate:
+    researched_at: '2026-07-15T00:59:36.521393'
+    queries:
+    - Nuclei false positive rate hands-on CI benchmark (confirmation, no new research)
+    findings:
+    - url: internal://ci-benchmark
+      snippet: Hands-on CI scan data (17 false positives vs 4 true detections) is
+        real empirical evidence and supersedes paper/marketing research.
+    reviewed_by_gap_check: true
+    stale: false
+  auto-remediation-pr:
+    researched_at: '2026-07-15T00:59:37.235284'
+    queries:
+    - ProjectDiscovery Neo PR security review auto remediation
+    findings:
+    - url: https://projectdiscovery.io/solutions/pr-security-review
+      snippet: Neo posts PR comments with finding, exploit evidence, and suggested
+        fix; retests once a fix is pushed.
+    - url: https://projectdiscovery.io/blog/continuous-pr-security-review
+      snippet: Continuous PR security review product blog.
+    reviewed_by_gap_check: true
+    stale: false
+  business-logic-workflow-detection:
+    researched_at: '2026-07-15T00:59:37.892439'
+    queries:
+    - Nuclei workflow templates multi-step business logic
+    findings:
+    - url: https://docs.projectdiscovery.io/templates/workflows/overview
+      snippet: Workflow templates chain multi-step flows with shared execution context.
+    - url: https://nuclei.projectdiscovery.io/templating-guide/workflows/
+      snippet: Templating guide for workflow templates.
+    reviewed_by_gap_check: true
+    stale: false
+  legacy-app-protocol-support:
+    researched_at: '2026-07-15T00:59:38.549252'
+    queries:
+    - Nuclei legacy protocol support network templates
+    findings:
+    - url: https://docs.projectdiscovery.io/templates/protocols/network
+      snippet: Network protocol templates for FTP, Telnet, SMB, SSH.
+    - url: https://projectdiscovery.io/blog/nuclei-templates-v9-8-0-a-leap-forward-in-network-security-scanning
+      snippet: v9.8.0 JS protocol library for complex legacy protocol interactions
+        (SMB, RDP).
+    reviewed_by_gap_check: true
+    stale: false
+  third-party-partner-api-risk:
+    researched_at: '2026-07-15T00:59:38.889519'
+    queries:
+    - Nuclei third-party partner API risk assessment
+    findings:
+    - url: https://projectdiscovery.featurebase.app/p/api-security
+      snippet: '''API Security'' appears on ProjectDiscovery''s public roadmap, not
+        yet shipped.'
+    reviewed_by_gap_check: true
+    stale: false
+  sensitive-financial-data-exposure:
+    researched_at: '2026-07-15T00:59:39.722945'
+    queries:
+    - Nuclei financial data credit card detection templates
+    findings:
+    - url: https://github.com/projectdiscovery/nuclei-templates/pull/11381
+      snippet: Merged credit-card-number-detection.yaml template, March 2025.
+    - url: https://github.com/projectdiscovery/nuclei-templates/blob/master/exposures/tokens/stripe/stripe-secret-key.yaml
+      snippet: Dedicated Stripe secret-key detection template.
+    reviewed_by_gap_check: true
+    stale: false
+  ide-local-dev-tooling:
+    researched_at: '2026-07-15T00:59:40.879048'
+    queries:
+    - Nuclei IDE plugin local dev tooling
+    findings:
+    - url: https://github.com/projectdiscovery/nuclei
+      snippet: Nuclei is a CLI tool runnable locally.
+    - url: https://github.com/projectdiscovery/nuclei-action
+      snippet: Official GitHub Action for CI, not a pre-commit/IDE integration.
+    reviewed_by_gap_check: true
+    stale: false
+  vulnerability-status-management:
+    researched_at: '2026-07-15T00:59:41.848186'
+    queries:
+    - ProjectDiscovery Cloud Platform vulnerability status lifecycle
+    findings:
+    - url: https://feedback.projectdiscovery.io/changelog
+      snippet: Added a 'triaged' status to PDCP lifecycle.
+    - url: https://projectdiscovery.io/vulnerability-management
+      snippet: PDCP vulnerability management with audit trails.
+    reviewed_by_gap_check: true
+    stale: false
+  stateful-web-crawling:
+    researched_at: '2026-07-15T00:59:42.708276'
+    queries:
+    - Katana stateful crawling authenticated sessions form fill
+    findings:
+    - url: https://github.com/projectdiscovery/katana
+      snippet: Katana supports authenticated browser sessions via remote-debugging
+        websocket.
+    - url: https://docs.projectdiscovery.io/tools/katana/usage
+      snippet: Katana usage docs including experimental automatic form-fill (-aff).
+    reviewed_by_gap_check: true
+    stale: false
+  automated-triage-fp-reduction:
+    researched_at: '2026-07-15T00:59:43.583840'
+    queries:
+    - ProjectDiscovery Triage automated FP reduction
+    findings:
+    - url: https://projectdiscovery.io/triage
+      snippet: Triage product automatically validates, reproduces, and resolves vulnerability
+        reports via behavioral checks.
+    - url: https://projectdiscovery.io/blog/why-current-vuln-scanners-fail-to-stop-breaches
+      snippet: Direct behavioral checks validate exploitability at runtime.
+    reviewed_by_gap_check: true
+    stale: false
+  aspm-integration:
+    researched_at: '2026-07-15T00:59:44.389837'
+    queries:
+    - Nuclei ASPM DefectDojo integration
+    findings:
+    - url: https://docs.defectdojo.com/supported_tools/parsers/file/nuclei/
+      snippet: Native DefectDojo parser for Nuclei JSON output with dedup fields.
+    - url: https://www.pointguardai.com/integrations/nuclei
+      snippet: PointGuard AI dedicated Nuclei integration.
+    reviewed_by_gap_check: true
+    stale: false

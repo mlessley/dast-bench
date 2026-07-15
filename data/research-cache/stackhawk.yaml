@@ -1,0 +1,150 @@
+vendor_id: stackhawk
+criteria:
+  shadow-api-discovery:
+    researched_at: '2026-07-15T00:59:45.218259'
+    queries:
+    - StackHawk API discovery shadow endpoints
+    findings:
+    - url: https://docs.stackhawk.com/web-app/api-discovery.html
+      snippet: API Discovery statically parses connected source repos to find endpoints
+        missing from OpenAPI specs.
+    - url: https://www.stackhawk.com/product/api-discovery/
+      snippet: Contrasts source-code-based discovery against traffic-based discovery.
+    reviewed_by_gap_check: true
+    stale: false
+  safe-prod-scanning:
+    researched_at: '2026-07-15T00:59:46.044917'
+    queries:
+    - StackHawk safe production scanning rate limiting
+    findings:
+    - url: https://docs.stackhawk.com/hawkscan/configuration/
+      snippet: 'Documented rate-limit/scope config: requestDelayMillis, concurrentRequests,
+        throttlePassiveBacklog, throttleIntervalSeconds, maxDurationMinutes.'
+    - url: https://docs.stackhawk.com/platform/policy-management/production-safe-scanning/
+      snippet: Dedicated Production Safe scan policy.
+    reviewed_by_gap_check: true
+    stale: false
+  auto-remediation-pr:
+    researched_at: '2026-07-15T00:59:46.402617'
+    queries:
+    - StackHawk auto remediation PR GitHub Copilot
+    findings:
+    - url: https://docs.stackhawk.com/integrations/workflows/github/github-pr-checks/
+      snippet: GitHub PR Checks only posts commit statuses and PR comment summaries
+        linking to findings, no auto-generated fix diff or auto-opened PR.
+    - url: https://www.stackhawk.com/blog/github-copilot-secure-code
+      snippet: Copilot Agent Skill does Scan->Fix->Verify, but Fix is user-invoked
+        Copilot chat editing, not an autonomous PR.
+    reviewed_by_gap_check: true
+    stale: false
+  extensibility-custom-rules:
+    researched_at: '2026-07-15T00:59:47.235430'
+    queries:
+    - StackHawk custom scripting extensibility
+    findings:
+    - url: https://docs.stackhawk.com/scripting/
+      snippet: Custom active/passive scan scripts in Kotlin, deployed via stackhawk.yml
+        + hawk register plugin, with public examples repo.
+    reviewed_by_gap_check: true
+    stale: false
+  third-party-partner-api-risk:
+    researched_at: '2026-07-15T00:59:47.661391'
+    queries:
+    - StackHawk third-party partner API risk financial sector
+    findings:
+    - url: https://www.stackhawk.com/solutions/stackhawk-for-financial-sector/
+      snippet: Only generic 'sensitive financial data' marketing language; no open-banking/partner-API-specific
+        scanning mode or vendor-risk-formatted output.
+    reviewed_by_gap_check: true
+    stale: false
+  asset-discovery-inventory:
+    researched_at: '2026-07-15T00:59:48.627846'
+    queries:
+    - StackHawk asset inventory discovery
+    findings:
+    - url: https://docs.stackhawk.com/web-app/api-discovery.html
+      snippet: Continuously-updated inventory of apps/APIs from connected repos.
+    - url: https://www.stackhawk.com/product/api-discovery/
+      snippet: 'Explicitly repo-connected only: no agents, no production scanning.'
+    reviewed_by_gap_check: true
+    stale: false
+  sensitive-financial-data-exposure:
+    researched_at: '2026-07-15T00:59:49.493021'
+    queries:
+    - StackHawk sensitive financial data exposure detection
+    findings:
+    - url: https://docs.stackhawk.com/hawkscan-scripting/script-types/passive_scripting.html
+      snippet: Passive scanning scripts include predefined patterns for phone numbers
+        and credit card numbers.
+    - url: https://www.stackhawk.com/solutions/sensitive-data-identification/
+      snippet: Sensitive Data Identification source-code-scans for PII/PCI/PHI-handling
+        APIs.
+    reviewed_by_gap_check: true
+    stale: false
+  incremental-differential-scanning:
+    researched_at: '2026-07-15T00:59:50.271897'
+    queries:
+    - StackHawk incremental differential scanning path scoping
+    findings:
+    - url: https://docs.stackhawk.com/hawkscan/configuration/
+      snippet: Documented includePaths/excludePaths scan-scoping configuration.
+    reviewed_by_gap_check: true
+    stale: false
+  ide-local-dev-tooling:
+    researched_at: '2026-07-15T00:59:50.943004'
+    queries:
+    - StackHawk IDE local dev tooling agent skills
+    findings:
+    - url: https://www.stackhawk.com/blog/github-copilot-secure-code
+      snippet: HawkScan/StackHawk API Agent Skills installable into VS Code/Copilot
+        CLI via open agent-skills standard.
+    - url: https://docs.stackhawk.com/hawkop/
+      snippet: HawkOp real local CLI.
+    reviewed_by_gap_check: true
+    stale: false
+  siem-soar-integration:
+    researched_at: '2026-07-15T00:59:51.594991'
+    queries:
+    - StackHawk SIEM SOAR integration Datadog
+    findings:
+    - url: https://docs.stackhawk.com/integrations/
+      snippet: No Splunk/QRadar/Sentinel/SOAR integration listed.
+    - url: https://docs.stackhawk.com/workflow-integrations/datadog.html
+      snippet: Datadog integration sends scan results as JSON into Datadog Log Explorer.
+    reviewed_by_gap_check: true
+    stale: false
+  deployment-model-data-residency:
+    researched_at: '2026-07-15T00:59:51.927021'
+    queries:
+    - StackHawk deployment model data residency on-prem
+    findings:
+    - url: https://appsecsanta.com/
+      snippet: Independent review states StackHawk is SaaS-only with no on-prem/air-gapped
+        option, contrasted against Invicti which offers on-prem.
+    reviewed_by_gap_check: true
+    stale: false
+  vendor-security-posture:
+    researched_at: '2026-07-15T00:59:52.557882'
+    queries:
+    - StackHawk security posture SOC2 pentest trust center
+    findings:
+    - url: https://www.stackhawk.com/security/
+      snippet: Annual ISAE3402 SOC 2 Type II audit and annual external pentest, provided
+        on request.
+    - url: https://trust.stackhawk.com/
+      snippet: Live SafeBase Trust Center listing SOC 2 Report, Pentest Report, Data
+        Flow Diagram.
+    reviewed_by_gap_check: true
+    stale: false
+  aspm-integration:
+    researched_at: '2026-07-15T00:59:53.183672'
+    queries:
+    - StackHawk ASPM DefectDojo integration
+    findings:
+    - url: https://docs.stackhawk.com/workflow-integrations/defect-dojo.html
+      snippet: Documented DefectDojo integration with auto-import and auto-close via
+        reimport-scan API.
+    - url: https://defectdojo.com/integrations/stackhawk
+      snippet: DefectDojo's own integration page for StackHawk.
+    reviewed_by_gap_check: true
+    stale: false

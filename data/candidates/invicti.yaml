@@ -241,6 +241,49 @@ scores:
     not Invicti's own published pricing page.
   confidence: paper
   timestamp: '2026-07-14T18:08:42.141695'
+- criterion_id: extensibility-custom-rules
+  score: 5.0
+  evidence: 'Custom Security Checks via Scripting: JavaScript-based system supporting
+    active/passive/singular/per-directory check types with helper functions (netsparker.request(),
+    logging APIs) and a public GitHub sample repo with API reference -- no vendor
+    involvement required. Source: docs.invicti.com/ie-is/custom-security-checks-via-scripting,
+    github.com/Invicti-Security/netsparker-custom-security-checks'
+  confidence: paper
+  timestamp: '2026-07-15T00:59:32.838748'
+- criterion_id: business-logic-workflow-detection
+  score: 4.0
+  evidence: 'Named ''Business Logic Recorder'' (BLR) for multi-step workflow/form
+    testing, plus stateful API scanning maintaining auth/session context across multi-step
+    API calls to catch BOLA/BFLA. Not a full 5: BLR''s own docs note different recordings
+    don''t rely on/sequence with one another, limiting true cross-recording attack
+    chains. Source: docs.invicti.com/ie-is/business-logic-recorder-invicti, invicti.com/blog/web-security/automate-api-security-testing'
+  confidence: paper
+  timestamp: '2026-07-15T00:59:33.364980'
+- criterion_id: sensitive-financial-data-exposure
+  score: 4.0
+  evidence: 'Dedicated, named vulnerability checks: ''Credit Card Disclosure'' and
+    ''Social Security Number Disclosure'', each with CWE/OWASP/PCI mappings -- covers
+    card PANs and SSNs as real named detections. No dedicated bank account/routing-number
+    check found. Source: invicti.com/web-vulnerability-scanner/vulnerabilities/credit-card-disclosure,
+    invicti.com/web-vulnerability-scanner/vulnerabilities/social-security-number-disclosure'
+  confidence: paper
+  timestamp: '2026-07-15T00:59:34.236557'
+- criterion_id: incremental-differential-scanning
+  score: 5.0
+  evidence: 'Named ''Incremental Scan'' feature identifies new/amended URLs and attacks
+    only pages detected since the prior scan -- automatic differential scanning, not
+    manual scoping. Source: docs.invicti.com/ie-is/incremental-scan-node'
+  confidence: paper
+  timestamp: '2026-07-15T00:59:34.884671'
+- criterion_id: ide-local-dev-tooling
+  score: 3.0
+  evidence: 'Scan CLI (Docker, invicti/scan-cli) and legacy netsparker.exe CLI runnable
+    locally, matching rubric-3. No true IDE plugin found -- the one ''VS Code'' Marketplace
+    listing (InvictiLtd.netsparker-cloud-extension) is actually an Azure DevOps/Pipelines
+    extension triggering remote cloud scans, not an in-editor plugin. Source: docs.invicti.com/ie-is/command-line-interface,
+    hub.docker.com/r/invicti/scan-cli'
+  confidence: paper
+  timestamp: '2026-07-15T00:59:35.599880'
 hands_on_results: []
 observations:
 - context: discovery research

@@ -18,17 +18,17 @@ Status: evaluated
 | Setup & Onboarding Friction | Developer Experience | 3 | 4.5 | Free, official docker images, first useful scan achievable in minutes with sensible defaults -- confirmed by this project's own live-verification run. | paper |
 | Reporting Quality / Exportability | Reporting & Extensibility | 2 | 4 | HTML/XML/JSON/Markdown report generation; community plugins for Jira/Slack exist but aren't first-party/polished. | paper |
 | Extensibility / Custom Rules | Reporting & Extensibility | 1 | 5 | Highly extensible -- custom active/passive scan rules via Zest/Python/JS/Groovy scripting, large add-on marketplace. | paper |
-| Business Logic & Workflow Vulnerability Detection | Coverage | 4 | 2.5 | Context-based multi-user/multi-role testing possible via manual session-management scripting per Context, but no purpose-built sequence-aware business-logic testing engine. | paper |
+| Business Logic & Workflow Vulnerability Detection | Coverage | 4 | 3.5 | ZAP's 'Access Control Testing' add-on defines per-role Access Rules within a Context, then automatically attacks every discovered URL as each configured user to flag authorization violations -- genuine authorization-state tracking across roles. Does not do true multi-step/sequence-dependent workflow chains; ZAP is independently documented to struggle with business logic flaws generally. Source: [zaproxy.org/docs/desktop/addons/access-control-testing](https://zaproxy.org/docs/desktop/addons/access-control-testing) | paper |
 | Legacy Application & Protocol Support | Coverage | 2 | 4 | Protocol-agnostic HTTP(S) proxy/scanner since 2010; traditional server-rendered/legacy web tech was its original design target before SPA-crawling was added. | paper |
-| Third-Party/Partner API Risk Assessment | Coverage | 1 | 2 | Can scan partner-facing APIs the same as any other target given a spec; no dedicated vendor-risk-assessment output shaping. | paper |
+| Third-Party/Partner API Risk Assessment | Coverage | 1 | 3 | ZAP's OpenAPI/Swagger add-on scans any documented API including partner/open-banking-facing ones exactly like any other endpoint. No vendor-risk-assessment-formatted output found -- matches rubric level 3 cleanly. Source: [zaproxy.org/docs/desktop/addons/openapi-support](https://zaproxy.org/docs/desktop/addons/openapi-support) | paper |
 | Asset Discovery & Inventory Tracking | Coverage | 1 | 1 | Not an attack-surface-management tool; requires a manually-provided target. | paper |
 | Compliance & Standards Mapping | Detection Quality | 4 | 3.5 | Real cweid/wascid mapping per plugin and OWASP Top 10 tagging used for compliance reporting (SOC2/PCI-DSS), but mapping coverage is incomplete across all plugins per ZAP's own developers; no financial-services-specific (GLBA/SOX/FFIEC/NYDFS) tagging out of the box. Source: [zaproxy.org/docs/alerts](https://zaproxy.org/docs/alerts), ZAP developer mailing list discussion on OWASP Top 10 mapping completeness. | paper |
 | Finding Validation / Proof-of-Exploit | Detection Quality | 2 | 3 | Active scan rules attach real evidence (matched payload/response snippet) for many findings, but not a formalized/systematic proof-of-exploit engine across all rule types. | paper |
 | Sensitive Financial Data Exposure Detection | Detection Quality | 2 | 3 | Generic PII Disclosure passive rule likely catches common patterns (SSN, card-like numbers), but no dedicated account/routing-number-specific detection. | paper |
-| Scan Performance & Scalability | Production Safety & Operability | 2 | 2.5 | Single-scan performance is workable (confirmed by this project's own ~10min full scans) but scaling across many apps requires DIY orchestration (e.g. our own CI dispatch pattern), not a built-in fleet feature. | paper |
-| Incremental / Differential Scanning | Production Safety & Operability | 1 | 1 | Always a full spider+scan of the whole target; no incremental/differential mode. | paper |
-| IDE / Local Developer Tooling | Developer Experience | 1 | 2 | Runnable locally via CLI/desktop app, but no native IDE plugin or pre-commit hook integration. | paper |
-| Ticketing & Collaboration Integration | Reporting & Extensibility | 2 | 2.5 | Community-built JIRA add-on (exports alerts as issues) and a Jenkins plugin bridging to Jira exist, but are unofficial/community-maintained, one-way, no auto-close-on-fix. | paper |
+| Scan Performance & Scalability | Production Safety & Operability | 2 | 3 | Real deployed horizontal-scaling evidence exists in ZAP's OSS ecosystem: an open-source Kubernetes operator (zap-operator) and a documented case study 'ZaaS: ZAP As A Service -- Continuous Security for 20K+ APIs'. This is ecosystem/architecture-pattern evidence rather than a built-in ZAP feature, hence a modest bump only. Source: [github.com/NCCloud/zap-operator](https://github.com/NCCloud/zap-operator), [nullcon.net/talk/zaas-owasp-zap-as-a-service-continous-security-for-20k-apis](https://nullcon.net/talk/zaas-owasp-zap-as-a-service-continous-security-for-20k-apis) | paper |
+| Incremental / Differential Scanning | Production Safety & Operability | 1 | 3 | ZAP's 'Contexts' feature lets users explicitly include/exclude URL patterns to scope a scan to specific paths, directly matching rubric level 3. No automatic change-detection-since-last-scan capability found. Source: [zaproxy.org/docs/desktop/start/features/contexts](https://zaproxy.org/docs/desktop/start/features/contexts) | paper |
+| IDE / Local Developer Tooling | Developer Experience | 1 | 3 | ZAP ships a genuine, well-documented local desktop app plus official CLI/Docker packages ([zap-baseline.py](https://zap-baseline.py), [zap-full-scan.py](https://zap-full-scan.py)) that developers can run pre-commit -- a solid rubric-3 match. No official IDE plugin exists for ZAP itself. Source: [zaproxy.org](https://zaproxy.org), [github.com/zaproxy/zaproxy](https://github.com/zaproxy/zaproxy) | paper |
+| Ticketing & Collaboration Integration | Reporting & Extensibility | 2 | 3 | ZAP's own official zaproxy/action-full-scan GitHub Action confirmed to auto-create/update/close a GitHub Issue as alerts resolve -- real one-way-plus-auto-close integration, but scoped to GitHub Issues specifically rather than Jira/ServiceNow/Slack named in the rubric. Source: [github.com/zaproxy/action-full-scan](https://github.com/zaproxy/action-full-scan) | paper |
 | SIEM/SOAR Integration | Reporting & Extensibility | 1 | 2 | Possible via third-party bridging tools (e.g. Flame, forwarding ZAP output to Splunk) -- not a native ZAP capability. | paper |
 | Historical Risk Trend Dashboards | Reporting & Extensibility | 2 | 1 | Produces per-scan reports only; no cross-scan executive trend dashboard. | paper |
 | Vulnerability Status Management | Reporting & Extensibility | 4 | 1 | No exception/risk-acceptance workflow or audit trail for finding lifecycle -- a scan-and-report tool, not a vulnerability management platform. | paper |
@@ -44,11 +44,11 @@ Status: evaluated
 
 | Category | Weight | Weighted Score |
 |---|---|---|
-| Coverage | 26 | 3.37 |
+| Coverage | 26 | 3.56 |
 | Detection Quality | 22 | 3.34 |
-| Production Safety & Operability | 14 | 4.14 |
-| Developer Experience | 10 | 2.95 |
-| Reporting & Extensibility | 14 | 2.43 |
+| Production Safety & Operability | 14 | 4.36 |
+| Developer Experience | 10 | 3.05 |
+| Reporting & Extensibility | 14 | 2.50 |
 | Deployment & Data Governance | 14 | 3.71 |
 
-**Weighted score: 3.34 / 5.00**
+**Weighted score: 3.44 / 5.00**

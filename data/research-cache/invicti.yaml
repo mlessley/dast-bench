@@ -1,0 +1,78 @@
+vendor_id: invicti
+criteria:
+  extensibility-custom-rules:
+    researched_at: '2026-07-15T00:59:33.079544'
+    queries:
+    - Invicti custom security checks scripting
+    findings:
+    - url: https://docs.invicti.com/ie-is/custom-security-checks-via-scripting
+      snippet: JavaScript-based custom security checks supporting active, passive,
+        singular, and per-directory check types with helper functions.
+    - url: https://github.com/Invicti-Security/netsparker-custom-security-checks/blob/master/docs/api-reference.md
+      snippet: Public sample repo and API reference for writing custom security checks
+        without vendor involvement.
+    reviewed_by_gap_check: true
+    stale: false
+  business-logic-workflow-detection:
+    researched_at: '2026-07-15T00:59:33.666368'
+    queries:
+    - Invicti business logic recorder stateful API scanning
+    findings:
+    - url: https://docs.invicti.com/ie-is/business-logic-recorder-invicti
+      snippet: Business Logic Recorder for multi-step workflow testing; different
+        BLRs do not rely on one another and sequences will not play in any specific
+        order.
+    - url: https://www.invicti.com/blog/web-security/automate-api-security-testing
+      snippet: Stateful API scanning maintains auth/session context across multi-step
+        API calls, tracking parameter relationships to catch BOLA/BFLA.
+    reviewed_by_gap_check: true
+    stale: false
+  third-party-partner-api-risk:
+    researched_at: '2026-07-15T00:59:33.949959'
+    queries:
+    - Invicti partner API risk third-party vendor risk assessment
+    findings:
+    - url: https://www.invicti.com/solutions/financial-services
+      snippet: No partner/third-party/vendor-risk-specific API scanning or output
+        format found.
+    - url: https://docs.invicti.com/ie-is/manage-api-inventory
+      snippet: API Inventory filters only by source, scan date, target, and API type
+        -- no partner-risk categorization.
+    reviewed_by_gap_check: true
+    stale: false
+  sensitive-financial-data-exposure:
+    researched_at: '2026-07-15T00:59:34.534994'
+    queries:
+    - Invicti credit card SSN disclosure detection
+    findings:
+    - url: https://www.invicti.com/web-vulnerability-scanner/vulnerabilities/credit-card-disclosure
+      snippet: Dedicated Credit Card Disclosure vulnerability check with CWE/OWASP/PCI
+        mappings.
+    - url: https://www.invicti.com/web-vulnerability-scanner/vulnerabilities/social-security-number-disclosure/
+      snippet: Dedicated Social Security Number Disclosure vulnerability check.
+    reviewed_by_gap_check: true
+    stale: false
+  incremental-differential-scanning:
+    researched_at: '2026-07-15T00:59:35.223024'
+    queries:
+    - Invicti incremental scan differential
+    findings:
+    - url: https://docs.invicti.com/ie-is/incremental-scan-node
+      snippet: Incremental Scan identifies new or amended URLs and attacks only those
+        web pages detected since the prior scan.
+    - url: https://www.invicti.com/support/incremental-scan-node/
+      snippet: Support documentation for Incremental Scan feature.
+    reviewed_by_gap_check: true
+    stale: false
+  ide-local-dev-tooling:
+    researched_at: '2026-07-15T00:59:35.936117'
+    queries:
+    - Invicti IDE plugin CLI local dev tooling
+    findings:
+    - url: https://docs.invicti.com/ie-is/command-line-interface
+      snippet: Scan CLI runnable locally by developers.
+    - url: https://marketplace.visualstudio.com/items?itemName=InvictiLtd.netsparker-cloud-extension
+      snippet: Confirmed to be an Azure DevOps/Pipelines integration, not an in-editor
+        IDE plugin.
+    reviewed_by_gap_check: true
+    stale: false

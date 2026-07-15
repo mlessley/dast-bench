@@ -67,3 +67,107 @@ criteria:
         Creator, or Workspace Administrator role
     reviewed_by_gap_check: true
     stale: false
+  auto-remediation-pr:
+    researched_at: '2026-07-15T00:59:53.793760'
+    queries:
+    - Veracode Fix GitHub Action auto remediation PR
+    findings:
+    - url: https://docs.veracode.com/r/Veracode_Fix_GitHub_Action
+      snippet: Veracode Fix GitHub Action creates a new branch and opens a PR with
+        proposed fixes when fixType:batch and createPR:true are configured.
+    - url: https://www.veracode.com/blog/bringing-veracode-fix-github/
+      snippet: Blog announcing Veracode Fix GitHub Action.
+    reviewed_by_gap_check: true
+    stale: false
+  setup-onboarding-friction:
+    researched_at: '2026-07-15T00:59:54.425820'
+    queries:
+    - Veracode setup onboarding quick scan
+    findings:
+    - url: https://www.veracode.com/blog/getting-started-guide-veracode-dast-essentials/
+      snippet: Quick Scan delivers results in as early as 5 minutes after a no-credit-card
+        free-trial signup.
+    - url: https://docs.veracode.com/r/Dynamic_Analysis_onboarding
+      snippet: Full authenticated/API scan setup quickstart learning path, closer
+        to ~30 minutes.
+    reviewed_by_gap_check: true
+    stale: false
+  extensibility-custom-rules:
+    researched_at: '2026-07-15T00:59:54.709224'
+    queries:
+    - Veracode custom detection rules extensibility DAST
+    findings:
+    - url: https://docs.veracode.com/r/c_sc_policies_custom
+      snippet: Custom rules capability found is for SCA agent-based scanning license/component
+        policy controls, not new DAST detection signatures.
+    - url: https://docs.veracode.com/r/Create_Custom_Rules_for_Agent_Based_Scanning
+      snippet: Custom rules for agent-based (SCA) scanning, not DAST.
+    reviewed_by_gap_check: true
+    stale: false
+  legacy-app-protocol-support:
+    researched_at: '2026-07-15T00:59:55.328719'
+    queries:
+    - Veracode SOAP WSDL legacy protocol support
+    findings:
+    - url: https://appsecsanta.com/veracode-dast
+      snippet: SOAP APIs scanned after translating WSDL into a Veracode-supported
+        spec format (Postman Collection/OpenAPI).
+    - url: https://docs.veracode.com/r/Scan_APIs
+      snippet: API scanning documentation referencing spec translation.
+    reviewed_by_gap_check: true
+    stale: false
+  third-party-partner-api-risk:
+    researched_at: '2026-07-15T00:59:55.615964'
+    queries:
+    - Veracode third-party partner API risk open banking
+    findings:
+    - url: https://www.veracode.com/security/third-party-risk-assessment/
+      snippet: Veracode's 'third-party risk' products (SCA, VAST) address risk from
+        vendors' code coming in, not risk of your APIs facing partners -- opposite
+        direction from the rubric.
+    reviewed_by_gap_check: true
+    stale: false
+  sensitive-financial-data-exposure:
+    researched_at: '2026-07-15T00:59:55.942904'
+    queries:
+    - Veracode sensitive financial data exposure detection
+    findings:
+    - url: https://docs.veracode.com/r/c_review_cwe
+      snippet: Only generic sensitive-data-exposure CWEs found (CWE-200/201/359 family);
+        no dedicated financial-pattern detector for PANs/routing numbers/SSNs.
+    reviewed_by_gap_check: true
+    stale: false
+  incremental-differential-scanning:
+    researched_at: '2026-07-15T00:59:56.551940'
+    queries:
+    - Veracode incremental differential scanning path scoping
+    findings:
+    - url: https://docs.veracode.com/r/Scan_Web_Applications
+      snippet: Allowlist/blocklist and subdirectory-level URL scoping to restrict
+        scans to specific paths.
+    reviewed_by_gap_check: true
+    stale: false
+  siem-soar-integration:
+    researched_at: '2026-07-15T00:59:56.858669'
+    queries:
+    - Veracode SIEM SOAR integration Splunk
+    findings:
+    - url: https://docs.veracode.com/r/Veracode_Integrations
+      snippet: Official integrations page lists Jira/Bugzilla/RSA Archer/Imperva/CI-CD/IDE
+        tools -- no native Splunk/QRadar/Sentinel/XSOAR.
+    - url: https://splunkbase.splunk.com/app/7277
+      snippet: The one Splunk connector found ('Veracode Splunk Bridge') is third-party/community-built,
+        not Veracode-authored.
+    reviewed_by_gap_check: true
+    stale: false
+  automated-triage-fp-reduction:
+    researched_at: '2026-07-15T00:59:57.146762'
+    queries:
+    - Veracode automated triage false positive reduction methodology
+    findings:
+    - url: https://docs.veracode.com/r/review_methodology
+      snippet: Veracode's own methodology docs state FP reduction comes from human
+        security analysts manually verifying output ('a security technician verifies
+        the output'), not automation.
+    reviewed_by_gap_check: true
+    stale: false

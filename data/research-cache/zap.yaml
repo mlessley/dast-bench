@@ -1,0 +1,130 @@
+vendor_id: zap
+criteria:
+  auto-remediation-pr:
+    researched_at: '2026-07-15T00:59:57.430491'
+    queries:
+    - ZAP auto remediation PR GitHub Action
+    findings:
+    - url: https://github.com/zaproxy/action-full-scan
+      snippet: ZAP's own official GitHub Action only opens/updates/closes a GitHub
+        issue, no diff, no PR.
+    reviewed_by_gap_check: true
+    stale: false
+  business-logic-workflow-detection:
+    researched_at: '2026-07-15T00:59:58.087526'
+    queries:
+    - ZAP access control testing add-on business logic
+    findings:
+    - url: https://www.zaproxy.org/docs/desktop/addons/access-control-testing/
+      snippet: Access Control Testing add-on attacks every discovered URL as each
+        configured role/user to flag authorization violations.
+    reviewed_by_gap_check: true
+    stale: false
+  third-party-partner-api-risk:
+    researched_at: '2026-07-15T00:59:58.714919'
+    queries:
+    - ZAP OpenAPI add-on partner API scanning
+    findings:
+    - url: https://www.zaproxy.org/docs/desktop/addons/openapi-support/
+      snippet: OpenAPI/Swagger add-on scans any documented API including partner-facing
+        ones like any other endpoint.
+    reviewed_by_gap_check: true
+    stale: false
+  asset-discovery-inventory:
+    researched_at: '2026-07-15T00:59:59.028046'
+    queries:
+    - ZAP asset discovery inventory Amass
+    findings:
+    - url: https://github.com/zaproxy/zaproxy/wiki/RelatedProjects
+      snippet: OWASP Amass is a separate, unrelated OWASP project, only listed as
+        a 'Related Project' on ZAP's wiki, not an integration. ZAP only spiders a
+        manually-provided target.
+    reviewed_by_gap_check: true
+    stale: false
+  scan-performance-scalability:
+    researched_at: '2026-07-15T00:59:59.646127'
+    queries:
+    - ZAP scan performance scalability kubernetes operator
+    findings:
+    - url: https://github.com/NCCloud/zap-operator
+      snippet: Open-source Kubernetes operator for running ZAP scans at scale.
+    - url: https://nullcon.net/talk/zaas-owasp-zap-as-a-service-continous-security-for-20k-apis/
+      snippet: 'Case study: ZAP As A Service, continuous security for 20K+ APIs.'
+    reviewed_by_gap_check: true
+    stale: false
+  incremental-differential-scanning:
+    researched_at: '2026-07-15T01:00:00.332764'
+    queries:
+    - ZAP contexts incremental scan scoping
+    findings:
+    - url: https://www.zaproxy.org/docs/desktop/start/features/contexts/
+      snippet: Contexts feature lets users include/exclude URL patterns to scope a
+        scan to specific paths.
+    reviewed_by_gap_check: true
+    stale: false
+  ide-local-dev-tooling:
+    researched_at: '2026-07-15T01:00:01.125583'
+    queries:
+    - ZAP CLI local dev tooling desktop app
+    findings:
+    - url: https://www.zaproxy.org/
+      snippet: ZAP local desktop app and official CLI/Docker packages.
+    - url: https://github.com/zaproxy/zaproxy
+      snippet: Official zap-baseline.py / zap-full-scan.py CLI/Docker packages.
+    reviewed_by_gap_check: true
+    stale: false
+  ticketing-collaboration-integration:
+    researched_at: '2026-07-15T01:00:02.035215'
+    queries:
+    - ZAP ticketing integration GitHub issues action
+    findings:
+    - url: https://github.com/zaproxy/action-full-scan
+      snippet: Auto-creates/updates/closes a GitHub Issue as alerts resolve.
+    reviewed_by_gap_check: true
+    stale: false
+  siem-soar-integration:
+    researched_at: '2026-07-15T01:00:02.428201'
+    queries:
+    - ZAP SIEM SOAR integration
+    findings:
+    - url: https://www.zaproxy.org/docs/
+      snippet: ZAP itself only outputs JSON/XML/HTML/Markdown reports, no CEF/syslog
+        or native SIEM/SOAR connector.
+    reviewed_by_gap_check: true
+    stale: false
+  historical-risk-trend-dashboards:
+    researched_at: '2026-07-15T01:00:02.836920'
+    queries:
+    - ZAP historical risk trend dashboard (confirmed absent in OSS ZAP; Checkmarx-only
+      feature excluded per vendor-scope decision)
+    findings:
+    - url: https://www.zaproxy.org/docs/
+      snippet: The only real evidence found for this criterion (Checkmarx One's Vulnerabilities/Executive
+        Overview Dashboards) is a Checkmarx-paid-platform feature, not available in
+        OSS ZAP itself. No historical/trend view exists in ZAP itself.
+    reviewed_by_gap_check: true
+    stale: false
+  vulnerability-status-management:
+    researched_at: '2026-07-15T01:00:03.199727'
+    queries:
+    - ZAP vulnerability status management (confirmed absent in OSS ZAP; Checkmarx-only
+      feature excluded per vendor-scope decision)
+    findings:
+    - url: https://www.zaproxy.org/docs/
+      snippet: The only real evidence found for this criterion (Checkmarx One's triage
+        states/audit trail) is Checkmarx-platform-only. ZAP itself has no lifecycle
+        workflow beyond a flat alert list.
+    reviewed_by_gap_check: true
+    stale: false
+  multi-tenancy-access-control:
+    researched_at: '2026-07-15T01:00:03.599755'
+    queries:
+    - ZAP multi-tenancy access control RBAC (confirmed absent in OSS ZAP; Checkmarx-only
+      feature excluded per vendor-scope decision)
+    findings:
+    - url: https://www.zaproxy.org/docs/
+      snippet: The only real evidence found for this criterion (Checkmarx One's 5
+        predefined RBAC roles) is Checkmarx-platform-only. ZAP itself, run locally/via
+        CLI, has no user/role concept at all.
+    reviewed_by_gap_check: true
+    stale: false
