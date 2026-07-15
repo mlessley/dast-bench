@@ -551,3 +551,38 @@ def test_generate_workbook_executive_summary_legend_has_border_and_fill(tmp_path
     bottom_right = ws.cell(row=legend_last_row, column=5)
     assert bottom_right.fill.fgColor.rgb == "00F2F2F2"
     assert bottom_right.border.bottom.style == "thin"
+
+
+def test_generate_workbook_executive_summary_highlights_top_vendor_row(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor_a = Vendor(id="a", name="Vendor A", source=VendorSource.DISCOVERED)
+    vendor_a.scores.append(ScoreEntry(criterion_id="c1", score=5.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_a.scores.append(ScoreEntry(criterion_id="c2", score=5.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_b = Vendor(id="b", name="Vendor B", source=VendorSource.DISCOVERED)
+    vendor_b.scores.append(ScoreEntry(criterion_id="c1", score=2.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_b.scores.append(ScoreEntry(criterion_id="c2", score=2.0, evidence="e", confidence=Confidence.PAPER))
+
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor_b, vendor_a],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={
+            "a": VendorResearchCache(vendor_id="a"),
+            "b": VendorResearchCache(vendor_id="b"),
+        },
+        out_path=out_path,
+    )
+
+    ws = load_workbook(out_path)["Executive Summary"]
+    # Vendor A scored higher on every criterion, so it ranks first (row EXEC_TABLE_FIRST_DATA_ROW).
+    assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1).value == "Vendor A"
+    top_row_cell = ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1)
+    assert top_row_cell.font.bold is True
+    assert top_row_cell.fill.fgColor.rgb == "00FFF2CC"
+
+    second_row_cell = ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW + 1, column=1)
+    assert second_row_cell.value == "Vendor B"
+    assert second_row_cell.font.bold is not True
+    assert second_row_cell.fill.fgColor.rgb == "00000000"

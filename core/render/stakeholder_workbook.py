@@ -208,6 +208,12 @@ def _add_executive_summary_sheet(
     for col_idx, header_name in enumerate(table_headers, start=1):
         ws.column_dimensions[get_column_letter(col_idx)].width = 40 if header_name == "Vendor" else 20
 
+    if ranked_vendors:
+        for col in range(1, len(table_headers) + 1):
+            top_cell = ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=col)
+            top_cell.font = Font(bold=True)
+            top_cell.fill = _TIER_FILL
+
     ws.protection.sheet = True
 
     if ranked_vendors:
