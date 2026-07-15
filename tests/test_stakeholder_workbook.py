@@ -295,7 +295,7 @@ def test_generate_workbook_applies_column_widths_freeze_panes_and_header_style(t
         out_path=out_path,
     )
     ws = load_workbook(out_path)["v1"]
-    assert ws.freeze_panes == "D4"
+    assert ws.freeze_panes == "G4"
     assert ws.column_dimensions["A"].width == 32  # Criterion
 
     header = [c.value for c in ws[3]]
@@ -509,7 +509,7 @@ def test_generate_workbook_freeze_panes_include_weight_column(tmp_path):
         out_path=out_path,
     )
     ws = load_workbook(out_path)["v1"]
-    assert ws.freeze_panes == "D4"
+    assert ws.freeze_panes == "G4"
 
 
 def test_generate_workbook_wraps_evidence_and_rationale_text(tmp_path):
@@ -622,3 +622,26 @@ def test_generate_workbook_executive_summary_highlights_top_vendor_row(tmp_path)
     assert second_row_cell.value == "Vendor B"
     assert second_row_cell.font.bold is not True
     assert second_row_cell.fill.fgColor.rgb == "00000000"
+
+
+def test_generate_workbook_writes_updated_pending_row_scope_text(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=1,
+        pending_criteria={"v1": {"c2"}},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[3]]
+    evidence_col = header.index("Automated Evidence") + 1
+    crit_id_col = header.index("_criterion_id") + 1
+    row = next(r for r in range(4, ws.max_row + 1) if ws.cell(row=r, column=crit_id_col).value == "c2")
+    assert ws.cell(row=row, column=evidence_col).value == (
+        "Pending — dast-scan results not yet available. "
+        "Do not score or edit this row; it will be populated in Round 2."
+    )

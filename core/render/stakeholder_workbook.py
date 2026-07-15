@@ -15,7 +15,7 @@ from .markdown import _ordered_categories
 SCORE_VALUES = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
 _PENDING_TEXT = (
     "Pending — dast-scan results not yet available. "
-    "Do not edit; will be populated in Round 2."
+    "Do not score or edit this row; it will be populated in Round 2."
 )
 _BASE_HEADERS = [
     "Criterion",
@@ -324,7 +324,7 @@ def generate_workbook(
         ws.append(["Provisional — ranking may shift once pending dast-scan results land."])
         ws.append([])
         ws.append(headers)
-        ws.freeze_panes = "D4"
+        ws.freeze_panes = "G4"
         for col_idx, header_name in enumerate(headers, start=1):
             width = _column_width_for(header_name)
             if width is not None:
