@@ -22,7 +22,12 @@ from .models import (
 )
 from .render.html import write_html
 from .render.markdown import write_markdown
+from .render.stakeholder_workbook import compute_priority_order, generate_workbook
 from .render.xlsx import write_xlsx
+from .stakeholder_review import merge as merge_stakeholder_copy
+from .stakeholder_review import populate as populate_pending
+from .stakeholder_review import snapshot as snapshot_workbook
+from .stakeholder_review import validate_workbook
 from .status import gap_report
 from .workflow import SKILLS, phase_report
 
@@ -36,6 +41,7 @@ CANDIDATES_DIR = DATA_DIR / "candidates"
 BENCHMARKS_PATH = DATA_DIR / "benchmarks.yaml"
 REPORTS_DIR = Path("reports")
 RESEARCH_CACHE_DIR = DATA_DIR / "research-cache"
+STAKEHOLDER_REVIEW_ARCHIVE_DIR = DATA_DIR / "stakeholder-reviews-archive"
 
 
 @criteria_app.command("add-criterion")
@@ -507,3 +513,101 @@ def cache_invalidate(
 
     storage.save_research_cache(cache, path)
     typer.echo(f"invalidated {count} cache entr{'y' if count == 1 else 'ies'} for '{vendor_id}'")
+
+
+stakeholder_review_app = typer.Typer()
+app.add_typer(stakeholder_review_app, name="stakeholder-review")
+
+
+def _parse_stakeholder(raw: str) -> tuple[str | None, str]:
+    name, _, role = raw.partition(":")
+    return (name or None, role)
+
+
+def _parse_pending_criteria(raw_list: list[str]) -> dict[str, set[str]]:
+    result: dict[str, set[str]] = {}
+    for raw in raw_list:
+        vendor_id, _, criteria_csv = raw.partition(":")
+        result.setdefault(vendor_id, set()).update(c.strip() for c in criteria_csv.split(",") if c.strip())
+    return result
+
+
+@stakeholder_review_app.command("generate")
+def stakeholder_review_generate(
+    vendor_id: list[str] = typer.Option(..., "--vendor-id"),
+    stakeholder: list[str] = typer.Option(..., "--stakeholder"),
+    pending_criteria: list[str] = typer.Option([], "--pending-criteria"),
+    out: Path = typer.Option(...),
+) -> None:
+    taxonomy = storage.load_criteria(CRITERIA_PATH)
+    vendors = []
+    for vid in vendor_id:
+        path = storage.vendor_path(CANDIDATES_DIR, vid)
+        if not path.exists():
+            typer.echo(f"error: vendor '{vid}' not found")
+            raise typer.Exit(code=1)
+        vendor = storage.load_vendor(path)
+        for criterion in taxonomy.criteria:
+            if vendor.score_for(criterion.id) is None:
+                typer.echo(f"error: vendor '{vid}' has no score for criterion '{criterion.id}'")
+                raise typer.Exit(code=1)
+        vendors.append(vendor)
+
+    stakeholders = [_parse_stakeholder(s) for s in stakeholder]
+    pending = _parse_pending_criteria(pending_criteria)
+    research_caches = {
+        v.id: storage.load_research_cache(storage.research_cache_path(RESEARCH_CACHE_DIR, v.id), v.id)
+        for v in vendors
+    }
+    generate_workbook(taxonomy, vendors, stakeholders, pending, research_caches, out)
+    typer.echo(f"generated stakeholder review workbook at {out}")
+
+
+@stakeholder_review_app.command("populate")
+def stakeholder_review_populate(
+    vendor_id: str = typer.Option(...),
+    file: Path = typer.Option(...),
+) -> None:
+    path = storage.vendor_path(CANDIDATES_DIR, vendor_id)
+    if not path.exists():
+        typer.echo(f"error: vendor '{vendor_id}' not found")
+        raise typer.Exit(code=1)
+    vendor = storage.load_vendor(path)
+    typer.echo(populate_pending(vendor, file))
+
+
+@stakeholder_review_app.command("merge")
+def stakeholder_review_merge(
+    into: Path = typer.Option(...),
+    from_: Path = typer.Option(..., "--from"),
+) -> None:
+    if not into.exists() or not from_.exists():
+        typer.echo("error: both --into and --from files must exist")
+        raise typer.Exit(code=1)
+    typer.echo(merge_stakeholder_copy(into, from_))
+
+
+@stakeholder_review_app.command("validate")
+def stakeholder_review_validate(file: Path = typer.Option(...)) -> None:
+    if not file.exists():
+        typer.echo(f"error: file not found: {file}")
+        raise typer.Exit(code=1)
+    issues = validate_workbook(file)
+    if not issues:
+        typer.echo("no issues found")
+        return
+    for issue in issues:
+        typer.echo(issue)
+
+
+@stakeholder_review_app.command("snapshot")
+def stakeholder_review_snapshot(
+    file: Path = typer.Option(...),
+    vendor_id: str = typer.Option(...),
+    label: str = typer.Option(None),
+) -> None:
+    if not file.exists():
+        typer.echo(f"error: file not found: {file}")
+        raise typer.Exit(code=1)
+    dest = snapshot_workbook(file, vendor_id, STAKEHOLDER_REVIEW_ARCHIVE_DIR, label)
+    typer.echo(f"snapshotted to {dest}")
