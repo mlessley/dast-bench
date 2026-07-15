@@ -491,3 +491,36 @@ def test_generate_workbook_wraps_evidence_and_rationale_text(tmp_path):
     assert ws.cell(row=4, column=rationale_col).alignment.wrap_text is True
     assert ws.cell(row=4, column=score_col).alignment.wrap_text is not True
     assert ws.row_dimensions[4].height is None
+
+
+def test_generate_workbook_bands_continuously_under_tier_highlight(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = CriteriaTaxonomy(
+        criteria=[
+            Criterion(id="c1", category="Cat", name="C1", description="d", weight=100, rubric="r"),
+            Criterion(id="c2", category="Cat", name="C2", description="d", weight=90, rubric="r"),
+            Criterion(id="c3", category="Cat", name="C3", description="d", weight=80, rubric="r"),
+            Criterion(id="c4", category="Cat", name="C4", description="d", weight=70, rubric="r"),
+        ]
+    )
+    vendor = Vendor(id="v1", name="V1", source=VendorSource.DISCOVERED)
+    for criterion_id in ("c1", "c2", "c3", "c4"):
+        vendor.scores.append(ScoreEntry(criterion_id=criterion_id, score=4.0, evidence="e", confidence=Confidence.PAPER))
+
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+        top_tier_count=2,
+    )
+    ws = load_workbook(out_path)["v1"]
+    # All four scores are equal (4.0) and above the needs-attention
+    # threshold, so priority order is purely descending weight:
+    # c1 (row 4), c2 (row 5), c3 (row 6), c4 (row 7).
+    assert ws.cell(row=4, column=1).fill.fgColor.rgb == "00FFF2CC"  # tier, even (i=0)
+    assert ws.cell(row=5, column=1).fill.fgColor.rgb == "00F9E79F"  # tier, odd (i=1)
+    assert ws.cell(row=6, column=1).fill.fgColor.rgb == "00000000"  # non-tier, even (i=2) -- no fill
+    assert ws.cell(row=7, column=1).fill.fgColor.rgb == "00F2F2F2"  # non-tier, odd (i=3) -- banded

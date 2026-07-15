@@ -29,6 +29,7 @@ _RESOLUTION_HEADERS = ["Resolved Score", "Resolved By", "Resolved Timestamp", "A
 _HIDDEN_HEADERS = ["_criterion_id", "_pending", "_effective_score"]
 
 _TIER_FILL = PatternFill(start_color="FFF2CC", end_color="FFF2CC", fill_type="solid")
+_TIER_FILL_ODD = PatternFill(start_color="F9E79F", end_color="F9E79F", fill_type="solid")
 _UNFILLED_FILL = PatternFill(start_color="FCE4D6", end_color="FCE4D6", fill_type="solid")
 
 _HEADER_FILL_COLOR = "1F4E78"
@@ -328,8 +329,9 @@ def generate_workbook(
             ws.append(row)
 
             if i < top_tier_count:
+                tier_fill = _TIER_FILL_ODD if i % 2 == 1 else _TIER_FILL
                 for col in range(1, len(headers) + 1):
-                    ws.cell(row=row_num, column=col).fill = _TIER_FILL
+                    ws.cell(row=row_num, column=col).fill = tier_fill
             elif i % 2 == 1:
                 for col in range(1, len(headers) + 1):
                     ws.cell(row=row_num, column=col).fill = _BAND_FILL
