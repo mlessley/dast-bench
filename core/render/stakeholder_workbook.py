@@ -9,6 +9,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 
 from ..models import CriteriaTaxonomy, Vendor, VendorResearchCache
+from .markdown import _ordered_categories
 
 SCORE_VALUES = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
 _PENDING_TEXT = (
@@ -129,6 +130,56 @@ def generate_workbook(
             ] + [_column_index(headers, h) for h in ("Resolved By", "Resolved Timestamp")]
             for col in editable_non_score_cols:
                 ws.cell(row=row_num, column=col).protection = Protection(locked=is_pending)
+
+        resolved_col_letter = get_column_letter(_column_index(headers, "Resolved Score"))
+        automated_col_letter = get_column_letter(_column_index(headers, "Automated Score"))
+        effective_col_letter = get_column_letter(_column_index(headers, "_effective_score"))
+        pending_col_letter = get_column_letter(_column_index(headers, "_pending"))
+        weight_col_letter = get_column_letter(_column_index(headers, "Weight"))
+        category_col_letter = get_column_letter(_column_index(headers, "Category"))
+        delta_col = _column_index(headers, "Automated vs. Resolved Delta")
+        effective_col = _column_index(headers, "_effective_score")
+        last_data_row = FIRST_DATA_ROW + len(order) - 1
+
+        for row_num in range(FIRST_DATA_ROW, last_data_row + 1):
+            resolved_ref = f"{resolved_col_letter}{row_num}"
+            automated_ref = f"{automated_col_letter}{row_num}"
+            ws.cell(row=row_num, column=effective_col).value = f"=IF(ISBLANK({resolved_ref}),{automated_ref},{resolved_ref})"
+            ws.cell(row=row_num, column=delta_col).value = f'=IF(ISBLANK({resolved_ref}),"",{resolved_ref}-{automated_ref})'
+
+        def _points_formulas(category_filter: str | None) -> tuple[str, str]:
+            weight_range = f"{weight_col_letter}{FIRST_DATA_ROW}:{weight_col_letter}{last_data_row}"
+            effective_range = f"{effective_col_letter}{FIRST_DATA_ROW}:{effective_col_letter}{last_data_row}"
+            pending_range = f"{pending_col_letter}{FIRST_DATA_ROW}:{pending_col_letter}{last_data_row}"
+            if category_filter is None:
+                achieved = f"=SUMPRODUCT({weight_range},{effective_range},(1-{pending_range}))/5"
+                available = f"=SUMPRODUCT({weight_range},(1-{pending_range}))"
+            else:
+                category_range = f"{category_col_letter}{FIRST_DATA_ROW}:{category_col_letter}{last_data_row}"
+                achieved = f'=SUMPRODUCT(({category_range}=\"{category_filter}\")*{weight_range}*{effective_range}*(1-{pending_range}))/5'
+                available = f'=SUMPRODUCT(({category_range}=\"{category_filter}\")*{weight_range}*(1-{pending_range}))'
+            return achieved, available
+
+        weight_header_col = _column_index(headers, "Weight")
+        evidence_header_col = _column_index(headers, "Automated Evidence")
+        score_header_col = _column_index(headers, "Automated Score")
+
+        def _write_rollup_row(label: str, category_filter: str | None) -> None:
+            ws.append([label] + [None] * (len(headers) - 1))
+            r = ws.max_row
+            achieved_formula, available_formula = _points_formulas(category_filter)
+            ws.cell(row=r, column=weight_header_col).value = achieved_formula
+            ws.cell(row=r, column=evidence_header_col).value = available_formula
+            weight_ref = f"{weight_col_letter}{r}"
+            evidence_ref = f"{get_column_letter(evidence_header_col)}{r}"
+            ws.cell(row=r, column=score_header_col).value = (
+                f'=TEXT({weight_ref},"0.0")&"/"&TEXT({evidence_ref},"0")&" available points"'
+            )
+
+        ws.append([])
+        for category in _ordered_categories(taxonomy):
+            _write_rollup_row(category, category)
+        _write_rollup_row("Weighted Total", None)
 
         for hidden_name in _HIDDEN_HEADERS:
             ws.column_dimensions[get_column_letter(_column_index(headers, hidden_name))].hidden = True

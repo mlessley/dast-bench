@@ -172,3 +172,30 @@ def test_generate_workbook_adds_score_data_validation_and_locks_pending_rows(tmp
     assert ws.cell(row=pending_row, column=score_col).protection.locked is True
     assert ws.cell(row=non_pending_row, column=score_col).protection.locked is False
     assert ws.protection.sheet is True
+
+
+def test_generate_workbook_writes_delta_formula_and_partial_completeness_total(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={"v1": {"c2"}},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[3]]
+    delta_col = header.index("Automated vs. Resolved Delta") + 1
+    crit_id_col = header.index("_criterion_id") + 1
+    row = next(r for r in range(4, ws.max_row + 1) if ws.cell(row=r, column=crit_id_col).value == "c1")
+    delta_formula = ws.cell(row=row, column=delta_col).value
+    assert delta_formula.startswith("=IF(ISBLANK(")
+
+    total_row = ws.cell(row=ws.max_row, column=1).value
+    assert total_row == "Weighted Total"
+    total_score_cell = ws.cell(row=ws.max_row, column=header.index("Automated Score") + 1).value
+    assert total_score_cell.startswith("=")
+    assert "available points" in total_score_cell
