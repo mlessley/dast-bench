@@ -318,6 +318,34 @@ def test_validate_workbook_does_not_flag_untouched_pending_row(tmp_path):
     assert not any("tampered" in issue for issue in issues)
 
 
+def test_validate_workbook_flags_pending_row_with_resolved_score_entered(tmp_path):
+    out_path = _generate_with_c2_pending(tmp_path)
+    wb = load_workbook(out_path)
+    ws = wb["v1"]
+    cols = _column_map(ws)
+    row = _row_for(ws, cols, "c2")
+    # Tamper: enter a Resolved Score on the pending row without touching its lock.
+    ws[f"{cols['Resolved Score']}{row}"] = 3.0
+    wb.save(out_path)
+
+    issues = validate_workbook(out_path)
+    assert any("tampered" in issue for issue in issues)
+
+
+def test_validate_workbook_flags_pending_row_with_resolved_score_lock_removed(tmp_path):
+    out_path = _generate_with_c2_pending(tmp_path)
+    wb = load_workbook(out_path)
+    ws = wb["v1"]
+    cols = _column_map(ws)
+    row = _row_for(ws, cols, "c2")
+    # Tamper: remove the lock on Resolved Score but leave the cell blank.
+    ws[f"{cols['Resolved Score']}{row}"].protection = Protection(locked=False)
+    wb.save(out_path)
+
+    issues = validate_workbook(out_path)
+    assert any("tampered" in issue for issue in issues)
+
+
 def test_snapshot_copies_file_into_archive_dir(tmp_path):
     file_path = _generate_two_stakeholders(tmp_path, "review.xlsx")
     archive_dir = tmp_path / "archive"

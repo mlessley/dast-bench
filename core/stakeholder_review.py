@@ -192,6 +192,12 @@ def validate_workbook(file_path: Path) -> list[str]:
                         break
                 if tampered:
                     break
+            if not tampered:
+                for header in (resolved_h, by_h, ts_h):
+                    cell = ws[f"{cols[header]}{row}"]
+                    if cell.value is not None or cell.protection.locked is False:
+                        tampered = True
+                        break
             if tampered:
                 issues.append(
                     f"{sheet_name}/{criterion_id}: pending row has been tampered with "
