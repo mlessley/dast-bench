@@ -248,3 +248,39 @@ def test_generate_workbook_applies_column_widths_freeze_panes_and_header_style(t
     assert header_cell.fill.fgColor.rgb == "001F4E78"
     assert header_cell.alignment.wrap_text is True
     assert header_cell.border.top.style == "thin"
+
+
+def test_generate_workbook_applies_number_formats_banding_border_and_tab_color(tmp_path):
+    from core.render.stakeholder_workbook import FIRST_DATA_ROW, _TAB_COLOR_PALETTE
+
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+        top_tier_count=0,
+    )
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[3]]
+    score_col = header.index("Automated Score") + 1
+    crit_col = header.index("Criterion") + 1
+
+    assert ws.cell(row=4, column=score_col).number_format == "0.0"
+    assert ws.cell(row=4, column=score_col).alignment.horizontal == "right"
+    assert ws.cell(row=4, column=crit_col).alignment.horizontal == "left"
+
+    row4_fill = ws.cell(row=4, column=crit_col).fill.fgColor.rgb
+    row5_fill = ws.cell(row=5, column=crit_col).fill.fgColor.rgb
+    assert row5_fill == "00F2F2F2"
+    assert row4_fill != row5_fill
+
+    last_data_row = FIRST_DATA_ROW + len(taxonomy.criteria) - 1
+    first_rollup_row = last_data_row + 2
+    assert ws.cell(row=first_rollup_row, column=1).border.top.style == "medium"
+
+    assert ws.sheet_properties.tabColor.rgb == "00" + _TAB_COLOR_PALETTE[0]

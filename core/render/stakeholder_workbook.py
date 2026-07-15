@@ -69,6 +69,26 @@ def _column_width_for(header: str) -> float | None:
     return None
 
 
+_BAND_FILL = PatternFill(start_color="F2F2F2", end_color="F2F2F2", fill_type="solid")
+_ROLLUP_BORDER = Border(top=Side(style="medium"))
+
+_RIGHT_ALIGN_NUMERIC_HEADERS_EXACT = {"Weight", "Automated vs. Resolved Delta"}
+_RIGHT_ALIGN_NUMERIC_HEADERS_SUFFIX = " Score"
+
+_TAB_COLOR_PALETTE = ["2E86AB", "A23B72", "F18F01", "C73E1D", "3B1F2B", "6A994E"]
+
+
+def _tab_color_for(index: int) -> str:
+    return _TAB_COLOR_PALETTE[index % len(_TAB_COLOR_PALETTE)]
+
+
+def _is_right_aligned_numeric(header_name: str) -> bool:
+    return (
+        header_name in _RIGHT_ALIGN_NUMERIC_HEADERS_EXACT
+        or header_name.endswith(_RIGHT_ALIGN_NUMERIC_HEADERS_SUFFIX)
+    )
+
+
 HEADER_ROW = 3
 FIRST_DATA_ROW = 4
 
@@ -115,8 +135,9 @@ def generate_workbook(
     wb = Workbook()
     wb.remove(wb.active)
     headers = _all_headers(stakeholders)
-    for vendor in vendors:
+    for vendor_index, vendor in enumerate(vendors):
         ws = wb.create_sheet(title=vendor.id[:31])
+        ws.sheet_properties.tabColor = _tab_color_for(vendor_index)
         ws.append(["Provisional — ranking may shift once pending dast-scan results land."])
         ws.append([])
         ws.append(headers)
@@ -164,6 +185,19 @@ def generate_workbook(
             if i < top_tier_count:
                 for col in range(1, len(headers) + 1):
                     ws.cell(row=row_num, column=col).fill = _TIER_FILL
+            elif i % 2 == 1:
+                for col in range(1, len(headers) + 1):
+                    ws.cell(row=row_num, column=col).fill = _BAND_FILL
+
+            for col_idx, header_name in enumerate(headers, start=1):
+                if header_name in _HIDDEN_HEADERS:
+                    continue
+                cell = ws.cell(row=row_num, column=col_idx)
+                if _is_right_aligned_numeric(header_name):
+                    cell.number_format = "0.0"
+                    cell.alignment = Alignment(horizontal="right")
+                else:
+                    cell.alignment = Alignment(horizontal="left")
 
             for col in score_cols:
                 cell = ws.cell(row=row_num, column=col)
@@ -227,9 +261,12 @@ def generate_workbook(
             )
 
         ws.append([])
+        first_rollup_row = last_data_row + 2
         for category in _ordered_categories(taxonomy):
             _write_rollup_row(category, category)
         _write_rollup_row("Weighted Total", None)
+        for col in range(1, len(headers) + 1):
+            ws.cell(row=first_rollup_row, column=col).border = _ROLLUP_BORDER
 
         for hidden_name in _HIDDEN_HEADERS:
             ws.column_dimensions[get_column_letter(_column_index(headers, hidden_name))].hidden = True
