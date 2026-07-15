@@ -207,8 +207,8 @@ def _add_executive_summary_sheet(
         chart = BarChart()
         chart.type = "bar"
         chart.title = "Weighted Avg Score by Vendor"
-        chart.x_axis.title = "Weighted Avg Score (0-5)"
-        chart.y_axis.title = "Vendor"
+        chart.x_axis.title = "Vendor"
+        chart.y_axis.title = "Weighted Avg Score (0-5)"
         data = Reference(ws, min_col=avg_col, min_row=EXEC_TABLE_HEADER_ROW, max_row=last_row)
         cats = Reference(ws, min_col=1, min_row=EXEC_TABLE_FIRST_DATA_ROW, max_row=last_row)
         chart.add_data(data, titles_from_data=True)
