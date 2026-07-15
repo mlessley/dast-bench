@@ -284,7 +284,7 @@ def _reviewer_slot_count_from_headers(headers: list[str]) -> int:
 
 
 def _unclaimed_reviewer_label(slot_number: int) -> str:
-    return f"Reviewer {slot_number}"
+    return f"Reviewer {slot_number} - {{name}} - {{role/title}}"
 
 
 def _write_reviewer_slot_group_headers(ws, reviewer_slots: int) -> None:

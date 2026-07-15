@@ -130,14 +130,14 @@ def test_generate_workbook_adds_merged_reviewer_slot_group_headers(tmp_path):
     slot1_range = f"{get_column_letter(slot1_score_col)}2:{get_column_letter(slot1_rationale_col)}2"
     assert slot1_range in [str(r) for r in ws.merged_cells.ranges]
     slot1_cell = ws.cell(row=2, column=slot1_score_col)
-    assert slot1_cell.value == "Reviewer 1"
+    assert slot1_cell.value == "Reviewer 1 - {name} - {role/title}"
     assert slot1_cell.font.bold is True
     assert slot1_cell.fill.fgColor.rgb == "001F4E78"
 
     slot2_score_col, _, slot2_rationale_col = slot_columns[1]
     slot2_range = f"{get_column_letter(slot2_score_col)}2:{get_column_letter(slot2_rationale_col)}2"
     assert slot2_range in [str(r) for r in ws.merged_cells.ranges]
-    assert ws.cell(row=2, column=slot2_score_col).value == "Reviewer 2"
+    assert ws.cell(row=2, column=slot2_score_col).value == "Reviewer 2 - {name} - {role/title}"
 
 
 def test_generate_workbook_with_zero_reviewer_slots_has_no_reviewer_columns(tmp_path):
