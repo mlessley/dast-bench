@@ -15,6 +15,7 @@ from .render.stakeholder_workbook import (
     SCORE_VALUES,
     _reviewer_slot_columns,
     _reviewer_slot_count_from_headers,
+    _unclaimed_reviewer_label,
 )
 
 _DISPUTE_YES_VALUES = {"y", "yes"}
@@ -172,6 +173,8 @@ def validate_workbook(file_path: Path) -> list[str]:
         slot_letters = _slot_letters(ws)
 
         for slot_number, (score_letter, dispute_letter, rationale_letter) in enumerate(slot_letters, start=1):
+            group_header_value = ws.cell(row=2, column=_reviewer_slot_columns(len(slot_letters))[slot_number - 1][0]).value
+            slot_claimed = group_header_value != _unclaimed_reviewer_label(slot_number)
             for row in range(FIRST_DATA_ROW, ws.max_row + 1):
                 criterion_id = ws[f"{crit_col}{row}"].value
                 if not criterion_id:
@@ -183,6 +186,11 @@ def validate_workbook(file_path: Path) -> list[str]:
                     issues.append(f"{sheet_name}/{criterion_id}: Reviewer {slot_number} score {score!r} is not a valid value")
                 if _is_dispute_yes(dispute) and not rationale:
                     issues.append(f"{sheet_name}/{criterion_id}: Reviewer {slot_number} disputed with no rationale")
+                if not slot_claimed and any(v is not None for v in (score, dispute, rationale)):
+                    issues.append(
+                        f"{sheet_name}/{criterion_id}: Reviewer {slot_number} has responses but "
+                        "the slot is unclaimed (header still shows placeholder text)"
+                    )
         resolved_h = "Resolved Score"
         by_h = "Resolved By"
         ts_h = "Resolved Timestamp"

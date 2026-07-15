@@ -283,6 +283,11 @@ def test_validate_workbook_flags_dispute_without_rationale_and_invalid_score(tmp
 
     wb = load_workbook(file_path)
     ws = wb["v1"]
+    # Claim both slots before entering test data
+    slot1_score_col, _, _ = _reviewer_slot_columns(2)[0]
+    slot2_score_col, _, _ = _reviewer_slot_columns(2)[1]
+    ws.cell(row=2, column=slot1_score_col, value="Reviewer One")
+    ws.cell(row=2, column=slot2_score_col, value="Reviewer Two")
     cols = _column_map(ws)
     row = _row_for(ws, cols, "c1")
     ws[f"{slot1_dispute}{row}"] = "Y"
@@ -426,6 +431,9 @@ def test_validate_workbook_flags_lowercase_dispute_without_rationale(tmp_path):
 
     wb = load_workbook(file_path)
     ws = wb["v1"]
+    # Claim the slot before entering test data
+    slot1_score_col, _, _ = _reviewer_slot_columns(2)[0]
+    ws.cell(row=2, column=slot1_score_col, value="Reviewer One")
     cols = _column_map(ws)
     row = _row_for(ws, cols, "c1")
     ws[f"{dispute_letter}{row}"] = "yes"
@@ -434,3 +442,37 @@ def test_validate_workbook_flags_lowercase_dispute_without_rationale(tmp_path):
     issues = validate_workbook(file_path)
     assert len(issues) == 1
     assert "disputed with no rationale" in issues[0]
+
+
+def test_validate_workbook_flags_unclaimed_slot_with_data(tmp_path):
+    file_path = _generate_two_reviewer_slots(tmp_path, "review.xlsx")
+    score_letter, _, _ = _slot_letters(1)
+
+    wb = load_workbook(file_path)
+    ws = wb["v1"]
+    cols = _column_map(ws)
+    row = _row_for(ws, cols, "c1")
+    ws[f"{score_letter}{row}"] = 4.0
+    wb.save(file_path)
+
+    issues = validate_workbook(file_path)
+    assert any("unclaimed" in issue for issue in issues)
+
+
+def test_validate_workbook_does_not_flag_claimed_slot_with_data(tmp_path):
+    file_path = _generate_two_reviewer_slots(tmp_path, "review.xlsx")
+    score_letter, _, _ = _slot_letters(1)
+    slot1_score_col, _, _ = _reviewer_slot_columns(2)[0]
+
+    wb = load_workbook(file_path)
+    ws = wb["v1"]
+    # Overwrite the same merged anchor cell generate_workbook wrote
+    # "Reviewer 1" into -- this is what "claiming" the slot actually means.
+    ws.cell(row=2, column=slot1_score_col, value="Jane Doe (DAST SME)")
+    cols = _column_map(ws)
+    row = _row_for(ws, cols, "c1")
+    ws[f"{score_letter}{row}"] = 4.0
+    wb.save(file_path)
+
+    issues = validate_workbook(file_path)
+    assert not any("unclaimed" in issue for issue in issues)
