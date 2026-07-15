@@ -1,8 +1,10 @@
+from datetime import date
+
 from openpyxl import load_workbook
 
 from core.models import Confidence, Criterion, CriteriaTaxonomy, ScoreEntry, Vendor, VendorResearchCache, VendorSource
 from core.render.stakeholder_workbook import HEADER_ROW, generate_workbook
-from core.stakeholder_review import _column_map, merge, populate
+from core.stakeholder_review import _column_map, merge, populate, snapshot, validate_workbook
 
 
 def _taxonomy():
@@ -259,3 +261,34 @@ def test_merge_flags_invalid_score_and_dispute_without_rationale(tmp_path):
 
     summary = merge(master_path, copy_path)
     assert "2 invalid" in summary
+
+
+def test_validate_workbook_flags_dispute_without_rationale_and_invalid_score(tmp_path):
+    file_path = _generate_two_stakeholders(tmp_path, "review.xlsx")
+    wb = load_workbook(file_path)
+    ws = wb["v1"]
+    cols = _column_map(ws)
+    row = _row_for(ws, cols, "c1")
+    ws[f"{cols['Jane Doe (DAST SME) Dispute?']}{row}"] = "Y"
+    row2 = _row_for(ws, cols, "c2")
+    ws[f"{cols['Dev Lead Score']}{row2}"] = 9.0
+    wb.save(file_path)
+
+    issues = validate_workbook(file_path)
+    assert len(issues) == 2
+
+
+def test_validate_workbook_returns_empty_list_for_clean_file(tmp_path):
+    file_path = _generate_two_stakeholders(tmp_path, "review.xlsx")
+    assert validate_workbook(file_path) == []
+
+
+def test_snapshot_copies_file_into_archive_dir(tmp_path):
+    file_path = _generate_two_stakeholders(tmp_path, "review.xlsx")
+    archive_dir = tmp_path / "archive"
+    result = snapshot(file_path, "v1", archive_dir, label="baseline")
+    assert result.exists()
+    assert result.parent == archive_dir
+    assert "v1" in result.name
+    assert "baseline" in result.name
+    assert result.read_bytes() == file_path.read_bytes()

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import shutil
+from datetime import date
 from pathlib import Path
 
 from openpyxl import load_workbook
@@ -139,3 +141,46 @@ def merge(master_path: Path, from_path: Path) -> str:
 
     master_wb.save(master_path)
     return f"merged {merged} cell(s), {invalid} invalid, {conflicts} conflict(s), unrecognized: {unrecognized}"
+
+
+def validate_workbook(file_path: Path) -> list[str]:
+    wb = load_workbook(file_path)
+    issues: list[str] = []
+    for sheet_name in wb.sheetnames:
+        ws = wb[sheet_name]
+        cols = _column_map(ws)
+        crit_col = cols["_criterion_id"]
+        for base in _stakeholder_bases(cols):
+            score_h, dispute_h, rationale_h = f"{base} Score", f"{base} Dispute?", f"{base} Rationale"
+            for row in range(FIRST_DATA_ROW, ws.max_row + 1):
+                criterion_id = ws[f"{crit_col}{row}"].value
+                if not criterion_id:
+                    continue
+                score = ws[f"{cols[score_h]}{row}"].value
+                dispute = ws[f"{cols[dispute_h]}{row}"].value
+                rationale = ws[f"{cols[rationale_h]}{row}"].value
+                if score is not None and score not in SCORE_VALUES:
+                    issues.append(f"{sheet_name}/{criterion_id}: '{base}' score {score!r} is not a valid value")
+                if dispute == "Y" and not rationale:
+                    issues.append(f"{sheet_name}/{criterion_id}: '{base}' disputed with no rationale")
+        resolved_h = "Resolved Score"
+        by_h = "Resolved By"
+        ts_h = "Resolved Timestamp"
+        for row in range(FIRST_DATA_ROW, ws.max_row + 1):
+            criterion_id = ws[f"{crit_col}{row}"].value
+            if not criterion_id:
+                continue
+            resolved = ws[f"{cols[resolved_h]}{row}"].value
+            resolved_by = ws[f"{cols[by_h]}{row}"].value
+            resolved_ts = ws[f"{cols[ts_h]}{row}"].value
+            if resolved is not None and not (resolved_by and resolved_ts):
+                issues.append(f"{sheet_name}/{criterion_id}: resolved score present without Resolved By/Timestamp")
+    return issues
+
+
+def snapshot(file_path: Path, vendor_id: str, archive_dir: Path, label: str | None = None) -> Path:
+    archive_dir.mkdir(parents=True, exist_ok=True)
+    suffix = f"-{label}" if label else ""
+    dest = archive_dir / f"{date.today().isoformat()}-{vendor_id}{suffix}.xlsx"
+    shutil.copy2(file_path, dest)
+    return dest
