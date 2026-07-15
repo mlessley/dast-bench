@@ -143,9 +143,16 @@ deferred; Weight's explanation doesn't need a duplicate location.
 
 ### 6. Default reviewer-slot count
 
-`generate_workbook`'s `reviewer_slots: int = 3` default becomes
-`reviewer_slots: int = 5`. The CLI's `typer.Option(3, "--reviewer-slots")`
-becomes `typer.Option(5, "--reviewer-slots")`. The existing CLI test
+Correction to how this was originally described: `generate_workbook`'s
+`reviewer_slots` parameter has **no default today** — it's a required
+parameter followed by other required parameters before
+`top_tier_count`'s existing default, so giving it a default would be a
+Python syntax error unless every parameter after it also got one, which
+is out of scope. The only actual "default" behavior lives in the CLI:
+`typer.Option(3, "--reviewer-slots")` becomes
+`typer.Option(5, "--reviewer-slots")`. `generate_workbook` itself is
+unchanged — every real caller (the CLI, every test) already passes
+`reviewer_slots` explicitly. The existing CLI test
 `test_cli_stakeholder_review_generate_defaults_to_three_reviewer_slots`
 is renamed and its assertion updated to expect 5 slots
 (`header.count("Score") == 5`) instead of 3.
