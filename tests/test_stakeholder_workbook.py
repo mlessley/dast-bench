@@ -362,7 +362,47 @@ def test_generate_workbook_adds_executive_summary_sheet_first_with_legend_and_ra
         f"'a'!{weight_col}{coverage_row}/'a'!{evidence_col}{coverage_row}*5)"
     )
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=2).value == expected_coverage_formula
+
+    expected_avg_formula = (
+        f"=IF('a'!{evidence_col}{weighted_total_row}=0,\"Pending\","
+        f"'a'!{weight_col}{weighted_total_row}/'a'!{evidence_col}{weighted_total_row}*5)"
+    )
+    assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=4).value == expected_avg_formula
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=5).value == f"='a'!{score_col}{weighted_total_row}"
+
+
+def test_generate_workbook_executive_summary_ranks_by_normalized_average_not_raw_achieved_points(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor_x = Vendor(id="x", name="Vendor X", source=VendorSource.DISCOVERED)
+    vendor_x.scores.append(ScoreEntry(criterion_id="c1", score=5.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_x.scores.append(ScoreEntry(criterion_id="c2", score=1.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_y = Vendor(id="y", name="Vendor Y", source=VendorSource.DISCOVERED)
+    vendor_y.scores.append(ScoreEntry(criterion_id="c1", score=4.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_y.scores.append(ScoreEntry(criterion_id="c2", score=4.0, evidence="e", confidence=Confidence.PAPER))
+
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor_y, vendor_x],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={"x": {"c2"}},
+        research_caches={
+            "x": VendorResearchCache(vendor_id="x"),
+            "y": VendorResearchCache(vendor_id="y"),
+        },
+        out_path=out_path,
+    )
+
+    ws = load_workbook(out_path)["Executive Summary"]
+    # Vendor X: c2 is pending, so only c1 (weight 60) counts -> normalized avg = 5.0.
+    #   Raw achieved points (weight*score, uncorrected): 60*5 = 300.
+    # Vendor Y: both criteria count -> normalized avg = (60*4 + 40*4) / 100 = 4.0.
+    #   Raw achieved points: 60*4 + 40*4 = 400 -- MORE raw points than Vendor X.
+    # A correct (normalized-average) ranking puts Vendor X first despite Vendor Y
+    # having more raw achieved points; a regression to raw-achieved-points ranking
+    # would put Vendor Y first instead. This is the case the other two tests can't catch.
+    assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1).value == "Vendor X"
+    assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW + 1, column=1).value == "Vendor Y"
 
 
 def test_generate_workbook_executive_summary_sorts_all_pending_vendor_last(tmp_path):
