@@ -6,7 +6,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Protection
 
 from .models import Vendor
-from .render.stakeholder_workbook import FIRST_DATA_ROW, HEADER_ROW, stakeholder_headers
+from .render.stakeholder_workbook import FIRST_DATA_ROW, HEADER_ROW
 
 
 def _column_map(ws) -> dict[str, str]:
@@ -45,7 +45,9 @@ def populate(vendor: Vendor, file_path: Path) -> str:
         ws[f"{confidence_col}{row}"] = entry.confidence.value
         ws[f"{pending_col}{row}"] = 0
         for header in cols:
-            if header.endswith(" Score") and header != "Automated Score" and header != "Resolved Score":
+            if header in ("Automated Score", "Resolved Score"):
+                continue
+            if header.endswith((" Score", " Dispute?", " Rationale")):
                 ws[f"{cols[header]}{row}"].protection = Protection(locked=False)
         filled += 1
 
