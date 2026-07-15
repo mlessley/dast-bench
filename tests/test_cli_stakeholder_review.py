@@ -50,7 +50,7 @@ def test_cli_stakeholder_review_generate_creates_workbook(tmp_path, monkeypatch)
     assert header.count("Score") == 2
 
 
-def test_cli_stakeholder_review_generate_defaults_to_three_reviewer_slots(tmp_path, monkeypatch):
+def test_cli_stakeholder_review_generate_defaults_to_five_reviewer_slots(tmp_path, monkeypatch):
     _setup_repo(tmp_path, monkeypatch)
     out_path = tmp_path / "review.xlsx"
     result = runner.invoke(
@@ -64,7 +64,7 @@ def test_cli_stakeholder_review_generate_defaults_to_three_reviewer_slots(tmp_pa
     assert result.exit_code == 0, result.output
     ws = load_workbook(out_path)["v1"]
     header = [c.value for c in ws[3]]
-    assert header.count("Score") == 3
+    assert header.count("Score") == 5
 
 
 def test_cli_stakeholder_review_generate_fails_on_unscored_criterion(tmp_path, monkeypatch):

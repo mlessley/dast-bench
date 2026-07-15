@@ -530,7 +530,7 @@ def _parse_pending_criteria(raw_list: list[str]) -> dict[str, set[str]]:
 @stakeholder_review_app.command("generate")
 def stakeholder_review_generate(
     vendor_id: list[str] = typer.Option(..., "--vendor-id"),
-    reviewer_slots: int = typer.Option(3, "--reviewer-slots"),
+    reviewer_slots: int = typer.Option(5, "--reviewer-slots"),
     pending_criteria: list[str] = typer.Option([], "--pending-criteria"),
     out: Path = typer.Option(...),
 ) -> None:
