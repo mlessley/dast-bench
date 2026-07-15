@@ -276,7 +276,7 @@ def generate_workbook(
         ws.append(["Provisional — ranking may shift once pending dast-scan results land."])
         ws.append([])
         ws.append(headers)
-        ws.freeze_panes = "C4"
+        ws.freeze_panes = "D4"
         for col_idx, header_name in enumerate(headers, start=1):
             width = _column_width_for(header_name)
             if width is not None:

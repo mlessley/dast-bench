@@ -243,7 +243,7 @@ def test_generate_workbook_applies_column_widths_freeze_panes_and_header_style(t
         out_path=out_path,
     )
     ws = load_workbook(out_path)["v1"]
-    assert ws.freeze_panes == "C4"
+    assert ws.freeze_panes == "D4"
     assert ws.column_dimensions["A"].width == 32  # Criterion
 
     header = [c.value for c in ws[3]]
@@ -451,3 +451,19 @@ def test_generate_workbook_executive_summary_includes_bar_chart(tmp_path):
     ws = load_workbook(out_path)["Executive Summary"]
     assert len(ws._charts) == 1
     assert isinstance(ws._charts[0], BarChart)
+
+
+def test_generate_workbook_freeze_panes_include_weight_column(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    assert ws.freeze_panes == "D4"
