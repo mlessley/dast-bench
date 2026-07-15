@@ -146,6 +146,13 @@ def _add_executive_summary_sheet(
     for i, line in enumerate(_EXEC_LEGEND_LINES_TEMPLATE):
         ws.cell(row=_EXEC_LEGEND_FIRST_ROW + i, column=1, value=line.format(top_tier_count=top_tier_count))
 
+    legend_last_row = _EXEC_LEGEND_FIRST_ROW + len(_EXEC_LEGEND_LINES_TEMPLATE) - 1
+    for row in range(_EXEC_LEGEND_HEADER_ROW, legend_last_row + 1):
+        for col in range(1, 6):
+            cell = ws.cell(row=row, column=col)
+            cell.fill = _BAND_FILL
+            cell.border = _HEADER_BORDER
+
     categories = _ordered_categories(taxonomy)
     category_rows, weighted_total_row = _rollup_row_numbers(taxonomy)
     table_headers = ["Vendor"] + categories + ["Weighted Avg Score", "Total Achieved / Available"]

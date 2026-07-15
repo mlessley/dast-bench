@@ -17,6 +17,9 @@ from openpyxl.utils import get_column_letter
 from core.render.stakeholder_workbook import (
     _all_headers,
     _column_index,
+    _EXEC_LEGEND_FIRST_ROW,
+    _EXEC_LEGEND_HEADER_ROW,
+    _EXEC_LEGEND_LINES_TEMPLATE,
     _rollup_row_numbers,
     compute_priority_order,
     EXEC_TABLE_FIRST_DATA_ROW,
@@ -524,3 +527,27 @@ def test_generate_workbook_bands_continuously_under_tier_highlight(tmp_path):
     assert ws.cell(row=5, column=1).fill.fgColor.rgb == "00F9E79F"  # tier, odd (i=1)
     assert ws.cell(row=6, column=1).fill.fgColor.rgb == "00000000"  # non-tier, even (i=2) -- no fill
     assert ws.cell(row=7, column=1).fill.fgColor.rgb == "00F2F2F2"  # non-tier, odd (i=3) -- banded
+
+
+def test_generate_workbook_executive_summary_legend_has_border_and_fill(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["Executive Summary"]
+    legend_last_row = _EXEC_LEGEND_FIRST_ROW + len(_EXEC_LEGEND_LINES_TEMPLATE) - 1
+
+    top_left = ws.cell(row=_EXEC_LEGEND_HEADER_ROW, column=1)
+    assert top_left.fill.fgColor.rgb == "00F2F2F2"
+    assert top_left.border.top.style == "thin"
+
+    bottom_right = ws.cell(row=legend_last_row, column=5)
+    assert bottom_right.fill.fgColor.rgb == "00F2F2F2"
+    assert bottom_right.border.bottom.style == "thin"
