@@ -92,6 +92,10 @@ def merge(master_path: Path, from_path: Path) -> str:
         m_cols = _column_map(m_ws)
         f_cols = _column_map(f_ws)
 
+        if "_criterion_id" not in m_cols or "_criterion_id" not in f_cols:
+            # Not a per-vendor rollup sheet (e.g. the Executive Summary tab).
+            continue
+
         m_crit_col = m_cols["_criterion_id"]
         f_crit_col = f_cols["_criterion_id"]
         m_pending_col = m_cols["_pending"]
@@ -157,6 +161,9 @@ def validate_workbook(file_path: Path) -> list[str]:
     for sheet_name in wb.sheetnames:
         ws = wb[sheet_name]
         cols = _column_map(ws)
+        if "_criterion_id" not in cols:
+            # Not a per-vendor rollup sheet (e.g. the Executive Summary tab).
+            continue
         crit_col = cols["_criterion_id"]
         for base in _stakeholder_bases(cols):
             score_h, dispute_h, rationale_h = f"{base} Score", f"{base} Dispute?", f"{base} Rationale"

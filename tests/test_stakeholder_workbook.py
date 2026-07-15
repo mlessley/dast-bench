@@ -14,7 +14,15 @@ from core.models import (
 )
 from openpyxl.utils import get_column_letter
 
-from core.render.stakeholder_workbook import compute_priority_order, generate_workbook
+from core.render.stakeholder_workbook import (
+    _all_headers,
+    _column_index,
+    _rollup_row_numbers,
+    compute_priority_order,
+    EXEC_TABLE_FIRST_DATA_ROW,
+    EXEC_TABLE_HEADER_ROW,
+    generate_workbook,
+)
 
 
 def _taxonomy():
@@ -86,7 +94,7 @@ def test_generate_workbook_writes_one_sheet_per_vendor_with_headers(tmp_path):
         out_path=out_path,
     )
     wb = load_workbook(out_path)
-    assert wb.sheetnames == ["v1"]
+    assert wb.sheetnames == ["Executive Summary", "v1"]
     ws = wb["v1"]
     header = [c.value for c in ws[3]]
     assert header[:6] == ["Criterion", "Category", "Weight", "Automated Score", "Automated Evidence", "Automated Confidence"]
@@ -304,3 +312,83 @@ def test_generate_workbook_adds_dispute_dropdown(tmp_path):
     dispute_dvs = [dv for dv in ws.data_validations.dataValidation if dv.formula1 == '"Yes"']
     assert len(dispute_dvs) == 1
     assert f"{dispute_col_letter}4" in str(dispute_dvs[0].sqref)
+
+
+def test_generate_workbook_adds_executive_summary_sheet_first_with_legend_and_ranked_table(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor_a = Vendor(id="a", name="Vendor A", source=VendorSource.DISCOVERED)
+    vendor_a.scores.append(ScoreEntry(criterion_id="c1", score=5.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_a.scores.append(ScoreEntry(criterion_id="c2", score=5.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_b = Vendor(id="b", name="Vendor B", source=VendorSource.DISCOVERED)
+    vendor_b.scores.append(ScoreEntry(criterion_id="c1", score=2.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_b.scores.append(ScoreEntry(criterion_id="c2", score=2.0, evidence="e", confidence=Confidence.PAPER))
+
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor_b, vendor_a],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={},
+        research_caches={
+            "a": VendorResearchCache(vendor_id="a"),
+            "b": VendorResearchCache(vendor_id="b"),
+        },
+        out_path=out_path,
+    )
+
+    wb = load_workbook(out_path)
+    assert wb.sheetnames[0] == "Executive Summary"
+    ws = wb["Executive Summary"]
+    assert ws.cell(row=1, column=1).value == "Executive Summary"
+    assert ws.cell(row=3, column=1).value == "Legend"
+    assert "top 10 priority" in ws.cell(row=5, column=1).value
+
+    header = [c.value for c in ws[EXEC_TABLE_HEADER_ROW]]
+    assert header == ["Vendor", "Coverage", "DX", "Weighted Avg Score", "Total Achieved / Available"]
+
+    # Vendor A scored higher on every criterion, so it ranks first
+    assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1).value == "Vendor A"
+    assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW + 1, column=1).value == "Vendor B"
+
+    category_rows, weighted_total_row = _rollup_row_numbers(taxonomy)
+    vendor_headers = _all_headers([(None, "DAST SME")])
+    weight_col = get_column_letter(_column_index(vendor_headers, "Weight"))
+    evidence_col = get_column_letter(_column_index(vendor_headers, "Automated Evidence"))
+    score_col = get_column_letter(_column_index(vendor_headers, "Automated Score"))
+
+    coverage_row = category_rows["Coverage"]
+    expected_coverage_formula = (
+        f"=IF('a'!{evidence_col}{coverage_row}=0,\"Pending\","
+        f"'a'!{weight_col}{coverage_row}/'a'!{evidence_col}{coverage_row}*5)"
+    )
+    assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=2).value == expected_coverage_formula
+    assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=5).value == f"='a'!{score_col}{weighted_total_row}"
+
+
+def test_generate_workbook_executive_summary_sorts_all_pending_vendor_last(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor_a = Vendor(id="a", name="Vendor A", source=VendorSource.DISCOVERED)
+    vendor_a.scores.append(ScoreEntry(criterion_id="c1", score=1.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_a.scores.append(ScoreEntry(criterion_id="c2", score=1.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_b = Vendor(id="b", name="Vendor B", source=VendorSource.DISCOVERED)
+    vendor_b.scores.append(ScoreEntry(criterion_id="c1", score=5.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_b.scores.append(ScoreEntry(criterion_id="c2", score=5.0, evidence="e", confidence=Confidence.PAPER))
+
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor_a, vendor_b],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={"b": {"c1", "c2"}},
+        research_caches={
+            "a": VendorResearchCache(vendor_id="a"),
+            "b": VendorResearchCache(vendor_id="b"),
+        },
+        out_path=out_path,
+    )
+
+    ws = load_workbook(out_path)["Executive Summary"]
+    # Vendor B has nothing scored yet (fully pending), so it must not
+    # outrank Vendor A's real (if low) score.
+    assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1).value == "Vendor A"
+    assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW + 1, column=1).value == "Vendor B"

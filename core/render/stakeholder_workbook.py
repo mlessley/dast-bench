@@ -82,6 +82,126 @@ def _tab_color_for(index: int) -> str:
     return _TAB_COLOR_PALETTE[index % len(_TAB_COLOR_PALETTE)]
 
 
+_EXEC_SHEET_NAME = "Executive Summary"
+_EXEC_TAB_COLOR = "1F4E78"
+_EXEC_TITLE_ROW = 1
+_EXEC_LEGEND_HEADER_ROW = 3
+_EXEC_LEGEND_FIRST_ROW = 4
+_EXEC_LEGEND_LINES_TEMPLATE = [
+    "Pending rows: dast-scan results not yet available; locked until Round 2 populate fills them in.",
+    "Tier highlight (light yellow): top {top_tier_count} priority criteria for this round, shown for quick scanning.",
+    "Dispute = Yes requires a non-blank Rationale; discuss unresolved disputes before finalizing a score.",
+    "Automated Confidence: 'paper' = desk research only; 'hands-on' = verified via dast-scan.",
+    "Weighted Avg Score is normalized to a 0-5 scale and is comparable across vendors even when the "
+    "number of pending criteria differs. Row order below is fixed when this workbook is generated and "
+    "does not auto-resort if scores change later.",
+]
+
+EXEC_TABLE_HEADER_ROW = _EXEC_LEGEND_FIRST_ROW + len(_EXEC_LEGEND_LINES_TEMPLATE) + 1
+EXEC_TABLE_FIRST_DATA_ROW = EXEC_TABLE_HEADER_ROW + 1
+
+
+def _rollup_row_numbers(taxonomy: CriteriaTaxonomy) -> tuple[dict[str, int], int]:
+    last_data_row = FIRST_DATA_ROW + len(taxonomy.criteria) - 1
+    categories = _ordered_categories(taxonomy)
+    first_category_row = last_data_row + 2
+    category_rows = {category: first_category_row + i for i, category in enumerate(categories)}
+    weighted_total_row = first_category_row + len(categories)
+    return category_rows, weighted_total_row
+
+
+def _weighted_avg_score(taxonomy: CriteriaTaxonomy, vendor: Vendor, pending_for_vendor: set[str]) -> float | None:
+    achieved = 0.0
+    available = 0.0
+    for criterion in taxonomy.criteria:
+        if criterion.id in pending_for_vendor:
+            continue
+        entry = vendor.score_for(criterion.id)
+        score = entry.score if entry else 0.0
+        achieved += criterion.weight * score
+        available += criterion.weight
+    if available == 0:
+        return None
+    return achieved / available
+
+
+def _add_executive_summary_sheet(
+    wb: Workbook,
+    taxonomy: CriteriaTaxonomy,
+    vendors: list[Vendor],
+    pending_criteria: dict[str, set[str]],
+    headers: list[str],
+    top_tier_count: int,
+) -> None:
+    ws = wb.create_sheet(title=_EXEC_SHEET_NAME)
+    ws.sheet_properties.tabColor = _EXEC_TAB_COLOR
+
+    title_cell = ws.cell(row=_EXEC_TITLE_ROW, column=1, value=_EXEC_SHEET_NAME)
+    title_cell.font = Font(bold=True, size=14)
+
+    legend_header_cell = ws.cell(row=_EXEC_LEGEND_HEADER_ROW, column=1, value="Legend")
+    legend_header_cell.font = Font(bold=True)
+    for i, line in enumerate(_EXEC_LEGEND_LINES_TEMPLATE):
+        ws.cell(row=_EXEC_LEGEND_FIRST_ROW + i, column=1, value=line.format(top_tier_count=top_tier_count))
+
+    categories = _ordered_categories(taxonomy)
+    category_rows, weighted_total_row = _rollup_row_numbers(taxonomy)
+    table_headers = ["Vendor"] + categories + ["Weighted Avg Score", "Total Achieved / Available"]
+    avg_col = 2 + len(categories)
+
+    for col_idx, header_name in enumerate(table_headers, start=1):
+        cell = ws.cell(row=EXEC_TABLE_HEADER_ROW, column=col_idx, value=header_name)
+        cell.font = _HEADER_FONT
+        cell.fill = _HEADER_FILL
+        cell.border = _HEADER_BORDER
+        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+    weight_col_letter = get_column_letter(_column_index(headers, "Weight"))
+    evidence_col_letter = get_column_letter(_column_index(headers, "Automated Evidence"))
+    score_col_letter = get_column_letter(_column_index(headers, "Automated Score"))
+
+    def _sort_key(vendor: Vendor) -> tuple[bool, float]:
+        avg = _weighted_avg_score(taxonomy, vendor, pending_criteria.get(vendor.id, set()))
+        return (avg is None, -(avg or 0.0))
+
+    ranked_vendors = sorted(vendors, key=_sort_key)
+
+    for i, vendor in enumerate(ranked_vendors):
+        row_num = EXEC_TABLE_FIRST_DATA_ROW + i
+        sheet_name = vendor.id[:31]
+        ws.cell(row=row_num, column=1, value=vendor.name)
+
+        for col_offset, category in enumerate(categories):
+            r = category_rows[category]
+            formula = (
+                f"=IF('{sheet_name}'!{evidence_col_letter}{r}=0,\"Pending\","
+                f"'{sheet_name}'!{weight_col_letter}{r}/'{sheet_name}'!{evidence_col_letter}{r}*5)"
+            )
+            cell = ws.cell(row=row_num, column=2 + col_offset, value=formula)
+            cell.number_format = "0.0"
+            cell.alignment = Alignment(horizontal="right")
+
+        avg_formula = (
+            f"=IF('{sheet_name}'!{evidence_col_letter}{weighted_total_row}=0,\"Pending\","
+            f"'{sheet_name}'!{weight_col_letter}{weighted_total_row}/"
+            f"'{sheet_name}'!{evidence_col_letter}{weighted_total_row}*5)"
+        )
+        avg_cell = ws.cell(row=row_num, column=avg_col, value=avg_formula)
+        avg_cell.number_format = "0.0"
+        avg_cell.alignment = Alignment(horizontal="right")
+
+        ws.cell(
+            row=row_num,
+            column=avg_col + 1,
+            value=f"='{sheet_name}'!{score_col_letter}{weighted_total_row}",
+        )
+
+    for col_idx, header_name in enumerate(table_headers, start=1):
+        ws.column_dimensions[get_column_letter(col_idx)].width = 40 if header_name == "Vendor" else 20
+
+    ws.protection.sheet = True
+
+
 def _is_right_aligned_numeric(header_name: str) -> bool:
     return (
         header_name in _RIGHT_ALIGN_NUMERIC_HEADERS_EXACT
@@ -135,6 +255,7 @@ def generate_workbook(
     wb = Workbook()
     wb.remove(wb.active)
     headers = _all_headers(stakeholders)
+    _add_executive_summary_sheet(wb, taxonomy, vendors, pending_criteria, headers, top_tier_count)
     for vendor_index, vendor in enumerate(vendors):
         ws = wb.create_sheet(title=vendor.id[:31])
         ws.sheet_properties.tabColor = _tab_color_for(vendor_index)
@@ -270,7 +391,8 @@ def generate_workbook(
             )
 
         ws.append([])
-        first_rollup_row = last_data_row + 2
+        category_rows_for_border, _ = _rollup_row_numbers(taxonomy)
+        first_rollup_row = category_rows_for_border[_ordered_categories(taxonomy)[0]]
         for category in _ordered_categories(taxonomy):
             _write_rollup_row(category, category)
         _write_rollup_row("Weighted Total", None)
