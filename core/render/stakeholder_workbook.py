@@ -3,7 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 
 from openpyxl import Workbook
+from openpyxl.formatting.rule import CellIsRule
+from openpyxl.styles import PatternFill, Protection
 from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.datavalidation import DataValidation
 
 from ..models import CriteriaTaxonomy, Vendor, VendorResearchCache
 
@@ -22,6 +25,9 @@ _BASE_HEADERS = [
 ]
 _RESOLUTION_HEADERS = ["Resolved Score", "Resolved By", "Resolved Timestamp", "Automated vs. Resolved Delta"]
 _HIDDEN_HEADERS = ["_criterion_id", "_pending", "_effective_score"]
+
+_TIER_FILL = PatternFill(start_color="FFF2CC", end_color="FFF2CC", fill_type="solid")
+_UNFILLED_FILL = PatternFill(start_color="FCE4D6", end_color="FCE4D6", fill_type="solid")
 
 HEADER_ROW = 3
 FIRST_DATA_ROW = 4
@@ -77,7 +83,20 @@ def generate_workbook(
         pending_for_vendor = pending_criteria.get(vendor.id, set())
         cache = research_caches.get(vendor.id) or VendorResearchCache(vendor_id=vendor.id)
         order = compute_priority_order(taxonomy, vendor, cache)
-        for criterion_id in order:
+
+        score_cols = [
+            _column_index(headers, h) for h in stakeholder_headers(stakeholders) if h.endswith(" Score")
+        ] + [_column_index(headers, "Resolved Score")]
+
+        dv = DataValidation(
+            type="list",
+            formula1='"' + ",".join(str(v) for v in SCORE_VALUES) + '"',
+            allow_blank=True,
+        )
+        ws.add_data_validation(dv)
+
+        for i, criterion_id in enumerate(order):
+            row_num = FIRST_DATA_ROW + i
             criterion = taxonomy.get(criterion_id)
             entry = vendor.score_for(criterion_id)
             is_pending = criterion_id in pending_for_vendor
@@ -87,10 +106,32 @@ def generate_workbook(
             else:
                 row += [entry.score if entry else None, entry.evidence if entry else None, entry.confidence.value if entry else None]
             row += [None] * len(stakeholder_headers(stakeholders))
-            row += [None, None, None, None]  # resolution columns
-            row += [criterion_id, 1 if is_pending else 0, None]  # hidden columns
+            row += [None, None, None, None]
+            row += [criterion_id, 1 if is_pending else 0, None]
             ws.append(row)
+
+            if i < top_tier_count:
+                for col in range(1, len(headers) + 1):
+                    ws.cell(row=row_num, column=col).fill = _TIER_FILL
+
+            for col in score_cols:
+                cell = ws.cell(row=row_num, column=col)
+                cell.protection = Protection(locked=is_pending)
+                dv.add(cell)
+                if i < top_tier_count:
+                    ws.conditional_formatting.add(
+                        cell.coordinate,
+                        CellIsRule(operator="equal", formula=['""'], fill=_UNFILLED_FILL),
+                    )
+
+            editable_non_score_cols = [
+                _column_index(headers, h) for h in stakeholder_headers(stakeholders) if not h.endswith(" Score")
+            ] + [_column_index(headers, h) for h in ("Resolved By", "Resolved Timestamp")]
+            for col in editable_non_score_cols:
+                ws.cell(row=row_num, column=col).protection = Protection(locked=is_pending)
+
         for hidden_name in _HIDDEN_HEADERS:
             ws.column_dimensions[get_column_letter(_column_index(headers, hidden_name))].hidden = True
+        ws.protection.sheet = True
     out_path.parent.mkdir(parents=True, exist_ok=True)
     wb.save(out_path)

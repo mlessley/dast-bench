@@ -148,3 +148,27 @@ def test_generate_workbook_marks_pending_criteria_with_placeholder_and_no_automa
     assert ws.cell(row=row, column=score_col).value is None
     non_pending_row = next(r for r in range(4, ws.max_row + 1) if ws.cell(row=r, column=crit_id_col).value == "c1")
     assert ws.cell(row=non_pending_row, column=pending_col).value == 0
+
+
+def test_generate_workbook_adds_score_data_validation_and_locks_pending_rows(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        stakeholders=[(None, "DAST SME")],
+        pending_criteria={"v1": {"c2"}},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[3]]
+    assert len(ws.data_validations.dataValidation) >= 1
+    score_col = header.index("DAST SME Score") + 1
+    crit_id_col = header.index("_criterion_id") + 1
+    pending_row = next(r for r in range(4, ws.max_row + 1) if ws.cell(row=r, column=crit_id_col).value == "c2")
+    non_pending_row = next(r for r in range(4, ws.max_row + 1) if ws.cell(row=r, column=crit_id_col).value == "c1")
+    assert ws.cell(row=pending_row, column=score_col).protection.locked is True
+    assert ws.cell(row=non_pending_row, column=score_col).protection.locked is False
+    assert ws.protection.sheet is True
