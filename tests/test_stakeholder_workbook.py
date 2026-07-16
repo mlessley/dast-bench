@@ -20,6 +20,10 @@ from core.render.stakeholder_workbook import (
     _EXEC_LEGEND_FIRST_ROW,
     _EXEC_LEGEND_HEADER_ROW,
     _EXEC_LEGEND_LINES_TEMPLATE,
+    _REVIEWERS_FIRST_DATA_ROW,
+    _REVIEWERS_NAME_COL,
+    _REVIEWERS_ROLE_COL,
+    _REVIEWERS_SHEET_NAME,
     _reviewer_slot_columns,
     _rollup_row_numbers,
     compute_priority_order,
@@ -99,7 +103,7 @@ def test_generate_workbook_writes_one_sheet_per_vendor_with_headers(tmp_path):
         out_path=out_path,
     )
     wb = load_workbook(out_path)
-    assert wb.sheetnames == ["Executive Summary", "v1"]
+    assert wb.sheetnames == ["Executive Summary", _REVIEWERS_SHEET_NAME, "v1"]
     ws = wb["v1"]
     header = [c.value for c in ws[3]]
     assert header[:6] == ["Criterion", "Category", "Weight", "Automated Score", "Automated Evidence", "Automated Confidence"]
@@ -110,6 +114,63 @@ def test_generate_workbook_writes_one_sheet_per_vendor_with_headers(tmp_path):
     assert "Resolved By" in header
     assert "Resolved Timestamp" in header
     assert "_criterion_id" in header
+
+
+def test_generate_workbook_adds_reviewers_sheet_with_editable_name_role_cells(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=2,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    wb = load_workbook(out_path)
+    assert wb.sheetnames == ["Executive Summary", _REVIEWERS_SHEET_NAME, "v1"]
+
+    ws = wb[_REVIEWERS_SHEET_NAME]
+    assert ws.protection.sheet is True
+
+    slot1_row = _REVIEWERS_FIRST_DATA_ROW
+    slot2_row = _REVIEWERS_FIRST_DATA_ROW + 1
+    assert ws.cell(row=slot1_row, column=1).value == 1
+    assert ws.cell(row=slot2_row, column=1).value == 2
+    assert ws.cell(row=slot1_row, column=_REVIEWERS_NAME_COL).protection.locked is False
+    assert ws.cell(row=slot1_row, column=_REVIEWERS_ROLE_COL).protection.locked is False
+    # Only 2 reviewer_slots were requested -- no row for a 3rd slot.
+    assert ws.cell(row=_REVIEWERS_FIRST_DATA_ROW + 2, column=1).value is None
+
+
+def test_generate_workbook_reviewer_slot_header_is_a_formula_referencing_reviewers_sheet(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=2,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    slot_columns = _reviewer_slot_columns(2)
+
+    slot1_score_col, _, _ = slot_columns[0]
+    slot1_cell = ws.cell(row=2, column=slot1_score_col)
+    assert slot1_cell.value == (
+        '=IF(Reviewers!B6="","Reviewer 1 - {name} - {role/title}",Reviewers!B6&" - "&Reviewers!C6)'
+    )
+    assert slot1_cell.protection.locked is True
+
+    slot2_score_col, _, _ = slot_columns[1]
+    slot2_cell = ws.cell(row=2, column=slot2_score_col)
+    assert slot2_cell.value == (
+        '=IF(Reviewers!B7="","Reviewer 2 - {name} - {role/title}",Reviewers!B7&" - "&Reviewers!C7)'
+    )
 
 
 def test_generate_workbook_adds_merged_reviewer_slot_group_headers(tmp_path):
@@ -131,14 +192,18 @@ def test_generate_workbook_adds_merged_reviewer_slot_group_headers(tmp_path):
     slot1_range = f"{get_column_letter(slot1_score_col)}2:{get_column_letter(slot1_rationale_col)}2"
     assert slot1_range in [str(r) for r in ws.merged_cells.ranges]
     slot1_cell = ws.cell(row=2, column=slot1_score_col)
-    assert slot1_cell.value == "Reviewer 1 - {name} - {role/title}"
+    assert slot1_cell.value == (
+        '=IF(Reviewers!B6="","Reviewer 1 - {name} - {role/title}",Reviewers!B6&" - "&Reviewers!C6)'
+    )
     assert slot1_cell.font.bold is True
     assert slot1_cell.fill.fgColor.rgb == "001F4E78"
 
     slot2_score_col, _, slot2_rationale_col = slot_columns[1]
     slot2_range = f"{get_column_letter(slot2_score_col)}2:{get_column_letter(slot2_rationale_col)}2"
     assert slot2_range in [str(r) for r in ws.merged_cells.ranges]
-    assert ws.cell(row=2, column=slot2_score_col).value == "Reviewer 2 - {name} - {role/title}"
+    assert ws.cell(row=2, column=slot2_score_col).value == (
+        '=IF(Reviewers!B7="","Reviewer 2 - {name} - {role/title}",Reviewers!B7&" - "&Reviewers!C7)'
+    )
 
 
 def test_generate_workbook_with_zero_reviewer_slots_has_no_reviewer_columns(tmp_path):

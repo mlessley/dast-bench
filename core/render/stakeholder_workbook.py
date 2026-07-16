@@ -294,18 +294,84 @@ def _reviewer_slot_count_from_headers(headers: list[str]) -> int:
     return count
 
 
+_REVIEWERS_SHEET_NAME = "Reviewers"
+_REVIEWERS_TAB_COLOR = "8E44AD"
+_REVIEWERS_TITLE_ROW = 1
+_REVIEWERS_INSTRUCTIONS_ROW = 3
+_REVIEWERS_HEADER_ROW = 5
+_REVIEWERS_FIRST_DATA_ROW = 6
+_REVIEWERS_SLOT_COL = 1
+_REVIEWERS_NAME_COL = 2
+_REVIEWERS_ROLE_COL = 3
+
+
 def _unclaimed_reviewer_label(slot_number: int) -> str:
     return f"Reviewer {slot_number} - {{name}} - {{role/title}}"
 
 
+def _reviewer_slot_group_header_formula(slot_index: int, slot_number: int) -> str:
+    """A vendor sheet's reviewer-slot header pulls live from the Reviewers sheet, so
+    claiming a slot there propagates to every vendor tab instead of being re-typed per tab."""
+    row = _REVIEWERS_FIRST_DATA_ROW + slot_index
+    name_ref = f"Reviewers!{get_column_letter(_REVIEWERS_NAME_COL)}{row}"
+    role_ref = f"Reviewers!{get_column_letter(_REVIEWERS_ROLE_COL)}{row}"
+    placeholder = _unclaimed_reviewer_label(slot_number)
+    return f'=IF({name_ref}="","{placeholder}",{name_ref}&" - "&{role_ref})'
+
+
 def _write_reviewer_slot_group_headers(ws, reviewer_slots: int) -> None:
-    for i, (score_col, _dispute_col, rationale_col) in enumerate(_reviewer_slot_columns(reviewer_slots), start=1):
+    for slot_index, (score_col, _dispute_col, rationale_col) in enumerate(_reviewer_slot_columns(reviewer_slots)):
         ws.merge_cells(start_row=2, start_column=score_col, end_row=2, end_column=rationale_col)
-        anchor = ws.cell(row=2, column=score_col, value=_unclaimed_reviewer_label(i))
+        anchor = ws.cell(
+            row=2, column=score_col,
+            value=_reviewer_slot_group_header_formula(slot_index, slot_index + 1),
+        )
         anchor.font = _HEADER_FONT
         anchor.fill = _HEADER_FILL
         anchor.border = _HEADER_BORDER
         anchor.alignment = _HEADER_ALIGNMENT
+        anchor.protection = Protection(locked=True)
+
+
+def _add_reviewers_sheet(wb: Workbook, reviewer_slots: int) -> None:
+    ws = wb.create_sheet(title=_REVIEWERS_SHEET_NAME)
+    ws.sheet_properties.tabColor = _REVIEWERS_TAB_COLOR
+
+    title_cell = ws.cell(row=_REVIEWERS_TITLE_ROW, column=1, value=_REVIEWERS_SHEET_NAME)
+    title_cell.font = Font(bold=True, size=14)
+    ws.row_dimensions[_REVIEWERS_TITLE_ROW].height = 26
+
+    ws.cell(
+        row=_REVIEWERS_INSTRUCTIONS_ROW,
+        column=1,
+        value="Claim a slot by filling in your name and role below — it appears automatically on every vendor tab.",
+    )
+
+    header_labels = ["Slot", "Name", "Role / Title"]
+    for col_idx, label in enumerate(header_labels, start=1):
+        cell = ws.cell(row=_REVIEWERS_HEADER_ROW, column=col_idx, value=label)
+        cell.font = _HEADER_FONT
+        cell.fill = _HEADER_FILL
+        cell.border = _HEADER_BORDER
+        cell.alignment = _HEADER_ALIGNMENT
+    ws.row_dimensions[_REVIEWERS_HEADER_ROW].height = 20
+
+    for i in range(reviewer_slots):
+        row = _REVIEWERS_FIRST_DATA_ROW + i
+        if i % 2 == 1:
+            for col in range(1, 4):
+                ws.cell(row=row, column=col).fill = _BAND_FILL
+
+        slot_cell = ws.cell(row=row, column=_REVIEWERS_SLOT_COL, value=i + 1)
+        slot_cell.alignment = Alignment(horizontal="center")
+
+        for col in (_REVIEWERS_NAME_COL, _REVIEWERS_ROLE_COL):
+            ws.cell(row=row, column=col).protection = Protection(locked=False)
+
+    ws.column_dimensions[get_column_letter(_REVIEWERS_SLOT_COL)].width = 8
+    ws.column_dimensions[get_column_letter(_REVIEWERS_NAME_COL)].width = 28
+    ws.column_dimensions[get_column_letter(_REVIEWERS_ROLE_COL)].width = 28
+    ws.protection.sheet = True
 
 
 def _all_headers(reviewer_slots: int) -> list[str]:
@@ -329,6 +395,7 @@ def generate_workbook(
     wb.remove(wb.active)
     headers = _all_headers(reviewer_slots)
     _add_executive_summary_sheet(wb, taxonomy, vendors, pending_criteria, headers, top_tier_count)
+    _add_reviewers_sheet(wb, reviewer_slots)
     for vendor_index, vendor in enumerate(vendors):
         ws = wb.create_sheet(title=vendor.id[:31])
         ws.sheet_properties.tabColor = _tab_color_for(vendor_index)
