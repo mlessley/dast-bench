@@ -4,7 +4,14 @@ from openpyxl import load_workbook
 from openpyxl.styles import Protection
 
 from core.models import Confidence, Criterion, CriteriaTaxonomy, ScoreEntry, Vendor, VendorResearchCache, VendorSource
-from core.render.stakeholder_workbook import HEADER_ROW, _reviewer_slot_columns, generate_workbook
+from core.render.stakeholder_workbook import (
+    HEADER_ROW,
+    _REVIEWERS_FIRST_DATA_ROW,
+    _REVIEWERS_NAME_COL,
+    _REVIEWERS_SHEET_NAME,
+    _reviewer_slot_columns,
+    generate_workbook,
+)
 from core.stakeholder_review import _column_map, merge, populate, snapshot, validate_workbook
 
 
@@ -155,6 +162,11 @@ def _generate_two_reviewer_slots(tmp_path, filename="master.xlsx"):
     return out_path
 
 
+def _claim_slot(wb, slot_number: int, name: str = "Reviewer") -> None:
+    ws = wb[_REVIEWERS_SHEET_NAME]
+    ws.cell(row=_REVIEWERS_FIRST_DATA_ROW + slot_number - 1, column=_REVIEWERS_NAME_COL, value=name)
+
+
 def _slot_letters(slot_number: int) -> tuple[str, str, str]:
     from openpyxl.utils import get_column_letter
 
@@ -284,10 +296,8 @@ def test_validate_workbook_flags_dispute_without_rationale_and_invalid_score(tmp
     wb = load_workbook(file_path)
     ws = wb["v1"]
     # Claim both slots before entering test data
-    slot1_score_col, _, _ = _reviewer_slot_columns(2)[0]
-    slot2_score_col, _, _ = _reviewer_slot_columns(2)[1]
-    ws.cell(row=2, column=slot1_score_col, value="Reviewer One")
-    ws.cell(row=2, column=slot2_score_col, value="Reviewer Two")
+    _claim_slot(wb, 1, "Reviewer One")
+    _claim_slot(wb, 2, "Reviewer Two")
     cols = _column_map(ws)
     row = _row_for(ws, cols, "c1")
     ws[f"{slot1_dispute}{row}"] = "Y"
@@ -432,8 +442,7 @@ def test_validate_workbook_flags_lowercase_dispute_without_rationale(tmp_path):
     wb = load_workbook(file_path)
     ws = wb["v1"]
     # Claim the slot before entering test data
-    slot1_score_col, _, _ = _reviewer_slot_columns(2)[0]
-    ws.cell(row=2, column=slot1_score_col, value="Reviewer One")
+    _claim_slot(wb, 1, "Reviewer One")
     cols = _column_map(ws)
     row = _row_for(ws, cols, "c1")
     ws[f"{dispute_letter}{row}"] = "yes"
@@ -462,13 +471,12 @@ def test_validate_workbook_flags_unclaimed_slot_with_data(tmp_path):
 def test_validate_workbook_does_not_flag_claimed_slot_with_data(tmp_path):
     file_path = _generate_two_reviewer_slots(tmp_path, "review.xlsx")
     score_letter, _, _ = _slot_letters(1)
-    slot1_score_col, _, _ = _reviewer_slot_columns(2)[0]
 
     wb = load_workbook(file_path)
     ws = wb["v1"]
-    # Overwrite the same merged anchor cell generate_workbook wrote
-    # "Reviewer 1" into -- this is what "claiming" the slot actually means.
-    ws.cell(row=2, column=slot1_score_col, value="Jane Doe (DAST SME)")
+    # Claiming a slot means filling in a name on the Reviewers sheet -- the vendor
+    # tab's merged header cell just formula-references it, it's not typed directly.
+    _claim_slot(wb, 1, "Jane Doe (DAST SME)")
     cols = _column_map(ws)
     row = _row_for(ws, cols, "c1")
     ws[f"{score_letter}{row}"] = 4.0

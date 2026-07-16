@@ -13,9 +13,11 @@ from .render.stakeholder_workbook import (
     FIRST_DATA_ROW,
     HEADER_ROW,
     SCORE_VALUES,
+    _REVIEWERS_FIRST_DATA_ROW,
+    _REVIEWERS_NAME_COL,
+    _REVIEWERS_SHEET_NAME,
     _reviewer_slot_columns,
     _reviewer_slot_count_from_headers,
-    _unclaimed_reviewer_label,
 )
 
 _DISPUTE_YES_VALUES = {"y", "yes"}
@@ -162,19 +164,24 @@ def merge(master_path: Path, from_path: Path) -> str:
 
 def validate_workbook(file_path: Path) -> list[str]:
     wb = load_workbook(file_path)
+    reviewers_ws = wb[_REVIEWERS_SHEET_NAME] if _REVIEWERS_SHEET_NAME in wb.sheetnames else None
     issues: list[str] = []
     for sheet_name in wb.sheetnames:
         ws = wb[sheet_name]
         cols = _column_map(ws)
         if "_criterion_id" not in cols:
-            # Not a per-vendor rollup sheet (e.g. the Executive Summary tab).
+            # Not a per-vendor rollup sheet (e.g. the Executive Summary or Reviewers tab).
             continue
         crit_col = cols["_criterion_id"]
         slot_letters = _slot_letters(ws)
 
         for slot_number, (score_letter, dispute_letter, rationale_letter) in enumerate(slot_letters, start=1):
-            group_header_value = ws.cell(row=2, column=_reviewer_slot_columns(len(slot_letters))[slot_number - 1][0]).value
-            slot_claimed = group_header_value != _unclaimed_reviewer_label(slot_number)
+            # A slot's identity is claimed on the Reviewers sheet (Name column), not on
+            # the vendor tab -- the vendor-tab header is a formula that mirrors it.
+            slot_claimed = bool(
+                reviewers_ws
+                and reviewers_ws.cell(row=_REVIEWERS_FIRST_DATA_ROW + slot_number - 1, column=_REVIEWERS_NAME_COL).value
+            )
             for row in range(FIRST_DATA_ROW, ws.max_row + 1):
                 criterion_id = ws[f"{crit_col}{row}"].value
                 if not criterion_id:
