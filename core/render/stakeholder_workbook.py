@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from openpyxl import Workbook
+from openpyxl.cell.rich_text import CellRichText, TextBlock
+from openpyxl.cell.text import InlineFont
 from openpyxl.chart import BarChart, Reference
 from openpyxl.formatting.rule import CellIsRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Protection, Side
@@ -10,7 +12,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 
 from ..models import CriteriaTaxonomy, Vendor, VendorResearchCache
-from .markdown import _ordered_categories
+from .markdown import _DOMAIN_TOKEN, _ordered_categories
 
 SCORE_VALUES = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
 _PENDING_TEXT = (
@@ -30,6 +32,8 @@ _HIDDEN_HEADERS = ["_criterion_id", "_pending", "_effective_score"]
 
 _TIER_FILL = PatternFill(start_color="FFF2CC", end_color="FFF2CC", fill_type="solid")
 _UNFILLED_FILL = PatternFill(start_color="FCE4D6", end_color="FCE4D6", fill_type="solid")
+
+_EVIDENCE_LINK_INLINE_FONT = InlineFont(color="0563C1", u="single")
 
 _HEADER_FILL_COLOR = "1F4E78"
 _HEADER_FONT = Font(bold=True, color="FFFFFF")
@@ -273,6 +277,24 @@ def _is_right_aligned_numeric(header_name: str) -> bool:
 
 def _is_wrapped_text(header_name: str) -> bool:
     return header_name == "Automated Evidence" or header_name.endswith("Rationale")
+
+
+def _linkify_evidence(text: str) -> tuple[str, CellRichText] | tuple[None, None]:
+    """Find the first URL-looking token in evidence text and return its target plus a rich-text
+    value that styles only that substring as a link, leaving the rest of the text plain."""
+    match = _DOMAIN_TOKEN.search(text)
+    if not match:
+        return None, None
+    token = match.group(1)
+    stripped = token.rstrip(".,;:)")
+    start = match.start(1)
+    link_end = start + len(stripped)
+    before, link_text, after = text[:start], text[start:link_end], text[link_end:]
+    blocks: list = [before] if before else []
+    blocks.append(TextBlock(_EVIDENCE_LINK_INLINE_FONT, link_text))
+    if after:
+        blocks.append(after)
+    return f"https://{stripped}", CellRichText(blocks)
 
 
 HEADER_ROW = 3
@@ -528,6 +550,13 @@ def generate_workbook(
                     cell.alignment = Alignment(horizontal="right")
                 else:
                     cell.alignment = Alignment(horizontal="left", wrap_text=_is_wrapped_text(header_name))
+
+            if not is_pending and entry and entry.evidence:
+                url, rich_text = _linkify_evidence(entry.evidence)
+                if url:
+                    evidence_cell = ws.cell(row=row_num, column=_column_index(headers, "Automated Evidence"))
+                    evidence_cell.value = rich_text
+                    evidence_cell.hyperlink = url
 
             for col in score_cols:
                 cell = ws.cell(row=row_num, column=col)

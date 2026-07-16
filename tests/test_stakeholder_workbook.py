@@ -910,3 +910,45 @@ def test_generate_workbook_how_it_works_legend_explains_weight(tmp_path):
     legend_text = ws.cell(row=weight_legend_row, column=1).value
     assert "Weight" in legend_text
     assert "set by the evaluator" in legend_text
+
+
+def test_generate_workbook_links_first_url_in_evidence(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = Vendor(id="v1", name="V1", source=VendorSource.DISCOVERED)
+    vendor.scores.append(ScoreEntry(
+        criterion_id="c1", score=4.0,
+        evidence="See docs.example.com/report for details.", confidence=Confidence.PAPER,
+    ))
+    vendor.scores.append(ScoreEntry(criterion_id="c2", score=2.0, evidence="no link here", confidence=Confidence.PAPER))
+
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=1,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[3]]
+    crit_id_col = header.index("_criterion_id") + 1
+    evidence_col = header.index("Automated Evidence") + 1
+
+    linked_row = next(r for r in range(4, ws.max_row + 1) if ws.cell(row=r, column=crit_id_col).value == "c1")
+    unlinked_row = next(r for r in range(4, ws.max_row + 1) if ws.cell(row=r, column=crit_id_col).value == "c2")
+
+    linked_cell = ws.cell(row=linked_row, column=evidence_col)
+    assert linked_cell.hyperlink.target == "https://docs.example.com/report"
+    # Plain (non rich-text-aware) reads still see the full original evidence text.
+    assert linked_cell.value == "See docs.example.com/report for details."
+
+    assert ws.cell(row=unlinked_row, column=evidence_col).hyperlink is None
+
+    ws_rich = load_workbook(out_path, rich_text=True)["v1"]
+    linked_cell_rich = ws_rich.cell(row=linked_row, column=evidence_col)
+    link_block = next(b for b in linked_cell_rich.value if not isinstance(b, str))
+    assert link_block.text == "docs.example.com/report"
+    assert link_block.font.color.rgb == "000563C1"
+    plain_blocks = [b for b in linked_cell_rich.value if isinstance(b, str)]
+    assert "See " in plain_blocks and " for details." in plain_blocks
