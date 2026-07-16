@@ -369,6 +369,14 @@ def _add_reviewers_sheet(wb: Workbook, reviewer_slots: int) -> None:
         column=1,
         value="Claim a slot by filling in your name and role below — it appears automatically on every vendor tab.",
     )
+    ws.cell(
+        row=_REVIEWERS_INSTRUCTIONS_ROW + 1,
+        column=1,
+        value=(
+            "Please don't overwrite an existing reviewer's name/role — you may be reassigning someone "
+            "else's already-entered scores to yourself."
+        ),
+    )
 
     header_labels = ["Slot", "Name", "Role / Title"]
     for col_idx, label in enumerate(header_labels, start=1):

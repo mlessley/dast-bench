@@ -149,6 +149,24 @@ def test_generate_workbook_adds_reviewers_sheet_with_editable_name_role_cells(tm
     assert ws.cell(row=_REVIEWERS_FIRST_DATA_ROW + 2, column=1).value is None
 
 
+def test_generate_workbook_reviewers_sheet_has_no_overwrite_caveat(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=1,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)[_REVIEWERS_SHEET_NAME]
+    caveat = ws.cell(row=4, column=1).value
+    assert caveat is not None
+    assert "don't overwrite" in caveat.lower()
+
+
 def test_generate_workbook_reviewer_slot_header_is_a_formula_referencing_reviewers_sheet(tmp_path):
     out_path = tmp_path / "review.xlsx"
     taxonomy = _taxonomy_two_criteria()
