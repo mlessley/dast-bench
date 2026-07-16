@@ -327,10 +327,10 @@ def test_generate_workbook_adds_score_data_validation_and_locks_pending_rows(tmp
     assert ws.protection.sheet is True
 
 
-def test_generate_workbook_writes_provisional_note_above_header(tmp_path):
+def test_generate_workbook_writes_vendor_name_title_above_header(tmp_path):
     out_path = tmp_path / "review.xlsx"
     taxonomy = _taxonomy_two_criteria()
-    vendor = _vendor_two_criteria()
+    vendor = _vendor_two_criteria(name="Vendor One")
     generate_workbook(
         taxonomy=taxonomy,
         vendors=[vendor],
@@ -340,9 +340,14 @@ def test_generate_workbook_writes_provisional_note_above_header(tmp_path):
         out_path=out_path,
     )
     ws = load_workbook(out_path)["v1"]
-    row1 = [c.value for c in ws[1]]
-    note = "Provisional — ranking may shift once pending dast-scan results land."
-    assert note in row1
+    title_cell = ws.cell(row=1, column=1)
+    assert title_cell.value == "Vendor One"
+    assert title_cell.font.bold is True
+    assert title_cell.font.size == 16
+    assert ws.row_dimensions[1].height == 28
+
+    row1_values = [c.value for c in ws[1]]
+    assert "Provisional — ranking may shift once pending dast-scan results land." not in row1_values
 
 
 def test_generate_workbook_writes_delta_formula_and_partial_completeness_total(tmp_path):
@@ -426,6 +431,10 @@ def test_generate_workbook_title_and_header_rows_have_explicit_height(tmp_path):
     category_rows, _ = _rollup_row_numbers(taxonomy)
     summary_header_row = min(category_rows.values()) - 1
     assert vendor_ws.row_dimensions[summary_header_row].height == 20
+
+    reviewers_ws = wb[_REVIEWERS_SHEET_NAME]
+    assert reviewers_ws.row_dimensions[1].height == 28
+    assert reviewers_ws.cell(row=1, column=1).font.size == 16
 
 
 def test_generate_workbook_applies_number_formats_banding_border_and_tab_color(tmp_path):

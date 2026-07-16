@@ -361,8 +361,8 @@ def _add_reviewers_sheet(wb: Workbook, reviewer_slots: int) -> None:
     ws.sheet_properties.tabColor = _REVIEWERS_TAB_COLOR
 
     title_cell = ws.cell(row=_REVIEWERS_TITLE_ROW, column=1, value=_REVIEWERS_SHEET_NAME)
-    title_cell.font = Font(bold=True, size=14)
-    ws.row_dimensions[_REVIEWERS_TITLE_ROW].height = 26
+    title_cell.font = Font(bold=True, size=16)
+    ws.row_dimensions[_REVIEWERS_TITLE_ROW].height = 28
 
     ws.cell(
         row=_REVIEWERS_INSTRUCTIONS_ROW,
@@ -455,7 +455,9 @@ def generate_workbook(
     for vendor_index, vendor in enumerate(vendors):
         ws = wb.create_sheet(title=vendor.id[:31])
         ws.sheet_properties.tabColor = _tab_color_for(vendor_index)
-        ws.append(["Provisional — ranking may shift once pending dast-scan results land."])
+        ws.append([vendor.name])
+        ws.cell(row=1, column=1).font = Font(bold=True, size=16)
+        ws.row_dimensions[1].height = 28
         ws.append([])
         ws.append(headers)
         ws.freeze_panes = "G4"
