@@ -38,6 +38,33 @@ before being scoped:
   cells — no border or bold treatment). The Legend line is corrected to
   describe the pink-while-empty behavior instead.
 
+## Explicitly deferred (not part of this round)
+
+Two related ideas came up while scoping item 4's Legend text and were
+deliberately parked rather than built, to avoid scope creep on top of an
+already-large round:
+
+- **A real auto-pending mechanism.** Hands-on-eligible criteria
+  (`detection-accuracy`, `false-positive-rate` today) always present in
+  the sheet from the very first Round 1 build, locked/pending until that
+  vendor's actual hands-on confidence lands — independent of whether any
+  other vendor in the batch has hands-on data yet (the earlier discarded
+  round's sibling-comparison approach doesn't work for this, since Round
+  1 by definition has zero vendors with hands-on data). Would need a
+  `hands_on_eligible: bool` field on `Criterion` rather than hardcoded
+  IDs. Revisit if/when Round 2 hands-on workflows become a live need.
+- **Carrying reviewer input forward when the vendor list changes
+  mid-cycle** (e.g. shortlist 5 vendors, reviewers start scoring, then 2
+  more vendors get added later). Investigated and found to mostly already
+  work: `merge(new_workbook, old_workbook)` already skips sheets that
+  don't exist in the old file, so re-running it after regenerating a
+  larger workbook carries forward existing vendors' review data correctly
+  (matched by criterion ID). The one gap is the Reviewers sheet not
+  merging, which would require reviewers to re-claim their same slot
+  number in the regenerated file — judged not worth asking reviewers to
+  do, and not worth building tooling for. No action taken; noted here so
+  the reasoning isn't lost if it comes up again.
+
 ## Design
 
 ### 1. Tier shading
@@ -69,11 +96,22 @@ Title "How This Works" (16pt). Then:
 - "Methodology" section header, followed by the 4 paragraph lines the
   user provided verbatim.
 - "Legend" section header, followed by the 6 lines the user provided,
-  with the tier line corrected to: *"Tier highlight (pink): top 10
-  priority Score cells are tinted while still empty, as a reminder they
-  still need a value."* The "Pending rows" line gets one sentence
-  appended: *"Until then, treat the Overview ranking as provisional."*
-  (this replaces the old per-vendor-tab "Provisional…" banner — item 8).
+  with two corrections:
+  - The tier line becomes: *"Tier highlight (pink): top 10 priority Score
+    cells are tinted while still empty, as a reminder they still need a
+    value."*
+  - The "Pending rows" line drops the auto-pending sentence ("A vendor's
+    row is marked pending automatically…") — that describes a feature
+    from the earlier discarded round that was never rebuilt; pending rows
+    are still purely manual (`--pending-criteria`) today. A follow-up
+    design for a real auto-pending mechanism (hands-on-eligible criteria
+    always present as locked placeholders from the first Round 1 build,
+    independent of sibling-vendor state) was discussed and explicitly
+    deferred — not part of this round. The line becomes: *"Pending rows:
+    dast-scan results not yet available; locked until Round 2 populate
+    fills them in. Until then, treat the Overview ranking as
+    provisional."* (this also replaces the old per-vendor-tab
+    "Provisional…" banner — item 8).
 
 Both sections use the wrap_text + wide-column-A treatment already proven
 in round 4's original (later-reverted) How This Works implementation, so
