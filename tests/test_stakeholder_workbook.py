@@ -496,6 +496,27 @@ def test_generate_workbook_executive_summary_includes_bar_chart(tmp_path):
     assert isinstance(ws._charts[0], BarChart)
 
 
+def test_generate_workbook_bar_chart_category_axis_is_reversed(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=1,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["Executive Summary"]
+    chart = ws._charts[0]
+    # Horizontal bar charts plot the first category at the bottom by default,
+    # which is backwards from the ranked table listed above the chart (best
+    # vendor first/top). Reversing the category axis puts the first-ranked
+    # vendor at the top of the chart too.
+    assert chart.x_axis.scaling.orientation == "maxMin"
+
+
 def test_generate_workbook_freeze_panes_include_weight_column(tmp_path):
     out_path = tmp_path / "review.xlsx"
     taxonomy = _taxonomy_two_criteria()
