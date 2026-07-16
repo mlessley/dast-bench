@@ -162,6 +162,25 @@ def test_generate_workbook_with_zero_reviewer_slots_has_no_reviewer_columns(tmp_
     assert header[6] == "Resolved Score"
 
 
+def test_generate_workbook_supports_more_than_five_reviewer_slots(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=8,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    header = [c.value for c in ws[HEADER_ROW]]
+    assert header.count("Score") == 8
+    assert header.count("Dispute?") == 8
+    assert header.count("Rationale") == 8
+
+
 def test_generate_workbook_orders_rows_by_priority_and_fills_automated_data(tmp_path):
     out_path = tmp_path / "review.xlsx"
     taxonomy = _taxonomy_two_criteria()
