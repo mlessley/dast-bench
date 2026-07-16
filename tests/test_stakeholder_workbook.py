@@ -670,7 +670,7 @@ def test_generate_workbook_wraps_evidence_and_rationale_text(tmp_path):
     assert ws.row_dimensions[4].height is None
 
 
-def test_generate_workbook_bands_continuously_under_tier_highlight(tmp_path):
+def test_generate_workbook_bands_continuously_regardless_of_tier(tmp_path):
     out_path = tmp_path / "review.xlsx"
     taxonomy = CriteriaTaxonomy(
         criteria=[
@@ -694,10 +694,30 @@ def test_generate_workbook_bands_continuously_under_tier_highlight(tmp_path):
         top_tier_count=2,
     )
     ws = load_workbook(out_path)["v1"]
-    assert ws.cell(row=4, column=1).fill.fgColor.rgb == "00FFF2CC"  # tier, even (i=0)
-    assert ws.cell(row=5, column=1).fill.fgColor.rgb == "00F9E79F"  # tier, odd (i=1)
+    # Banding is continuous regardless of tier membership now -- no more
+    # full-row yellow fill for the top 10 rows.
+    assert ws.cell(row=4, column=1).fill.fgColor.rgb == "00000000"  # tier, even (i=0) -- no fill
+    assert ws.cell(row=5, column=1).fill.fgColor.rgb == "00F2F2F2"  # tier, odd (i=1) -- banded
     assert ws.cell(row=6, column=1).fill.fgColor.rgb == "00000000"  # non-tier, even (i=2) -- no fill
     assert ws.cell(row=7, column=1).fill.fgColor.rgb == "00F2F2F2"  # non-tier, odd (i=3) -- banded
+
+
+def test_generate_workbook_still_flags_empty_top_tier_score_cells(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=1,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+        top_tier_count=10,
+    )
+    ws = load_workbook(out_path)["v1"]
+    rules = list(ws.conditional_formatting)
+    assert len(rules) > 0
 
 
 def test_generate_workbook_executive_summary_legend_has_border_and_fill(tmp_path):
