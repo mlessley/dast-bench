@@ -17,9 +17,14 @@ from openpyxl.utils import get_column_letter
 from core.render.stakeholder_workbook import (
     _all_headers,
     _column_index,
-    _EXEC_LEGEND_FIRST_ROW,
-    _EXEC_LEGEND_HEADER_ROW,
-    _EXEC_LEGEND_LINES_TEMPLATE,
+    _EXEC_ABOUT_FIRST_ROW,
+    _EXEC_ABOUT_HEADER_ROW,
+    _EXEC_ABOUT_LINES,
+    _EXEC_SHEET_NAME,
+    _HOW_IT_WORKS_SHEET_NAME,
+    _LEGEND_FIRST_ROW,
+    _LEGEND_HEADER_ROW,
+    _LEGEND_LINES,
     _REVIEWERS_FIRST_DATA_ROW,
     _REVIEWERS_NAME_COL,
     _REVIEWERS_ROLE_COL,
@@ -103,7 +108,7 @@ def test_generate_workbook_writes_one_sheet_per_vendor_with_headers(tmp_path):
         out_path=out_path,
     )
     wb = load_workbook(out_path)
-    assert wb.sheetnames == ["Executive Summary", _REVIEWERS_SHEET_NAME, "v1"]
+    assert wb.sheetnames == [_EXEC_SHEET_NAME, _REVIEWERS_SHEET_NAME, "v1", _HOW_IT_WORKS_SHEET_NAME]
     ws = wb["v1"]
     header = [c.value for c in ws[3]]
     assert header[:6] == ["Criterion", "Category", "Weight", "Automated Score", "Automated Evidence", "Automated Confidence"]
@@ -129,7 +134,7 @@ def test_generate_workbook_adds_reviewers_sheet_with_editable_name_role_cells(tm
         out_path=out_path,
     )
     wb = load_workbook(out_path)
-    assert wb.sheetnames == ["Executive Summary", _REVIEWERS_SHEET_NAME, "v1"]
+    assert wb.sheetnames == [_EXEC_SHEET_NAME, _REVIEWERS_SHEET_NAME, "v1", _HOW_IT_WORKS_SHEET_NAME]
 
     ws = wb[_REVIEWERS_SHEET_NAME]
     assert ws.protection.sheet is True
@@ -409,9 +414,9 @@ def test_generate_workbook_title_and_header_rows_have_explicit_height(tmp_path):
     )
     wb = load_workbook(out_path)
 
-    exec_ws = wb["Executive Summary"]
-    assert exec_ws.row_dimensions[1].height == 26
-    assert exec_ws.row_dimensions[_EXEC_LEGEND_HEADER_ROW].height == 20
+    exec_ws = wb[_EXEC_SHEET_NAME]
+    assert exec_ws.row_dimensions[1].height == 28
+    assert exec_ws.row_dimensions[_EXEC_ABOUT_HEADER_ROW].height == 20
     assert exec_ws.row_dimensions[EXEC_TABLE_HEADER_ROW].height == 34
 
     vendor_ws = wb["v1"]
@@ -479,7 +484,7 @@ def test_generate_workbook_adds_dispute_dropdown(tmp_path):
     assert f"{dispute_col_letter}4" in str(dispute_dvs[0].sqref)
 
 
-def test_generate_workbook_adds_executive_summary_sheet_first_with_legend_and_ranked_table(tmp_path):
+def test_generate_workbook_adds_overview_sheet_first_with_about_block_and_ranked_table(tmp_path):
     out_path = tmp_path / "review.xlsx"
     taxonomy = _taxonomy_two_criteria()
     vendor_a = Vendor(id="a", name="Vendor A", source=VendorSource.DISCOVERED)
@@ -502,11 +507,11 @@ def test_generate_workbook_adds_executive_summary_sheet_first_with_legend_and_ra
     )
 
     wb = load_workbook(out_path)
-    assert wb.sheetnames[0] == "Executive Summary"
-    ws = wb["Executive Summary"]
-    assert ws.cell(row=1, column=1).value == "Executive Summary"
-    assert ws.cell(row=3, column=1).value == "Legend"
-    assert "top 10 priority" in ws.cell(row=5, column=1).value
+    assert wb.sheetnames[0] == _EXEC_SHEET_NAME
+    ws = wb[_EXEC_SHEET_NAME]
+    assert ws.cell(row=1, column=1).value == _EXEC_SHEET_NAME
+    assert ws.cell(row=_EXEC_ABOUT_HEADER_ROW, column=1).value == "About This Report"
+    assert ws.cell(row=_EXEC_ABOUT_FIRST_ROW, column=1).value == _EXEC_ABOUT_LINES[0]
 
     header = [c.value for c in ws[EXEC_TABLE_HEADER_ROW]]
     assert header == ["Vendor", "Coverage", "DX", "Weighted Avg Score", "Total Achieved / Available"]
@@ -558,7 +563,7 @@ def test_generate_workbook_executive_summary_ranks_by_normalized_average_not_raw
         out_path=out_path,
     )
 
-    ws = load_workbook(out_path)["Executive Summary"]
+    ws = load_workbook(out_path)[_EXEC_SHEET_NAME]
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1).value == "Vendor X"
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW + 1, column=1).value == "Vendor Y"
 
@@ -585,7 +590,7 @@ def test_generate_workbook_executive_summary_sorts_all_pending_vendor_last(tmp_p
         out_path=out_path,
     )
 
-    ws = load_workbook(out_path)["Executive Summary"]
+    ws = load_workbook(out_path)[_EXEC_SHEET_NAME]
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1).value == "Vendor A"
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW + 1, column=1).value == "Vendor B"
 
@@ -604,7 +609,7 @@ def test_generate_workbook_executive_summary_includes_bar_chart(tmp_path):
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
     )
-    ws = load_workbook(out_path)["Executive Summary"]
+    ws = load_workbook(out_path)[_EXEC_SHEET_NAME]
     assert len(ws._charts) == 1
     assert isinstance(ws._charts[0], BarChart)
 
@@ -720,7 +725,7 @@ def test_generate_workbook_still_flags_empty_top_tier_score_cells(tmp_path):
     assert len(rules) > 0
 
 
-def test_generate_workbook_executive_summary_legend_has_border_and_fill(tmp_path):
+def test_generate_workbook_how_it_works_has_methodology_and_legend(tmp_path):
     out_path = tmp_path / "review.xlsx"
     taxonomy = _taxonomy_two_criteria()
     vendor = _vendor_two_criteria()
@@ -732,16 +737,45 @@ def test_generate_workbook_executive_summary_legend_has_border_and_fill(tmp_path
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
     )
-    ws = load_workbook(out_path)["Executive Summary"]
-    legend_last_row = _EXEC_LEGEND_FIRST_ROW + len(_EXEC_LEGEND_LINES_TEMPLATE) - 1
+    wb = load_workbook(out_path)
+    assert wb.sheetnames[-1] == _HOW_IT_WORKS_SHEET_NAME
+    ws = wb[_HOW_IT_WORKS_SHEET_NAME]
+    assert ws.cell(row=1, column=1).value == _HOW_IT_WORKS_SHEET_NAME
+    assert ws.cell(row=3, column=1).value == "Methodology"
+    assert ws.cell(row=_LEGEND_HEADER_ROW, column=1).value == "Legend"
+    assert "top 10 priority" in ws.cell(row=_LEGEND_FIRST_ROW + 1, column=1).value
 
-    top_left = ws.cell(row=_EXEC_LEGEND_HEADER_ROW, column=1)
+    legend_last_row = _LEGEND_FIRST_ROW + len(_LEGEND_LINES) - 1
+    top_left = ws.cell(row=_LEGEND_FIRST_ROW, column=1)
     assert top_left.fill.fgColor.rgb == "00F2F2F2"
     assert top_left.border.top.style == "thin"
 
     bottom_right = ws.cell(row=legend_last_row, column=5)
     assert bottom_right.fill.fgColor.rgb == "00F2F2F2"
     assert bottom_right.border.bottom.style == "thin"
+
+
+def test_generate_workbook_how_it_works_legend_tier_and_pending_lines_are_corrected(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=1,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)[_HOW_IT_WORKS_SHEET_NAME]
+    pending_line = ws.cell(row=_LEGEND_FIRST_ROW, column=1).value
+    assert "marked pending automatically" not in pending_line
+    assert "treat the Overview ranking as provisional" in pending_line
+
+    tier_line = ws.cell(row=_LEGEND_FIRST_ROW + 1, column=1).value
+    assert "gold left border" not in tier_line
+    assert "Tier highlight (pink)" in tier_line
+    assert "tinted while still empty" in tier_line
 
 
 def test_generate_workbook_executive_summary_highlights_top_vendor_row(tmp_path):
@@ -766,7 +800,7 @@ def test_generate_workbook_executive_summary_highlights_top_vendor_row(tmp_path)
         out_path=out_path,
     )
 
-    ws = load_workbook(out_path)["Executive Summary"]
+    ws = load_workbook(out_path)[_EXEC_SHEET_NAME]
     assert ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1).value == "Vendor A"
     top_row_cell = ws.cell(row=EXEC_TABLE_FIRST_DATA_ROW, column=1)
     assert top_row_cell.font.bold is True
@@ -823,7 +857,7 @@ def test_generate_workbook_rollup_block_has_summary_header(tmp_path):
     assert cell.fill.fgColor.rgb == "001F4E78"
 
 
-def test_generate_workbook_executive_summary_legend_explains_weight(tmp_path):
+def test_generate_workbook_how_it_works_legend_explains_weight(tmp_path):
     out_path = tmp_path / "review.xlsx"
     taxonomy = _taxonomy_two_criteria()
     vendor = _vendor_two_criteria()
@@ -835,8 +869,8 @@ def test_generate_workbook_executive_summary_legend_explains_weight(tmp_path):
         research_caches={"v1": VendorResearchCache(vendor_id="v1")},
         out_path=out_path,
     )
-    ws = load_workbook(out_path)["Executive Summary"]
-    weight_legend_row = _EXEC_LEGEND_FIRST_ROW + 5
+    ws = load_workbook(out_path)[_HOW_IT_WORKS_SHEET_NAME]
+    weight_legend_row = _LEGEND_FIRST_ROW + 5
     legend_text = ws.cell(row=weight_legend_row, column=1).value
     assert "Weight" in legend_text
     assert "set by the evaluator" in legend_text

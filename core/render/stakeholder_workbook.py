@@ -83,14 +83,54 @@ def _tab_color_for(index: int) -> str:
     return _TAB_COLOR_PALETTE[index % len(_TAB_COLOR_PALETTE)]
 
 
-_EXEC_SHEET_NAME = "Executive Summary"
+_EXEC_SHEET_NAME = "Overview"
 _EXEC_TAB_COLOR = "1F4E78"
 _EXEC_TITLE_ROW = 1
-_EXEC_LEGEND_HEADER_ROW = 3
-_EXEC_LEGEND_FIRST_ROW = 4
-_EXEC_LEGEND_LINES_TEMPLATE = [
-    "Pending rows: dast-scan results not yet available; locked until Round 2 populate fills them in.",
-    "Tier highlight (light yellow): top {top_tier_count} priority criteria for this round, shown for quick scanning.",
+_EXEC_ABOUT_HEADER_ROW = 3
+_EXEC_ABOUT_FIRST_ROW = 4
+_EXEC_ABOUT_LINES = [
+    "This workbook ranks DAST (dynamic application security testing) vendors against a weighted set "
+    "of evaluation criteria, blending automated desk research with hands-on benchmark testing where "
+    "available.",
+    "Reviewers can weigh in on any criterion on that vendor's tab and resolve disagreements with the "
+    "automated score; resolved scores take precedence in the totals below. Claim a reviewer slot once "
+    "on the \"Reviewers\" tab and it applies automatically to every vendor tab.",
+    "See the \"How This Works\" tab (last tab) for the full methodology, scoring formulas, and "
+    "definitions.",
+]
+
+EXEC_TABLE_HEADER_ROW = _EXEC_ABOUT_FIRST_ROW + len(_EXEC_ABOUT_LINES) + 1
+EXEC_TABLE_FIRST_DATA_ROW = EXEC_TABLE_HEADER_ROW + 1
+
+_HOW_IT_WORKS_SHEET_NAME = "How This Works"
+_HOW_IT_WORKS_TAB_COLOR = "808080"
+_METHODOLOGY_HEADER_ROW = 3
+_METHODOLOGY_FIRST_ROW = 4
+_METHODOLOGY_LINES = [
+    "The evaluation criteria, categories, and weights were defined up front, before any vendor was "
+    "researched, based on standard DAST-buying considerations — coverage, detection quality, "
+    "production safety, developer experience, reporting, and deployment/data governance. Fixing the "
+    "rubric first keeps the comparison consistent instead of retrofitting criteria to favor a "
+    "particular tool.",
+    "Each criterion has a written rubric describing what a 1 vs. a 3 vs. a 5 looks like. Automated "
+    "scores come from structured desk research against that rubric — vendor docs, pricing pages, "
+    "release notes, and public third-party reviews — with the evidence and reasoning captured "
+    "alongside every score so it's traceable, not a black box.",
+    "Two criteria, Detection Accuracy and False Positive Rate, also get a hands-on pass: the tool is "
+    "run against known-vulnerable benchmark targets (OWASP Juice Shop, VAmPI) and the desk-research "
+    "score is replaced with one based on real scan output. Confidence is upgraded from 'paper' to "
+    "'hands-on' when that happens.",
+    "Reviewer input on each vendor's tab exists to catch what desk research misses or gets wrong — "
+    "resolved scores from reviewers take precedence over the automated ones in the final totals.",
+]
+
+_LEGEND_HEADER_ROW = _METHODOLOGY_FIRST_ROW + len(_METHODOLOGY_LINES) + 1
+_LEGEND_FIRST_ROW = _LEGEND_HEADER_ROW + 1
+_LEGEND_LINES = [
+    "Pending rows: dast-scan results not yet available; locked until Round 2 populate fills them in. "
+    "Until then, treat the Overview ranking as provisional.",
+    "Tier highlight (pink): top {top_tier_count} priority Score cells are tinted while still empty, "
+    "as a reminder they still need a value.",
     "Dispute = Yes requires a non-blank Rationale; discuss unresolved disputes before finalizing a score.",
     "Automated Confidence: 'paper' = desk research only; 'hands-on' = verified via dast-scan.",
     "Weighted Avg Score is normalized to a 0-5 scale and is comparable across vendors even when the "
@@ -100,9 +140,6 @@ _EXEC_LEGEND_LINES_TEMPLATE = [
     "score — the same value used in the actual score calculation, set by the evaluator when the "
     "criteria taxonomy was defined, not something a reviewer sets.",
 ]
-
-EXEC_TABLE_HEADER_ROW = _EXEC_LEGEND_FIRST_ROW + len(_EXEC_LEGEND_LINES_TEMPLATE) + 1
-EXEC_TABLE_FIRST_DATA_ROW = EXEC_TABLE_HEADER_ROW + 1
 
 
 def _rollup_row_numbers(taxonomy: CriteriaTaxonomy) -> tuple[dict[str, int], int]:
@@ -135,27 +172,19 @@ def _add_executive_summary_sheet(
     vendors: list[Vendor],
     pending_criteria: dict[str, set[str]],
     headers: list[str],
-    top_tier_count: int,
 ) -> None:
     ws = wb.create_sheet(title=_EXEC_SHEET_NAME)
     ws.sheet_properties.tabColor = _EXEC_TAB_COLOR
 
     title_cell = ws.cell(row=_EXEC_TITLE_ROW, column=1, value=_EXEC_SHEET_NAME)
-    title_cell.font = Font(bold=True, size=14)
-    ws.row_dimensions[_EXEC_TITLE_ROW].height = 26
+    title_cell.font = Font(bold=True, size=16)
+    ws.row_dimensions[_EXEC_TITLE_ROW].height = 28
 
-    legend_header_cell = ws.cell(row=_EXEC_LEGEND_HEADER_ROW, column=1, value="Legend")
-    legend_header_cell.font = Font(bold=True)
-    ws.row_dimensions[_EXEC_LEGEND_HEADER_ROW].height = 20
-    for i, line in enumerate(_EXEC_LEGEND_LINES_TEMPLATE):
-        ws.cell(row=_EXEC_LEGEND_FIRST_ROW + i, column=1, value=line.format(top_tier_count=top_tier_count))
-
-    legend_last_row = _EXEC_LEGEND_FIRST_ROW + len(_EXEC_LEGEND_LINES_TEMPLATE) - 1
-    for row in range(_EXEC_LEGEND_HEADER_ROW, legend_last_row + 1):
-        for col in range(1, 6):
-            cell = ws.cell(row=row, column=col)
-            cell.fill = _BAND_FILL
-            cell.border = _HEADER_BORDER
+    about_header_cell = ws.cell(row=_EXEC_ABOUT_HEADER_ROW, column=1, value="About This Report")
+    about_header_cell.font = Font(bold=True)
+    ws.row_dimensions[_EXEC_ABOUT_HEADER_ROW].height = 20
+    for i, line in enumerate(_EXEC_ABOUT_LINES):
+        ws.cell(row=_EXEC_ABOUT_FIRST_ROW + i, column=1, value=line)
 
     categories = _ordered_categories(taxonomy)
     category_rows, weighted_total_row = _rollup_row_numbers(taxonomy)
@@ -373,6 +402,39 @@ def _add_reviewers_sheet(wb: Workbook, reviewer_slots: int) -> None:
     ws.protection.sheet = True
 
 
+def _add_how_it_works_sheet(wb: Workbook, top_tier_count: int) -> None:
+    ws = wb.create_sheet(title=_HOW_IT_WORKS_SHEET_NAME)
+    ws.sheet_properties.tabColor = _HOW_IT_WORKS_TAB_COLOR
+    ws.column_dimensions["A"].width = 100
+
+    title_cell = ws.cell(row=1, column=1, value=_HOW_IT_WORKS_SHEET_NAME)
+    title_cell.font = Font(bold=True, size=16)
+    ws.row_dimensions[1].height = 28
+
+    methodology_header_cell = ws.cell(row=_METHODOLOGY_HEADER_ROW, column=1, value="Methodology")
+    methodology_header_cell.font = Font(bold=True)
+    ws.row_dimensions[_METHODOLOGY_HEADER_ROW].height = 20
+    for i, line in enumerate(_METHODOLOGY_LINES):
+        cell = ws.cell(row=_METHODOLOGY_FIRST_ROW + i, column=1, value=line)
+        cell.alignment = Alignment(wrap_text=True, vertical="top")
+
+    legend_header_cell = ws.cell(row=_LEGEND_HEADER_ROW, column=1, value="Legend")
+    legend_header_cell.font = Font(bold=True)
+    ws.row_dimensions[_LEGEND_HEADER_ROW].height = 20
+    for i, line in enumerate(_LEGEND_LINES):
+        cell = ws.cell(row=_LEGEND_FIRST_ROW + i, column=1, value=line.format(top_tier_count=top_tier_count))
+        cell.alignment = Alignment(wrap_text=True, vertical="top")
+
+    legend_last_row = _LEGEND_FIRST_ROW + len(_LEGEND_LINES) - 1
+    for row in range(_LEGEND_FIRST_ROW, legend_last_row + 1):
+        for col in range(1, 6):
+            cell = ws.cell(row=row, column=col)
+            cell.fill = _BAND_FILL
+            cell.border = _HEADER_BORDER
+            if col == 1:
+                cell.alignment = Alignment(wrap_text=True, vertical="top")
+
+
 def _all_headers(reviewer_slots: int) -> list[str]:
     return _BASE_HEADERS + _reviewer_slot_headers(reviewer_slots) + _RESOLUTION_HEADERS + _HIDDEN_HEADERS
 
@@ -393,7 +455,7 @@ def generate_workbook(
     wb = Workbook()
     wb.remove(wb.active)
     headers = _all_headers(reviewer_slots)
-    _add_executive_summary_sheet(wb, taxonomy, vendors, pending_criteria, headers, top_tier_count)
+    _add_executive_summary_sheet(wb, taxonomy, vendors, pending_criteria, headers)
     _add_reviewers_sheet(wb, reviewer_slots)
     for vendor_index, vendor in enumerate(vendors):
         ws = wb.create_sheet(title=vendor.id[:31])
@@ -543,5 +605,6 @@ def generate_workbook(
         for hidden_name in _HIDDEN_HEADERS:
             ws.column_dimensions[get_column_letter(_column_index(headers, hidden_name))].hidden = True
         ws.protection.sheet = True
+    _add_how_it_works_sheet(wb, top_tier_count)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     wb.save(out_path)
