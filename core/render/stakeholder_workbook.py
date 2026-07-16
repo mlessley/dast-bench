@@ -253,7 +253,7 @@ def _add_executive_summary_sheet(
     if ranked_vendors:
         last_row = EXEC_TABLE_FIRST_DATA_ROW + len(ranked_vendors) - 1
         chart = BarChart()
-        chart.type = "bar"
+        chart.type = "col"
         chart.title = "Weighted Avg Score by Vendor"
         chart.x_axis.title = "Vendor"
         chart.y_axis.title = "Weighted Avg Score (0-5)"
@@ -261,11 +261,6 @@ def _add_executive_summary_sheet(
         cats = Reference(ws, min_col=1, min_row=EXEC_TABLE_FIRST_DATA_ROW, max_row=last_row)
         chart.add_data(data, titles_from_data=True)
         chart.set_categories(cats)
-        # Horizontal bar charts plot the first category at the bottom by default,
-        # backwards from the ranked table above (best vendor listed first/top).
-        # x_axis is the category axis in openpyxl's model even for a horizontal
-        # "bar" chart type -- reversing it puts the first-ranked vendor on top.
-        chart.x_axis.scaling.orientation = "maxMin"
         ws.add_chart(chart, f"A{last_row + 3}")
 
 

@@ -614,25 +614,34 @@ def test_generate_workbook_executive_summary_includes_bar_chart(tmp_path):
     assert isinstance(ws._charts[0], BarChart)
 
 
-def test_generate_workbook_bar_chart_category_axis_is_reversed(tmp_path):
+def test_generate_workbook_bar_chart_is_a_vertical_column_chart_with_natural_order(tmp_path):
     out_path = tmp_path / "review.xlsx"
     taxonomy = _taxonomy_two_criteria()
-    vendor = _vendor_two_criteria()
+    vendor_a = Vendor(id="a", name="Vendor A", source=VendorSource.DISCOVERED)
+    vendor_a.scores.append(ScoreEntry(criterion_id="c1", score=5.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_a.scores.append(ScoreEntry(criterion_id="c2", score=5.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_b = Vendor(id="b", name="Vendor B", source=VendorSource.DISCOVERED)
+    vendor_b.scores.append(ScoreEntry(criterion_id="c1", score=2.0, evidence="e", confidence=Confidence.PAPER))
+    vendor_b.scores.append(ScoreEntry(criterion_id="c2", score=2.0, evidence="e", confidence=Confidence.PAPER))
+
     generate_workbook(
         taxonomy=taxonomy,
-        vendors=[vendor],
+        vendors=[vendor_b, vendor_a],
         reviewer_slots=1,
         pending_criteria={},
-        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        research_caches={
+            "a": VendorResearchCache(vendor_id="a"),
+            "b": VendorResearchCache(vendor_id="b"),
+        },
         out_path=out_path,
     )
-    ws = load_workbook(out_path)["Executive Summary"]
+    ws = load_workbook(out_path)[_EXEC_SHEET_NAME]
     chart = ws._charts[0]
-    # Horizontal bar charts plot the first category at the bottom by default,
-    # which is backwards from the ranked table listed above the chart (best
-    # vendor first/top). Reversing the category axis puts the first-ranked
-    # vendor at the top of the chart too.
-    assert chart.x_axis.scaling.orientation == "maxMin"
+    # Vertical column charts plot the first category leftmost by default, so
+    # feeding ranked_vendors (already best-first) in directly gives the
+    # correct order with no axis-orientation override needed.
+    assert chart.type == "col"
+    assert chart.x_axis.scaling.orientation in (None, "minMax")
 
 
 def test_generate_workbook_freeze_panes_include_weight_column(tmp_path):
