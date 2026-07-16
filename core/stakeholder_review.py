@@ -102,7 +102,7 @@ def merge(master_path: Path, from_path: Path) -> str:
         f_cols = _column_map(f_ws)
 
         if "_criterion_id" not in m_cols or "_criterion_id" not in f_cols:
-            # Not a per-vendor rollup sheet (e.g. the Executive Summary tab).
+            # Not a per-vendor rollup sheet (e.g. the Overview tab).
             continue
 
         m_crit_col = m_cols["_criterion_id"]
@@ -170,7 +170,7 @@ def validate_workbook(file_path: Path) -> list[str]:
         ws = wb[sheet_name]
         cols = _column_map(ws)
         if "_criterion_id" not in cols:
-            # Not a per-vendor rollup sheet (e.g. the Executive Summary or Reviewers tab).
+            # Not a per-vendor rollup sheet (e.g. the Overview or Reviewers tab).
             continue
         crit_col = cols["_criterion_id"]
         slot_letters = _slot_letters(ws)
