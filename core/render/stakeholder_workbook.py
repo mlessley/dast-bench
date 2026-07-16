@@ -143,9 +143,11 @@ def _add_executive_summary_sheet(
 
     title_cell = ws.cell(row=_EXEC_TITLE_ROW, column=1, value=_EXEC_SHEET_NAME)
     title_cell.font = Font(bold=True, size=14)
+    ws.row_dimensions[_EXEC_TITLE_ROW].height = 26
 
     legend_header_cell = ws.cell(row=_EXEC_LEGEND_HEADER_ROW, column=1, value="Legend")
     legend_header_cell.font = Font(bold=True)
+    ws.row_dimensions[_EXEC_LEGEND_HEADER_ROW].height = 20
     for i, line in enumerate(_EXEC_LEGEND_LINES_TEMPLATE):
         ws.cell(row=_EXEC_LEGEND_FIRST_ROW + i, column=1, value=line.format(top_tier_count=top_tier_count))
 
@@ -167,6 +169,7 @@ def _add_executive_summary_sheet(
         cell.fill = _HEADER_FILL
         cell.border = _HEADER_BORDER
         cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    ws.row_dimensions[EXEC_TABLE_HEADER_ROW].height = 34
 
     weight_col_letter = get_column_letter(_column_index(headers, "Weight"))
     evidence_col_letter = get_column_letter(_column_index(headers, "Automated Evidence"))
@@ -343,6 +346,8 @@ def generate_workbook(
             cell.fill = _HEADER_FILL
             cell.border = _HEADER_BORDER
             cell.alignment = _HEADER_ALIGNMENT
+        ws.row_dimensions[HEADER_ROW].height = 36
+        ws.row_dimensions[2].height = 24
         _write_reviewer_slot_group_headers(ws, reviewer_slots)
         pending_for_vendor = pending_criteria.get(vendor.id, set())
         cache = research_caches.get(vendor.id) or VendorResearchCache(vendor_id=vendor.id)
@@ -463,6 +468,7 @@ def generate_workbook(
         summary_header_row = ws.max_row
         summary_cell = ws.cell(row=summary_header_row, column=1)
         summary_cell.font = _HEADER_FONT
+        ws.row_dimensions[summary_header_row].height = 20
         summary_cell.fill = _HEADER_FILL
         category_rows_for_border, _ = _rollup_row_numbers(taxonomy)
         first_rollup_row = category_rows_for_border[_ordered_categories(taxonomy)[0]]

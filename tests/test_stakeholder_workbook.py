@@ -25,6 +25,7 @@ from core.render.stakeholder_workbook import (
     compute_priority_order,
     EXEC_TABLE_FIRST_DATA_ROW,
     EXEC_TABLE_HEADER_ROW,
+    HEADER_ROW,
     generate_workbook,
 )
 
@@ -308,6 +309,34 @@ def test_generate_workbook_applies_column_widths_freeze_panes_and_header_style(t
     assert header_cell.fill.fgColor.rgb == "001F4E78"
     assert header_cell.alignment.wrap_text is True
     assert header_cell.border.top.style == "thin"
+
+
+def test_generate_workbook_title_and_header_rows_have_explicit_height(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=1,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    wb = load_workbook(out_path)
+
+    exec_ws = wb["Executive Summary"]
+    assert exec_ws.row_dimensions[1].height == 26
+    assert exec_ws.row_dimensions[_EXEC_LEGEND_HEADER_ROW].height == 20
+    assert exec_ws.row_dimensions[EXEC_TABLE_HEADER_ROW].height == 34
+
+    vendor_ws = wb["v1"]
+    assert vendor_ws.row_dimensions[HEADER_ROW].height == 36
+    assert vendor_ws.row_dimensions[2].height == 24
+
+    category_rows, _ = _rollup_row_numbers(taxonomy)
+    summary_header_row = min(category_rows.values()) - 1
+    assert vendor_ws.row_dimensions[summary_header_row].height == 20
 
 
 def test_generate_workbook_applies_number_formats_banding_border_and_tab_color(tmp_path):
