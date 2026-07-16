@@ -345,6 +345,26 @@ def test_generate_workbook_adds_score_data_validation_and_locks_pending_rows(tmp
     assert ws.protection.sheet is True
 
 
+def test_generate_workbook_score_and_dispute_dropdowns_reject_invalid_entries(tmp_path):
+    out_path = tmp_path / "review.xlsx"
+    taxonomy = _taxonomy_two_criteria()
+    vendor = _vendor_two_criteria()
+    generate_workbook(
+        taxonomy=taxonomy,
+        vendors=[vendor],
+        reviewer_slots=1,
+        pending_criteria={},
+        research_caches={"v1": VendorResearchCache(vendor_id="v1")},
+        out_path=out_path,
+    )
+    ws = load_workbook(out_path)["v1"]
+    score_dv = next(dv for dv in ws.data_validations.dataValidation if dv.type == "list" and "1.0" in dv.formula1)
+    dispute_dv = next(dv for dv in ws.data_validations.dataValidation if dv.formula1 == '"Yes"')
+    for dv in (score_dv, dispute_dv):
+        assert dv.showErrorMessage is True
+        assert dv.errorStyle == "stop"
+
+
 def test_generate_workbook_writes_vendor_name_title_above_header(tmp_path):
     out_path = tmp_path / "review.xlsx"
     taxonomy = _taxonomy_two_criteria()

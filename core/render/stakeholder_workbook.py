@@ -515,11 +515,23 @@ def generate_workbook(
             type="list",
             formula1='"' + ",".join(str(v) for v in SCORE_VALUES) + '"',
             allow_blank=True,
+            showErrorMessage=True,
+            errorStyle="stop",
+            errorTitle="Invalid score",
+            error="Score must be one of: " + ", ".join(str(v) for v in SCORE_VALUES),
         )
         ws.add_data_validation(dv)
 
         dispute_cols = [dispute_col for _, dispute_col, _ in slot_columns]
-        dispute_dv = DataValidation(type="list", formula1='"Yes"', allow_blank=True)
+        dispute_dv = DataValidation(
+            type="list",
+            formula1='"Yes"',
+            allow_blank=True,
+            showErrorMessage=True,
+            errorStyle="stop",
+            errorTitle="Invalid entry",
+            error='Value must be "Yes" (or left blank).',
+        )
         ws.add_data_validation(dispute_dv)
 
         for i, criterion_id in enumerate(order):
