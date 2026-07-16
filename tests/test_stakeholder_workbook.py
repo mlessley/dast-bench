@@ -185,14 +185,14 @@ def test_generate_workbook_reviewer_slot_header_is_a_formula_referencing_reviewe
     slot1_score_col, _, _ = slot_columns[0]
     slot1_cell = ws.cell(row=2, column=slot1_score_col)
     assert slot1_cell.value == (
-        '=IF(Reviewers!B6="","Reviewer 1 - {name} - {role/title}",Reviewers!B6&" - "&Reviewers!C6)'
+        '=IF(Reviewers!B6="","Unassigned — see Reviewers tab",Reviewers!B6&" - "&Reviewers!C6)'
     )
     assert slot1_cell.protection.locked is True
 
     slot2_score_col, _, _ = slot_columns[1]
     slot2_cell = ws.cell(row=2, column=slot2_score_col)
     assert slot2_cell.value == (
-        '=IF(Reviewers!B7="","Reviewer 2 - {name} - {role/title}",Reviewers!B7&" - "&Reviewers!C7)'
+        '=IF(Reviewers!B7="","Unassigned — see Reviewers tab",Reviewers!B7&" - "&Reviewers!C7)'
     )
 
 
@@ -216,7 +216,7 @@ def test_generate_workbook_adds_merged_reviewer_slot_group_headers(tmp_path):
     assert slot1_range in [str(r) for r in ws.merged_cells.ranges]
     slot1_cell = ws.cell(row=2, column=slot1_score_col)
     assert slot1_cell.value == (
-        '=IF(Reviewers!B6="","Reviewer 1 - {name} - {role/title}",Reviewers!B6&" - "&Reviewers!C6)'
+        '=IF(Reviewers!B6="","Unassigned — see Reviewers tab",Reviewers!B6&" - "&Reviewers!C6)'
     )
     assert slot1_cell.font.bold is True
     assert slot1_cell.fill.fgColor.rgb == "001F4E78"
@@ -225,7 +225,7 @@ def test_generate_workbook_adds_merged_reviewer_slot_group_headers(tmp_path):
     slot2_range = f"{get_column_letter(slot2_score_col)}2:{get_column_letter(slot2_rationale_col)}2"
     assert slot2_range in [str(r) for r in ws.merged_cells.ranges]
     assert ws.cell(row=2, column=slot2_score_col).value == (
-        '=IF(Reviewers!B7="","Reviewer 2 - {name} - {role/title}",Reviewers!B7&" - "&Reviewers!C7)'
+        '=IF(Reviewers!B7="","Unassigned — see Reviewers tab",Reviewers!B7&" - "&Reviewers!C7)'
     )
 
 

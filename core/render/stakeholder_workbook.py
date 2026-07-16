@@ -328,17 +328,17 @@ _REVIEWERS_NAME_COL = 2
 _REVIEWERS_ROLE_COL = 3
 
 
-def _unclaimed_reviewer_label(slot_number: int) -> str:
-    return f"Reviewer {slot_number} - {{name}} - {{role/title}}"
+def _unclaimed_reviewer_label() -> str:
+    return "Unassigned — see Reviewers tab"
 
 
-def _reviewer_slot_group_header_formula(slot_index: int, slot_number: int) -> str:
+def _reviewer_slot_group_header_formula(slot_index: int) -> str:
     """A vendor sheet's reviewer-slot header pulls live from the Reviewers sheet, so
     claiming a slot there propagates to every vendor tab instead of being re-typed per tab."""
     row = _REVIEWERS_FIRST_DATA_ROW + slot_index
     name_ref = f"Reviewers!{get_column_letter(_REVIEWERS_NAME_COL)}{row}"
     role_ref = f"Reviewers!{get_column_letter(_REVIEWERS_ROLE_COL)}{row}"
-    placeholder = _unclaimed_reviewer_label(slot_number)
+    placeholder = _unclaimed_reviewer_label()
     return f'=IF({name_ref}="","{placeholder}",{name_ref}&" - "&{role_ref})'
 
 
@@ -347,7 +347,7 @@ def _write_reviewer_slot_group_headers(ws, reviewer_slots: int) -> None:
         ws.merge_cells(start_row=2, start_column=score_col, end_row=2, end_column=rationale_col)
         anchor = ws.cell(
             row=2, column=score_col,
-            value=_reviewer_slot_group_header_formula(slot_index, slot_index + 1),
+            value=_reviewer_slot_group_header_formula(slot_index),
         )
         anchor.font = _HEADER_FONT
         anchor.fill = _HEADER_FILL
