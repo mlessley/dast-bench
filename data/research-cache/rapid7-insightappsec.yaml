@@ -1,0 +1,331 @@
+vendor_id: rapid7-insightappsec
+criteria:
+  api-spa-coverage:
+    researched_at: '2026-07-18T19:26:51.516990'
+    queries:
+    - Rapid7 InsightAppSec REST SOAP GraphQL API scanning coverage
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/graphql/
+      snippet: InsightAppSec has specifically added support for parsing GraphQL requests,
+        responses, and schemas.
+    reviewed_by_gap_check: false
+    stale: false
+  shadow-api-discovery:
+    researched_at: '2026-07-18T19:26:51.905912'
+    queries:
+    - Rapid7 InsightAppSec shadow API discovery unmapped asset inventory
+    findings:
+    - url: https://www.rapid7.com/blog/post/2022/08/16/are-your-apps-exposed-know-faster-with-application-discovery-in-insightappsec/
+      snippet: Application Discovery is powered by Project Sonar and finds other applications/subdomains/IPs
+        tied to a domain -- app-level, not endpoint-level discovery.
+    reviewed_by_gap_check: true
+    stale: false
+  auth-session-handling:
+    researched_at: '2026-07-18T19:26:52.328224'
+    queries:
+    - Rapid7 InsightAppSec authentication SSO MFA scripted login session handling
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/authentication/
+      snippet: Automated Login automatically authenticates to modern apps, identifies
+        logout, and logs back in to prevent authentication loops.
+    reviewed_by_gap_check: false
+    stale: false
+  detection-accuracy:
+    researched_at: '2026-07-18T19:26:52.769967'
+    queries:
+    - Rapid7 InsightAppSec detection accuracy false positive rate benchmark
+    findings:
+    - url: https://www.peerspot.com/products/rapid7-insightappsec-reviews
+      snippet: General platform reviews; no credible independent accuracy benchmark
+        found.
+    reviewed_by_gap_check: false
+    stale: false
+  false-positive-rate:
+    researched_at: '2026-07-18T19:26:53.243942'
+    queries:
+    - Rapid7 InsightAppSec false positive rate 94% verification
+    findings:
+    - url: https://www.peerspot.com/products/rapid7-insightappsec-reviews
+      snippet: Single reviewer (Shritam Bhowmick, June 2025) subjective claim of 94%
+        false positives for SQL/JSON injection detection specifically -- not a benchmark,
+        not corroborated elsewhere.
+    reviewed_by_gap_check: true
+    stale: false
+  safe-prod-scanning:
+    researched_at: '2026-07-18T19:26:53.646214'
+    queries:
+    - Rapid7 InsightAppSec production safe scanning passive throttle sensitive data
+    findings:
+    - url: https://www.rapid7.com/products/insightappsec/
+      snippet: Safe for use on production applications; scan blackouts available;
+        passive attack module for sensitive data exposure.
+    reviewed_by_gap_check: false
+    stale: false
+  cicd-native-fit:
+    researched_at: '2026-07-18T19:26:54.044964'
+    queries:
+    - Rapid7 InsightAppSec CI/CD integration Jenkins exit codes policy
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/jenkins-integration/
+      snippet: Advance build when configuration option gates on scan status or a vulnerability
+        query; fails build when any/matching vulnerabilities are found.
+    reviewed_by_gap_check: false
+    stale: false
+  triage-remediation-guidance:
+    researched_at: '2026-07-18T19:26:54.492173'
+    queries:
+    - Rapid7 InsightAppSec business logic authorization BOLA Attack Replay
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/test-vulnerability-remediation/
+      snippet: Attack Replay generates a replay package including HTTP request, reproduction
+        steps, evidence, and remediation guidance.
+    reviewed_by_gap_check: false
+    stale: false
+  auto-remediation-pr:
+    researched_at: '2026-07-18T19:26:54.862232'
+    queries:
+    - Rapid7 InsightAppSec auto remediation pull request code fix
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/test-vulnerability-remediation/
+      snippet: Attack Replay validates and reproduces findings; no auto-PR or code-patch
+        generation found.
+    reviewed_by_gap_check: true
+    stale: false
+  setup-onboarding-friction:
+    researched_at: '2026-07-18T19:26:55.233305'
+    queries:
+    - Rapid7 InsightAppSec detection accuracy false positive rate benchmark
+    findings:
+    - url: https://aimultiple.com/dast-tools
+      snippet: InsightAppSec reduces threat response time by 20% and deploys in 30
+        minutes.
+    reviewed_by_gap_check: false
+    stale: false
+  reporting-exportability:
+    researched_at: '2026-07-18T19:26:55.632132'
+    queries:
+    - Rapid7 InsightAppSec dashboard reporting trend export white label
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/show-progress-with-reports/
+      snippet: Generate, share, and download app-level and scan-level reports as CSV,
+        PDF, or HTML.
+    reviewed_by_gap_check: false
+    stale: false
+  extensibility-custom-rules:
+    researched_at: '2026-07-18T19:26:55.989256'
+    queries:
+    - Rapid7 InsightAppSec incremental scan attack templates custom rules extensibility
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/attack-templates/
+      snippet: Custom attack templates let you enable/disable attacks and adjust severity,
+        max findings, and attack locations.
+    reviewed_by_gap_check: false
+    stale: false
+  business-logic-workflow-detection:
+    researched_at: '2026-07-18T19:26:56.412219'
+    queries:
+    - Rapid7 InsightAppSec business logic authorization BOLA Attack Replay
+    findings:
+    - url: https://appsecsanta.com/insightappsec
+      snippet: InsightAppSec covers injection, XSS, auth flaws, authorization issues,
+        config problems, and business logic vulnerabilities.
+    reviewed_by_gap_check: false
+    stale: false
+  legacy-app-protocol-support:
+    researched_at: '2026-07-18T19:26:56.776370'
+    queries:
+    - Rapid7 InsightAppSec REST SOAP GraphQL API scanning coverage
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/scan-scope/
+      snippet: Add WSDL File(s) for SOAP API scanning.
+    reviewed_by_gap_check: false
+    stale: false
+  third-party-partner-api-risk:
+    researched_at: '2026-07-18T19:26:57.184663'
+    queries:
+    - Rapid7 InsightAppSec partner API third-party open banking risk
+    findings:
+    - url: https://www.rapid7.com/products/insightappsec/
+      snippet: No partner/third-party-API-specific feature found.
+    reviewed_by_gap_check: true
+    stale: false
+  asset-discovery-inventory:
+    researched_at: '2026-07-18T19:26:57.558166'
+    queries:
+    - Rapid7 InsightAppSec shadow API discovery unmapped asset inventory
+    findings:
+    - url: https://www.rapid7.com/blog/post/2022/08/16/are-your-apps-exposed-know-faster-with-application-discovery-in-insightappsec/
+      snippet: Project Sonar conducts internet-wide surveys across 70+ services and
+        protocols to find exposed apps.
+    reviewed_by_gap_check: false
+    stale: false
+  compliance-standards-mapping:
+    researched_at: '2026-07-18T19:26:57.921673'
+    queries:
+    - Rapid7 InsightAppSec compliance PCI DSS HIPAA vulnerability status false positive
+      tagging
+    findings:
+    - url: https://www.rapid7.com/products/insightappsec/features/powerful-reporting-for-compliance-and-remediation/
+      snippet: InsightAppSec produces reports tailored to PCI-DSS, HIPAA, SOX, and
+        OWASP Top 10.
+    reviewed_by_gap_check: false
+    stale: false
+  finding-validation-proof-of-exploit:
+    researched_at: '2026-07-18T19:26:58.375981'
+    queries:
+    - Rapid7 InsightAppSec business logic authorization BOLA Attack Replay
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/test-vulnerability-remediation/
+      snippet: Replay recorded HTTP attack traffic to validate a vulnerability and
+        confirm fixes without waiting for another full scan.
+    reviewed_by_gap_check: false
+    stale: false
+  sensitive-financial-data-exposure:
+    researched_at: '2026-07-18T19:26:58.765240'
+    queries:
+    - Rapid7 InsightAppSec sensitive financial data PII PAN SSN detection
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/concepts/
+      snippet: Passive attack module examines the application for issues like passwords
+        stored in clear text.
+    reviewed_by_gap_check: true
+    stale: false
+  scan-performance-scalability:
+    researched_at: '2026-07-18T19:26:59.147724'
+    queries:
+    - Rapid7 InsightAppSec scan performance scalability concurrent scans cloud
+    - Rapid7 InsightAppSec incremental scan attack templates custom rules extensibility
+    findings:
+    - url: https://www.rapid7.com/blog/post/2024/01/31/insightappsec-improving-scan-speed-and-performance/
+      snippet: Dedicated post on improving InsightAppSec scan speed and performance.
+    reviewed_by_gap_check: false
+    stale: false
+  incremental-differential-scanning:
+    researched_at: '2026-07-18T19:26:59.563639'
+    queries:
+    - Rapid7 InsightAppSec incremental scan attack templates custom rules extensibility
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/attack-templates/
+      snippet: Incremental scans reference the crawl map of the previous scan and
+        attack only new or updated links.
+    reviewed_by_gap_check: false
+    stale: false
+  ide-local-dev-tooling:
+    researched_at: '2026-07-18T19:26:59.987532'
+    queries:
+    - Rapid7 InsightAppSec incremental scan attack templates custom rules extensibility
+    findings:
+    - url: https://marketplace.visualstudio.com/items?itemName=rapid7.rapid7-insightappsec-extension
+      snippet: Rapid7 Application Security (InsightAppSec) Visual Studio Marketplace
+        extension.
+    reviewed_by_gap_check: false
+    stale: false
+  ticketing-collaboration-integration:
+    researched_at: '2026-07-18T19:27:00.386974'
+    queries:
+    - Rapid7 InsightAppSec ArmorCode DefectDojo ASPM Splunk SIEM SOAR integration
+    findings:
+    - url: https://www.rapid7.com/products/insightappsec/integrations/
+      snippet: Integrating with Atlassian Jira gives developers full visibility within
+        their existing workflows.
+    reviewed_by_gap_check: false
+    stale: false
+  siem-soar-integration:
+    researched_at: '2026-07-18T19:27:00.774467'
+    queries:
+    - Rapid7 InsightAppSec ArmorCode DefectDojo ASPM Splunk SIEM SOAR integration
+    findings:
+    - url: https://splunkbase.splunk.com/app/7362
+      snippet: Rapid7 InsightAppSec Add-On for Splunk retrieves application and vulnerability
+        data.
+    reviewed_by_gap_check: false
+    stale: false
+  historical-risk-trend-dashboards:
+    researched_at: '2026-07-18T19:27:01.175947'
+    queries:
+    - Rapid7 InsightAppSec dashboard reporting trend export white label
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/monitor-appsec-data-with-dashboards/
+      snippet: Build custom dashboard views using data visualization widgets from
+        the Dashboard Widget Library.
+    reviewed_by_gap_check: false
+    stale: false
+  vulnerability-status-management:
+    researched_at: '2026-07-18T19:27:01.560844'
+    queries:
+    - Rapid7 InsightAppSec compliance PCI DSS HIPAA vulnerability status false positive
+      tagging
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/test-vulnerability-remediation/
+      snippet: Workflow for confirming vulnerability remediation via Attack Replay.
+    reviewed_by_gap_check: false
+    stale: false
+  deployment-model-data-residency:
+    researched_at: '2026-07-18T19:27:01.997114'
+    queries:
+    - Rapid7 InsightAppSec production safe scanning passive throttle sensitive data
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/setting-up-an-on-premise-scan-engine/
+      snippet: On-premises scan engines report results back to the centralized cloud
+        console.
+    reviewed_by_gap_check: false
+    stale: false
+  multi-tenancy-access-control:
+    researched_at: '2026-07-18T19:27:02.399374'
+    queries:
+    - Rapid7 InsightAppSec RBAC access control SOC 2 ISO 27001 compliance
+    findings:
+    - url: https://docs.rapid7.com/insightappsec/rbac/
+      snippet: Feature-level RBAC with Administer, View and Change, and View access
+        levels.
+    reviewed_by_gap_check: false
+    stale: false
+  vendor-security-posture:
+    researched_at: '2026-07-18T19:27:02.799591'
+    queries:
+    - Rapid7 InsightAppSec RBAC access control SOC 2 ISO 27001 compliance
+    findings:
+    - url: https://www.rapid7.com/trust/compliance/
+      snippet: Rapid7's ISMS is ISO 27001 certified; annual SOC 2 Type II audit.
+    reviewed_by_gap_check: false
+    stale: false
+  stateful-web-crawling:
+    researched_at: '2026-07-18T19:27:03.218060'
+    queries:
+    - Rapid7 InsightAppSec multi-step forms crawler session state auto-remediation
+      PR
+    findings:
+    - url: https://appsecsanta.com/insightappsec
+      snippet: Macro feature records an exact sequence of events (e.g. filling out
+        a shipping page during checkout) with a Use Sequence option.
+    reviewed_by_gap_check: false
+    stale: false
+  automated-triage-fp-reduction:
+    researched_at: '2026-07-18T19:27:03.642643'
+    queries:
+    - Rapid7 InsightAppSec automated triage false positive reduction learning
+    findings:
+    - url: https://discuss.rapid7.com/t/reducing-false-positives-in-insight-appsec/27917
+      snippet: Unanswered community question on reducing false positives; no documented
+        automated triage mechanism found.
+    reviewed_by_gap_check: true
+    stale: false
+  aspm-integration:
+    researched_at: '2026-07-18T19:27:04.058011'
+    queries:
+    - Rapid7 InsightAppSec ArmorCode DefectDojo ASPM Splunk SIEM SOAR integration
+    findings:
+    - url: https://www.armorcode.com/integrations
+      snippet: Lists Rapid7 InsightVM, Rapid7 Nexpose, and Rapid7 Insight; no InsightAppSec
+        listing found.
+    reviewed_by_gap_check: true
+    stale: false
+  licensing-model-predictability:
+    researched_at: '2026-07-18T19:27:04.511416'
+    queries:
+    - Rapid7 InsightAppSec pricing licensing model
+    findings:
+    - url: https://www.rapid7.com/products/insightappsec/pricing/
+      snippet: InsightAppSec starting at $175 per application per month.
+    reviewed_by_gap_check: false
+    stale: false

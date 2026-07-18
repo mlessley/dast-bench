@@ -6,7 +6,255 @@ website: https://www.rapid7.com/products/insightappsec/
 notes: DAST on Rapid7's Insight Platform; Universal Translator normalizes modern JS-framework
   traffic; on-prem scan engines report to a centralized cloud console
 ci_tool_id: null
-scores: []
+scores:
+- criterion_id: api-spa-coverage
+  score: 3.5
+  evidence: 'REST/SOAP (WSDL upload) and GraphQL (schema parsing + attack template)
+    confirmed; one comparative source claims ''limited or no native support for GraphQL
+    and gRPC,'' directly conflicting with Rapid7''s own GraphQL docs -- both cited.
+    Source: docs.rapid7.com/insightappsec/graphql'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:51.325418'
+- criterion_id: shadow-api-discovery
+  score: 2.0
+  evidence: 'Confirmed weak after independent gap-check: ''Application Discovery''
+    is Project Sonar-powered asset/domain discovery (finds unknown applications/subdomains),
+    not undocumented-endpoint discovery within an application already being scanned
+    -- a real capability gap, not just unclear documentation. Source: rapid7.com/blog
+    Application Discovery post'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:51.717844'
+- criterion_id: auth-session-handling
+  score: 4.5
+  evidence: 'Automated Login auto-detects login pages and re-authenticates on logout;
+    Macro and Selenium recorded scripted login for complex flows; TOTP MFA support;
+    logout/session detection via regex. Source: docs.rapid7.com/insightappsec/authentication'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:52.139416'
+- criterion_id: detection-accuracy
+  score: 3.0
+  evidence: No credible independent benchmark found either direction after gap-check;
+    the widely-circulated '94% false positive' figure (see false-positive-rate) is
+    not a valid accuracy signal. Scored on general platform claims (signature-based
+    detection, Universal Translator for modern frameworks) absent contrary evidence.
+  confidence: paper
+  timestamp: '2026-07-18T19:26:52.572959'
+- criterion_id: false-positive-rate
+  score: 3.0
+  evidence: 'Correction after independent gap-check: the widely-quoted ''94% false
+    positive rate'' traces to a single anonymous PeerSpot reviewer''s subjective comment
+    in a room-for-improvement section (re: SQL/JSON injection specifically) -- not
+    a benchmark study, not corroborated elsewhere among the other reviews on that
+    page or any other source. Reported here as an unverified anecdote, not a real
+    statistic. No other strong false-positive evidence found either direction. Source:
+    peerspot.com/products/rapid7-insightappsec-reviews'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:52.982861'
+- criterion_id: safe-prod-scanning
+  score: 4.5
+  evidence: 'Scan blackout periods, flexible low-traffic-window scheduling, configurable
+    scan-scope rate limits, and a dedicated passive attack module for sensitive-data-exposure
+    issues. Source: rapid7.com/products/insightappsec, docs.rapid7.com scan-scope
+    docs'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:53.459393'
+- criterion_id: cicd-native-fit
+  score: 4.5
+  evidence: 'Native Jenkins plugin with explicit build-advance gating on a vulnerability-severity
+    query (e.g. vulnerability.severity=''HIGH''), plus a GitHub Actions marketplace
+    action. Source: docs.rapid7.com/insightappsec/jenkins-integration'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:53.851436'
+- criterion_id: triage-remediation-guidance
+  score: 4.5
+  evidence: 'Attack Replay provides a full replay package per finding: HTTP request,
+    reproduction steps, evidence screenshots, and fix guidance. Source: rapid7.com/blog
+    Attack Replay'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:54.240651'
+- criterion_id: auto-remediation-pr
+  score: 1.0
+  evidence: 'Confirmed absent after independent gap-check: Attack Replay validates/reproduces
+    a vulnerability but does not generate a code-level patch or open a pull request;
+    no such capability found in docs or CI/CD integrations (Jenkins, GitHub Actions).
+    Source: docs.rapid7.com/insightappsec/test-vulnerability-remediation'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:54.678800'
+- criterion_id: setup-onboarding-friction
+  score: 4.0
+  evidence: 'Vendor-cited ''deploys in 30 minutes.'' Source: aimultiple.com/dast-tools'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:55.051482'
+- criterion_id: reporting-exportability
+  score: 4.0
+  evidence: 'App-level and scan-level reports exportable as CSV, PDF, and HTML; selective
+    export of findings. No white-label branding option confirmed. Source: docs.rapid7.com/insightappsec/show-progress-with-reports'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:55.430397'
+- criterion_id: extensibility-custom-rules
+  score: 3.0
+  evidence: 'Custom attack templates (enable/disable attacks, adjust severity/max-findings/attack
+    locations) and a False Positive Regex field for tuning -- real scan-configuration
+    extensibility, not full custom-detection-rule authoring like a scripting engine.
+    Source: docs.rapid7.com/insightappsec/attack-templates'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:55.815457'
+- criterion_id: business-logic-workflow-detection
+  score: 3.0
+  evidence: 'Macro-based multi-step sequence recording/replay (e.g. checkout flow)
+    and a general ''authorization issues and business logic vulnerabilities'' claim
+    in the coverage list, but no confirmed BOLA-specific dual-account object-ID comparison
+    mechanism found. Source: appsecsanta.com/insightappsec review'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:56.219230'
+- criterion_id: legacy-app-protocol-support
+  score: 3.0
+  evidence: 'SOAP via WSDL upload confirmed, but no ASP.NET WebForms/JSP/mainframe-gateway-specific
+    claims found; product positioning skews modern-API/cloud (Universal Translator
+    for React/Angular/Vue) rather than legacy-framework-specific, weaker legacy story
+    than Checkmarx/HCL. Source: docs.rapid7.com/insightappsec/scan-scope'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:56.601689'
+- criterion_id: third-party-partner-api-risk
+  score: 1.5
+  evidence: 'Confirmed absent after independent gap-check: no citable feature found;
+    searches for InsightAppSec plus partner/open-banking/third-party-risk terms returned
+    only generic industry TPRM content unrelated to Rapid7.'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:56.995710'
+- criterion_id: asset-discovery-inventory
+  score: 5.0
+  evidence: 'Project Sonar-powered ''Application Discovery'' actively surveys public
+    IP ranges/domains (70+ services/protocols) to surface unknown or exposed internet-facing
+    applications -- directly matches the rubric''s top tier. Source: rapid7.com/blog
+    Application Discovery post'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:57.375874'
+- criterion_id: compliance-standards-mapping
+  score: 4.0
+  evidence: 'PCI-DSS, HIPAA (pass/fail by requirement), SOX, and OWASP Top 10 compliance
+    reports confirmed; no explicit GLBA/FFIEC/NYDFS mapping found, unlike HCL AppScan''s
+    FFIEC-specific report. Source: rapid7.com/products/insightappsec/features/powerful-reporting-for-compliance-and-remediation'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:57.744101'
+- criterion_id: finding-validation-proof-of-exploit
+  score: 4.5
+  evidence: 'Attack Replay replays the actual recorded attack traffic used to identify
+    a finding as proof, and lets the user edit the request to confirm whether a fix
+    resolves it. Source: docs.rapid7.com/insightappsec/test-vulnerability-remediation'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:58.185945'
+- criterion_id: sensitive-financial-data-exposure
+  score: 2.0
+  evidence: 'A passive attack module is confirmed for clear-text-password (credential)
+    detection; no citable evidence found either direction for dedicated PAN/routing-number/SSN-specific
+    pattern detection after independent gap-check -- absence of evidence, not confirmed
+    absence of the feature. Source: docs.rapid7.com/insightappsec/concepts'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:58.571491'
+- criterion_id: scan-performance-scalability
+  score: 3.5
+  evidence: 'Rapid7 published a dedicated blog post on improving InsightAppSec''s
+    scan speed and performance -- a real investment signal, though no specific benchmark
+    number was found. Source: rapid7.com/blog scan speed post'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:58.958088'
+- criterion_id: incremental-differential-scanning
+  score: 5.0
+  evidence: 'Explicit and direct: incremental scans reference the previous scan''s
+    crawl map and attack only new/updated links; the first incremental-enabled run
+    establishes a full-scan baseline. Source: docs.rapid7.com/insightappsec/attack-templates'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:59.349868'
+- criterion_id: ide-local-dev-tooling
+  score: 3.5
+  evidence: 'A VS Code extension is confirmed on the Visual Studio Marketplace, but
+    less documented depth (no pre-commit or real-time-feedback detail found) than
+    some competitors'' IDE tooling. Source: marketplace.visualstudio.com/items?itemName=rapid7.rapid7-insightappsec-extension'
+  confidence: paper
+  timestamp: '2026-07-18T19:26:59.753278'
+- criterion_id: ticketing-collaboration-integration
+  score: 3.5
+  evidence: 'Jira integration confirmed (full developer visibility within existing
+    workflows); no ServiceNow-specific integration confirmed this round. Source: original
+    discovery notes citing rapid7.com/products/insightappsec'
+  confidence: paper
+  timestamp: '2026-07-18T19:27:00.191252'
+- criterion_id: siem-soar-integration
+  score: 4.5
+  evidence: 'Both sides confirmed: an official Rapid7 InsightAppSec Splunk Technology
+    Add-On (SIEM) plus Rapid7''s own native SOAR product (InsightConnect), with a
+    listed ''Rapid7 InsightAppSec SOAR Actions'' integration on the CrowdStrike Marketplace.
+    Source: splunkbase.splunk.com/app/7362, marketplace.crowdstrike.com'
+  confidence: paper
+  timestamp: '2026-07-18T19:27:00.594838'
+- criterion_id: historical-risk-trend-dashboards
+  score: 3.0
+  evidence: 'A configurable dashboard widget library exists, but no explicit severity-trend-line
+    or executive-level rollup feature was found, unlike Checkmarx/HCL''s more explicit
+    trend dashboards. Source: docs.rapid7.com/insightappsec/monitor-appsec-data-with-dashboards'
+  confidence: paper
+  timestamp: '2026-07-18T19:27:00.969561'
+- criterion_id: vulnerability-status-management
+  score: 3.0
+  evidence: 'A ''Test Vulnerability Remediation'' workflow exists for confirming fixes,
+    but a formal exception/risk-acceptance workflow with a dedicated audit trail is
+    not clearly confirmed. Source: docs.rapid7.com/insightappsec/test-vulnerability-remediation'
+  confidence: paper
+  timestamp: '2026-07-18T19:27:01.370819'
+- criterion_id: deployment-model-data-residency
+  score: 3.0
+  evidence: 'On-prem scan engines report to a centralized cloud console (hybrid execution
+    model) for internal-only apps, but the console/platform itself is SaaS-only --
+    no full on-prem or air-gapped option like Checkmarx/HCL. Source: docs.rapid7.com/insightappsec/setting-up-an-on-premise-scan-engine'
+  confidence: paper
+  timestamp: '2026-07-18T19:27:01.813273'
+- criterion_id: multi-tenancy-access-control
+  score: 4.0
+  evidence: 'Documented RBAC with Administer / View-and-Change / View-only access
+    levels per feature, plus a dedicated RBAC FAQ page for InsightAppSec specifically.
+    Business-unit-specific isolation not explicitly confirmed. Source: docs.rapid7.com/insightappsec/rbac'
+  confidence: paper
+  timestamp: '2026-07-18T19:27:02.200836'
+- criterion_id: vendor-security-posture
+  score: 4.5
+  evidence: 'ISO 27001-certified ISMS and an annual SOC 2 Type II audit, confirmed
+    directly on Rapid7''s own trust/compliance page. Source: rapid7.com/trust/compliance'
+  confidence: paper
+  timestamp: '2026-07-18T19:27:02.611780'
+- criterion_id: stateful-web-crawling
+  score: 4.0
+  evidence: 'Macro ''Use Sequence'' recording explicitly handles multi-step flows
+    (e.g. a checkout shipping page), replaying the exact sequence of events. Source:
+    appsecsanta.com/insightappsec review'
+  confidence: paper
+  timestamp: '2026-07-18T19:27:03.002359'
+- criterion_id: automated-triage-fp-reduction
+  score: 1.5
+  evidence: 'Confirmed weak after independent gap-check: only a manual False Positive
+    Regex field exists for suppressing known false positives per attack template;
+    an unanswered Rapid7 community-forum question on reducing false positives found
+    no documented automated/cross-scan-learning mechanism in response. Source: discuss.rapid7.com
+    Reducing false positives thread'
+  confidence: paper
+  timestamp: '2026-07-18T19:27:03.416079'
+- criterion_id: aspm-integration
+  score: 1.5
+  evidence: 'Confirmed absent after independent gap-check: ArmorCode''s public integrations
+    page explicitly lists ''Rapid7 InsightVM,'' ''Rapid7 Nexpose,'' and ''Rapid7 Insight''
+    (infra/CSPM/vuln-mgmt products) but has no listing for InsightAppSec by name --
+    a specific, direct finding of omission, not just absence of evidence. Source:
+    armorcode.com/integrations'
+  confidence: paper
+  timestamp: '2026-07-18T19:27:03.856156'
+- criterion_id: licensing-model-predictability
+  score: 3.5
+  evidence: 'A real published starting price ($175/application/month) is more transparent
+    than the other three newly-added vendors'' pure quote-based models, though enterprise-tier
+    and multi-product-bundle pricing (with InsightVM/InsightIDR) still require custom
+    quotes. Source: rapid7.com/products/insightappsec/pricing'
+  confidence: paper
+  timestamp: '2026-07-18T19:27:04.291264'
 hands_on_results: []
 observations:
 - context: discovery research
