@@ -6,7 +6,272 @@ website: https://www.qualys.com/apps/web-app-scanning
 notes: Cloud DAST on the Qualys Cloud Platform (folded into the TotalAppSec release
   stream as of March 2026); REST + SOAP via OpenAPI v3 import; ML-optimized scanning
 ci_tool_id: null
-scores: []
+scores:
+- criterion_id: api-spa-coverage
+  score: 2.5
+  evidence: 'REST/SOAP confirmed via Swagger/OpenAPI/Postman/Burp-capture import;
+    confirmed weak on GraphQL/gRPC after independent gap-check -- a 2025 QID only
+    detects a known CVE in the GraphQL Mesh software component, not query/introspection
+    scanning, and third-party comparisons (Beagle Security, Invicti) explicitly state
+    Qualys lags on GraphQL/SPA crawling. Source: docs.qualys.com WAS 1.14 release
+    notes, beaglesecurity.com Acunetix vs Qualys comparison'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:09.505767'
+- criterion_id: shadow-api-discovery
+  score: 4.0
+  evidence: 'Revised up after independent gap-check: WAS''s own ''API Security'' module
+    (within WAS itself, not a separate EASM/CSAM product) explicitly claims to catalog
+    internal, external, undocumented, rogue, and shadow APIs across cloud/container/gateway
+    environments. Source: blog.qualys.com API Security in WAS post'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:09.848750'
+- criterion_id: auth-session-handling
+  score: 3.5
+  evidence: 'TOTP MFA is automatable; other MFA/SSO requires manual session-cookie
+    extraction or a Selenium script played back at the browser level (technology-agnostic
+    to SAML/OAuth/CAS) -- Qualys itself discloses it cannot automate 2FA/MFA beyond
+    TOTP. Source: success.qualys.com discussions on SSO/MFA handling'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:10.233358'
+- criterion_id: detection-accuracy
+  score: 3.0
+  evidence: Vendor claims a 96% detection rate via ML-optimized scan patterns -- self-reported,
+    not independently benchmarked.
+  confidence: paper
+  timestamp: '2026-07-18T19:44:10.595347'
+- criterion_id: false-positive-rate
+  score: 3.0
+  evidence: No independent benchmark or user-review data found specifically quantifying
+    WAS's false-positive rate in either direction.
+  confidence: paper
+  timestamp: '2026-07-18T19:44:10.966326'
+- criterion_id: safe-prod-scanning
+  score: 3.0
+  evidence: Only a 'Discovery scan' vs. 'Vulnerability scan' mode distinction was
+    found; no explicit passive-mode/rate-limiting documentation located for WAS specifically
+    -- a genuine research gap relative to other vendors scored so far.
+  confidence: paper
+  timestamp: '2026-07-18T19:44:11.311430'
+- criterion_id: cicd-native-fit
+  score: 4.0
+  evidence: 'Native Jenkins plugin evaluates configured pass/fail criteria against
+    scan results and generates a build exception to fail the build on a match. Source:
+    plugins.jenkins.io/qualys-was'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:11.696965'
+- criterion_id: triage-remediation-guidance
+  score: 3.0
+  evidence: TruRisk-based prioritization implied at the platform level; no WAS-specific
+    instance-tailored remediation-guidance citation found distinct from generic vulnerability
+    descriptions.
+  confidence: paper
+  timestamp: '2026-07-18T19:44:12.047248'
+- criterion_id: auto-remediation-pr
+  score: 1.0
+  evidence: 'Confirmed absent for WAS after independent gap-check: Qualys does have
+    an ''Auto-Remediation'' feature, but it is scoped to Policy Compliance (CAR scripts
+    fixing infrastructure misconfigurations) and VMDR patch/ticket remediation --
+    not WAS, and not code-fix/PR generation.'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:12.424748'
+- criterion_id: setup-onboarding-friction
+  score: 3.0
+  evidence: 'A dedicated Getting Started Guide exists; cloud SaaS deployment implies
+    straightforward setup, but no explicit time-to-first-scan claim was found. Source:
+    cdn2.qualys.com WAS getting started guide'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:12.786538'
+- criterion_id: reporting-exportability
+  score: 3.5
+  evidence: 'TruRisk reports and a PCI ASV compliance/remediation-guide report pair
+    confirmed; no CSV/JSON export or direct ticketing-integration citation found in
+    this specific pass, though ticketing connectors exist separately. Source: qualys.com
+    PCI ASV compliance page'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:13.150722'
+- criterion_id: extensibility-custom-rules
+  score: 1.5
+  evidence: 'Confirmed weak after independent gap-check: WAS itself only offers ''Search
+    Lists'' (static/dynamic QID include/exclude sets) for scoping which existing detections
+    run -- filtering, not new custom-rule authoring. The ''Custom Rules'' (Virtual
+    Patch/Access/Control Rules) feature found initially is documented under Qualys''s
+    separate WAF product, out of scope for WAS. Source: qualysguard.qg2.apps.qualys.com
+    Search Lists docs'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:13.519274'
+- criterion_id: business-logic-workflow-detection
+  score: 1.5
+  evidence: 'Confirmed weak after independent gap-check: ''Form Training'' and Selenium/Browser-Recorder
+    scripts enable crawling through multi-step workflows but no authorization-state-aware
+    business-logic testing capability was found (nothing analogous to a privilege-escalation-diff
+    test). A source explicitly states ''Standard DAST tools like Qualys WAS cannot
+    validate business logic,'' and this stands unrebutted.'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:13.927226'
+- criterion_id: legacy-app-protocol-support
+  score: 3.0
+  evidence: SOAP support confirmed; no ASP.NET WebForms/JSP/mainframe-gateway-specific
+    claims found for WAS.
+  confidence: paper
+  timestamp: '2026-07-18T19:44:14.308016'
+- criterion_id: third-party-partner-api-risk
+  score: 1.5
+  evidence: 'Confirmed absent after independent gap-check: Qualys''s partner/vendor-asset
+    content is under CSAM (''Import Third-Party Assets API'') for general asset inventory,
+    not a WAS-specific partner-API-differentiated scanning or risk-program-formatted
+    output.'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:14.701246'
+- criterion_id: asset-discovery-inventory
+  score: 5.0
+  evidence: 'Qualys EASM explicitly probes ''like an attacker would'' -- starting
+    from org name and seed domains, expanding via DNS records, SSL/TLS certificate
+    transparency logs, WHOIS data, hosting fingerprints, and cloud provider metadata
+    -- to map every internet-facing asset including shadow IT and forgotten test servers.
+    Directly matches the rubric''s top tier. Source: qualys.com attack surface management
+    FAQ'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:15.104319'
+- criterion_id: compliance-standards-mapping
+  score: 4.0
+  evidence: 'PCI DSS 4.0 (ASV-approved, audit-ready) confirmed; Policy Audit maps
+    to 90+ benchmarks/frameworks (CIS, NIST, FedRAMP, GDPR, PCI DSS); no GLBA/FFIEC/NYDFS/SOX-specific
+    mapping confirmed, and some of this breadth is platform-wide (Policy Audit) rather
+    than WAS-DAST-specific. Source: blog.qualys.com Policy Audit post'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:15.504275'
+- criterion_id: finding-validation-proof-of-exploit
+  score: 2.5
+  evidence: 'A real product, Qualys TruConfirm (''Agent-Led Safe Exploit Validation''),
+    was found during independent gap-check, but its scope (WAS/web-app findings vs.
+    VMDR/infrastructure-only) could not be confirmed either way -- flagged as an unresolved
+    lead rather than a confirmed WAS capability. TruRisk itself factors exploitability
+    into a risk score, which is prioritization, not the same as confirming a specific
+    finding is exploitable with proof. Source: qualys.com/apps/truconfirm'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:15.931230'
+- criterion_id: sensitive-financial-data-exposure
+  score: 4.5
+  evidence: 'Direct, dedicated evidence: WAS''s own sensitive-content detection types
+    explicitly include ''CC'' (credit card number) and ''SSN'' (Social Security Number,
+    US-only) detections, plus CUSTOM for user-defined sensitive content -- the clearest
+    hit of any of the four newly-added candidates on this criterion. Misses explicit
+    account/routing-number detection. Source: qualysguard.qg2.apps.qualys.com manage
+    detections docs'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:16.364282'
+- criterion_id: scan-performance-scalability
+  score: 3.5
+  evidence: Vendor claims ML-optimized scan patterns reduce scan time by up to 80%
+    on large applications -- self-reported, but a specific number.
+  confidence: paper
+  timestamp: '2026-07-18T19:44:16.761515'
+- criterion_id: incremental-differential-scanning
+  score: 4.5
+  evidence: 'Revised up substantially after independent gap-check: Qualys has offered
+    ''Progressive Scanning'' since 2015, explicitly reusing prior-scan data and scanning
+    only the parts of a website that changed between scans, plus a newer ''AI-Powered
+    Scan Optimization'' feature. Source: securityweek.com Qualys Progressive Scanning,
+    docs.qualys.com AI-Powered Scan Optimization'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:17.160233'
+- criterion_id: ide-local-dev-tooling
+  score: 1.0
+  evidence: 'Confirmed absent after independent gap-check: no IDE plugin (VS Code,
+    IntelliJ, Eclipse) or pre-commit tool found anywhere for WAS; only the CI/CD Jenkins
+    plugin exists, which is pipeline integration, not local/IDE tooling.'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:17.591077'
+- criterion_id: ticketing-collaboration-integration
+  score: 4.0
+  evidence: 'Native Jira Connector confirmed directly; ServiceNow and Splunk also
+    listed among 100+ Qualys connectors. Source: docs.qualys.com Jira connector'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:17.989310'
+- criterion_id: siem-soar-integration
+  score: 4.0
+  evidence: 'Revised up after independent gap-check: a dedicated ''Qualys WAS App
+    for Splunk Enterprise'' (Splunkbase app 3210) exists, distinct from the generic
+    VMDR-scoped ''Qualys Vulnerability Management'' app (app 6565), with its own real-time
+    dashboards and analytics for web-application-scanning data specifically. Source:
+    splunkbase.splunk.com/app/3210'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:18.472403'
+- criterion_id: historical-risk-trend-dashboards
+  score: 4.0
+  evidence: 'TruRisk dashboards are explicitly configurable to track control objectives,
+    identify gaps, and monitor trends across hybrid environments, fed in part by WAS
+    data. Source: blog.qualys.com TruRisk platform post'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:18.974078'
+- criterion_id: vulnerability-status-management
+  score: 3.0
+  evidence: 'Revised up modestly after independent gap-check: ignore/exception reasons
+    (False Positive, Risk Accepted, Other with an explanation field) are confirmed,
+    but no multi-party approval step or dedicated audit trail specific to the exception
+    itself was found. Source: docs.qualys.com ignore vulnerability docs'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:19.388617'
+- criterion_id: deployment-model-data-residency
+  score: 4.0
+  evidence: 'Physical/virtual Scanner Appliances for on-prem/private-cloud deployment
+    plus Cloud Agents and marketplace virtual scanners (AWS/Azure/VMware); hybrid
+    model explicitly recommended by Qualys. Full air-gapped support not explicitly
+    confirmed, unlike some competitors. Source: docs.qualys.com Scanner Appliance
+    docs'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:19.828327'
+- criterion_id: multi-tenancy-access-control
+  score: 4.0
+  evidence: 'Revised up after independent gap-check: documented RBAC via Role Management
+    (custom roles) plus a real Activity/Action Log explicitly covering ''WAS UI, API,
+    and other services,'' scoped by role (Manager sees all, Unit Manager sees their
+    unit, Scanner/Reader sees only their own actions). Source: qualysguard.qg2.apps.qualys.com
+    Activity Log and Role Management docs'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:20.218374'
+- criterion_id: vendor-security-posture
+  score: 4.5
+  evidence: 'SOC 2 Type II report and ISO 27001 certificate both directly confirmed
+    via Qualys''s own compliance fileshare pages. Source: success.qualys.com compliance
+    fileshare'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:20.621558'
+- criterion_id: stateful-web-crawling
+  score: 3.5
+  evidence: 'Revised up with caveat after independent gap-check: Selenium/Browser
+    Recorder scripts plus ''Form Training'' for multi-step forms are confirmed --
+    closer to scripted macro replay (like Rapid7''s Use Sequence) than dedicated wizard/session-state
+    modeling, but a genuine, real capability rather than zero. Source: docs.qualys.com
+    Selenium script docs'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:21.026057'
+- criterion_id: automated-triage-fp-reduction
+  score: 1.5
+  evidence: 'Confirmed weak after independent gap-check: no cross-scan learning or
+    automated proof-of-concept replay found beyond manual ignore/exception marking
+    and TruRisk''s risk-prioritization scoring.'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:21.427434'
+- criterion_id: aspm-integration
+  score: 1.5
+  evidence: 'Confirmed weak, worse than the initial pass suggested, after independent
+    gap-check: ArmorCode''s own partner page lists Qualys only as a generic ''API
+    - Tech Alliance Partner'' with no WAS-specific mention; DefectDojo''s Qualys parser
+    is documented as designed for VMDR host-based reports, with community-reported
+    gaps for WAS-specific scan import; no Snyk AppRisk integration found at all. Source:
+    technologypartners.qualys.com ArmorCode partner page, docs.defectdojo.com Qualys
+    parser'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:21.868905'
+- criterion_id: licensing-model-predictability
+  score: 4.0
+  evidence: 'A real published starting price ($1,995/year for 25 applications) is
+    the most concretely transparent entry-level pricing of the four newly-added candidates,
+    though larger enterprise tiers still require custom quotes. Source: beaglesecurity.com
+    Qualys pricing article'
+  confidence: paper
+  timestamp: '2026-07-18T19:44:22.282790'
 hands_on_results: []
 observations:
 - context: discovery research

@@ -1,0 +1,322 @@
+vendor_id: qualys-was
+criteria:
+  api-spa-coverage:
+    researched_at: '2026-07-18T19:44:09.672275'
+    queries:
+    - Qualys WAS GraphQL gRPC business logic authorization BOLA testing
+    findings:
+    - url: https://docs.qualys.com/en/was/release-notes/web_application_scanning/qualys-web-application-scanning-1.14-release-lcr-api-security.htm
+      snippet: REST/SOAP via Swagger/OpenAPI/Postman import; no GraphQL/gRPC scanning
+        capability confirmed.
+    reviewed_by_gap_check: true
+    stale: false
+  shadow-api-discovery:
+    researched_at: '2026-07-18T19:44:10.051262'
+    queries:
+    - Qualys WAS shadow API discovery asset inventory unmapped applications
+    findings:
+    - url: https://blog.qualys.com/product-tech/2024/07/24/secure-your-apis-and-reduce-your-attack-surface-with-modern-ai-powered-api-security-in-qualys-web-application-scanning-was
+      snippet: WAS API Security catalogs internal, external, undocumented, rogue,
+        and shadow APIs.
+    reviewed_by_gap_check: true
+    stale: false
+  auth-session-handling:
+    researched_at: '2026-07-18T19:44:10.409751'
+    queries:
+    - Qualys WAS authentication SSO MFA scripted login session handling
+    findings:
+    - url: https://success.qualys.com/discussions/s/article/000006314
+      snippet: Qualys cannot automate 2FA or MFA except TOTP; SSO handled via Selenium
+        script playback at the browser level.
+    reviewed_by_gap_check: false
+    stale: false
+  detection-accuracy:
+    researched_at: '2026-07-18T19:44:10.767344'
+    queries:
+    - Qualys WAS web application scanning DAST features 2026 SOAP
+    findings:
+    - url: https://www.qualys.com/apps/web-app-scanning
+      snippet: ML-optimized scanning achieving a 96% detection rate.
+    reviewed_by_gap_check: false
+    stale: false
+  false-positive-rate:
+    researched_at: '2026-07-18T19:44:11.139335'
+    queries:
+    - Qualys WAS web application scanning DAST features 2026 SOAP
+    findings:
+    - url: https://www.qualys.com/apps/web-app-scanning
+      snippet: No independent FP-rate benchmark found.
+    reviewed_by_gap_check: false
+    stale: false
+  safe-prod-scanning:
+    researched_at: '2026-07-18T19:44:11.510056'
+    queries:
+    - Qualys WAS incremental scan custom rules extensibility IDE plugin
+    findings:
+    - url: https://cdn2.qualys.com/docs/qualys-was-getting-started-guide.pdf
+      snippet: Discovery scan and Vulnerability scan are the two scan types; no explicit
+        passive/rate-limit documentation found.
+    reviewed_by_gap_check: false
+    stale: false
+  cicd-native-fit:
+    researched_at: '2026-07-18T19:44:11.865471'
+    queries:
+    - Qualys WAS CI/CD integration Jenkins GitHub Actions exit codes policy gates
+    findings:
+    - url: https://plugins.jenkins.io/qualys-was/
+      snippet: If pass/fail criteria are configured, the plugin evaluates responses
+        and generates an exception to fail the build.
+    reviewed_by_gap_check: false
+    stale: false
+  triage-remediation-guidance:
+    researched_at: '2026-07-18T19:44:12.211890'
+    queries:
+    - Qualys WAS TruRisk dashboard trend reporting compliance PCI GLBA
+    findings:
+    - url: https://docs.qualys.com/en/vmdr/latest/trurisk/truRisk_report.htm
+      snippet: TruRisk prioritization is platform-wide; WAS-specific tailored remediation
+        guidance not separately confirmed.
+    reviewed_by_gap_check: false
+    stale: false
+  auto-remediation-pr:
+    researched_at: '2026-07-18T19:44:12.603224'
+    queries:
+    - Qualys WAS auto remediation pull request code fix
+    findings:
+    - url: https://blog.qualys.com/product-tech/2023/04/03/augment-security-asset-tagging-with-custom-assessment-and-remediation-car
+      snippet: Auto-Remediation (CAR) is scoped to Policy Compliance infrastructure
+        fixes and VMDR patching, not WAS.
+    reviewed_by_gap_check: true
+    stale: false
+  setup-onboarding-friction:
+    researched_at: '2026-07-18T19:44:12.956636'
+    queries:
+    - Qualys WAS incremental scan custom rules extensibility IDE plugin
+    findings:
+    - url: https://cdn2.qualys.com/docs/qualys-was-getting-started-guide.pdf
+      snippet: Getting Started Guide for Qualys WAS; no explicit time-to-first-scan
+        claim found.
+    reviewed_by_gap_check: false
+    stale: false
+  reporting-exportability:
+    researched_at: '2026-07-18T19:44:13.320726'
+    queries:
+    - Qualys WAS TruRisk dashboard trend reporting compliance PCI GLBA
+    findings:
+    - url: https://www.qualys.com/apps/pci-asv-compliance/
+      snippet: PCI ASV generates a compliance report and a remediation guide report.
+    reviewed_by_gap_check: false
+    stale: false
+  extensibility-custom-rules:
+    researched_at: '2026-07-18T19:44:13.728641'
+    queries:
+    - Qualys WAS incremental scan custom rules extensibility IDE plugin
+    findings:
+    - url: https://qualysguard.qg2.apps.qualys.com/portal-help/en/was/configuration/sl/search_lists.htm
+      snippet: Search Lists filter which existing QIDs run; not custom detection-rule
+        authoring. Custom Rules (Virtual Patch etc.) belong to the separate WAF product.
+    reviewed_by_gap_check: true
+    stale: false
+  business-logic-workflow-detection:
+    researched_at: '2026-07-18T19:44:14.107333'
+    queries:
+    - Qualys WAS GraphQL gRPC business logic authorization BOLA testing
+    findings:
+    - url: https://getautonoma.com/blog/dast-tools
+      snippet: Standard DAST tools like Qualys WAS cannot validate business logic.
+    reviewed_by_gap_check: true
+    stale: false
+  legacy-app-protocol-support:
+    researched_at: '2026-07-18T19:44:14.500844'
+    queries:
+    - Qualys WAS web application scanning DAST features 2026 SOAP
+    findings:
+    - url: https://www.qualys.com/apps/web-app-scanning
+      snippet: Tests REST and SOAP APIs; no legacy-framework-specific claims found.
+    reviewed_by_gap_check: false
+    stale: false
+  third-party-partner-api-risk:
+    researched_at: '2026-07-18T19:44:14.888110'
+    queries:
+    - Qualys WAS shadow API discovery asset inventory unmapped applications
+    findings:
+    - url: https://www.qualys.com/faqs-resources-attack-surface-management
+      snippet: Third-party asset content is under CSAM asset inventory, not WAS-specific
+        partner-API risk output.
+    reviewed_by_gap_check: true
+    stale: false
+  asset-discovery-inventory:
+    researched_at: '2026-07-18T19:44:15.300172'
+    queries:
+    - Qualys WAS shadow API discovery asset inventory unmapped applications
+    findings:
+    - url: https://www.qualys.com/faqs-resources-attack-surface-management
+      snippet: EASM probes like an attacker would using DNS, SSL/TLS cert transparency,
+        WHOIS, and cloud metadata to map every internet-facing asset.
+    reviewed_by_gap_check: false
+    stale: false
+  compliance-standards-mapping:
+    researched_at: '2026-07-18T19:44:15.714395'
+    queries:
+    - Qualys WAS TruRisk dashboard trend reporting compliance PCI GLBA
+    findings:
+    - url: https://blog.qualys.com/product-tech/2025/04/24/introducing-qualys-policy-audit-the-new-standard-for-audit-readiness
+      snippet: Policy Audit provides audit-ready reporting cross-mapped to 90+ benchmarks
+        and frameworks including CIS, NIST, FedRAMP, GDPR, PCI DSS 4.0.
+    reviewed_by_gap_check: false
+    stale: false
+  finding-validation-proof-of-exploit:
+    researched_at: '2026-07-18T19:44:16.136254'
+    queries:
+    - Qualys WAS proof of exploit validation TruConfirm
+    findings:
+    - url: https://www.qualys.com/apps/truconfirm
+      snippet: Agent-Led Safe Exploit Validation; scope relative to WAS vs. infrastructure
+        findings unconfirmed.
+    reviewed_by_gap_check: true
+    stale: false
+  sensitive-financial-data-exposure:
+    researched_at: '2026-07-18T19:44:16.559420'
+    queries:
+    - Qualys WAS sensitive data PII SSN credit card detection false positive tagging
+    findings:
+    - url: https://qualysguard.qg2.apps.qualys.com/portal-help/en/was/detections/manage_detections.htm
+      snippet: Sensitive content detections include CC (credit card) and SSN (Social
+        Security Number, US only).
+    reviewed_by_gap_check: false
+    stale: false
+  scan-performance-scalability:
+    researched_at: '2026-07-18T19:44:16.943376'
+    queries:
+    - Qualys WAS web application scanning DAST features 2026 SOAP
+    findings:
+    - url: https://www.qualys.com/apps/web-app-scanning
+      snippet: ML-optimized scanning reduces scan times by up to 80% on large applications.
+    reviewed_by_gap_check: false
+    stale: false
+  incremental-differential-scanning:
+    researched_at: '2026-07-18T19:44:17.377971'
+    queries:
+    - Qualys WAS incremental scan custom rules extensibility IDE plugin
+    findings:
+    - url: https://www.securityweek.com/qualys-adds-progressive-scanning-capabilities-its-was-solution/
+      snippet: Progressive Scanning reuses prior-scan data and only scans parts of
+        the website that changed since the last scan.
+    reviewed_by_gap_check: true
+    stale: false
+  ide-local-dev-tooling:
+    researched_at: '2026-07-18T19:44:17.779787'
+    queries:
+    - Qualys WAS incremental scan custom rules extensibility IDE plugin
+    findings:
+    - url: https://plugins.jenkins.io/qualys-was/
+      snippet: Only a Jenkins CI/CD plugin found; no IDE-level plugin for WAS.
+    reviewed_by_gap_check: true
+    stale: false
+  ticketing-collaboration-integration:
+    researched_at: '2026-07-18T19:44:18.216293'
+    queries:
+    - Qualys WAS Jira ServiceNow ticketing ArmorCode ASPM SIEM Splunk integration
+    findings:
+    - url: https://docs.qualys.com/en/integration/jira_connector/
+      snippet: Native Qualys Jira Connector.
+    reviewed_by_gap_check: false
+    stale: false
+  siem-soar-integration:
+    researched_at: '2026-07-18T19:44:18.734066'
+    queries:
+    - Qualys WAS Jira ServiceNow ticketing ArmorCode ASPM SIEM Splunk integration
+    findings:
+    - url: https://splunkbase.splunk.com/app/3210
+      snippet: Qualys WAS App for Splunk Enterprise provides dashboards and analytics
+        for web application scanning data, distinct from the VMDR-scoped app.
+    reviewed_by_gap_check: true
+    stale: false
+  historical-risk-trend-dashboards:
+    researched_at: '2026-07-18T19:44:19.169591'
+    queries:
+    - Qualys WAS TruRisk dashboard trend reporting compliance PCI GLBA
+    findings:
+    - url: https://blog.qualys.com/product-tech/2025/09/19/introducing-enhanced-user-interface-for-qualys-pci-dss-4-0-asv-compliant-solution
+      snippet: TruRisk-focused dashboards track control objectives, gaps, and trends
+        across hybrid environments in real time.
+    reviewed_by_gap_check: false
+    stale: false
+  vulnerability-status-management:
+    researched_at: '2026-07-18T19:44:19.632733'
+    queries:
+    - Qualys WAS sensitive data PII SSN credit card detection false positive tagging
+    findings:
+    - url: https://docs.qualys.com/en/was/latest/knowledgebase/ignore_vulnerability.htm
+      snippet: Ignore reasons include False Positive, Risk Accepted, and Other with
+        an explanation field.
+    reviewed_by_gap_check: true
+    stale: false
+  deployment-model-data-residency:
+    researched_at: '2026-07-18T19:44:20.025293'
+    queries:
+    - Qualys WAS deployment on-premises scanner appliance cloud hybrid
+    findings:
+    - url: https://docs.qualys.com/en/scanner/onboarding/welcome/home_page.htm
+      snippet: Scanner Appliance (physical/virtual) for on-prem/private-cloud, plus
+        Cloud Agents; hybrid model recommended.
+    reviewed_by_gap_check: false
+    stale: false
+  multi-tenancy-access-control:
+    researched_at: '2026-07-18T19:44:20.415476'
+    queries:
+    - Qualys WAS RBAC access control SOC 2 ISO 27001 compliance
+    findings:
+    - url: https://qualysguard.qg2.apps.qualys.com/qwebhelp/fo_portal/activity_log/activity_log.htm
+      snippet: Activity/Action Log covers WAS UI, API, and other services, scoped
+        by role.
+    reviewed_by_gap_check: true
+    stale: false
+  vendor-security-posture:
+    researched_at: '2026-07-18T19:44:20.818386'
+    queries:
+    - Qualys WAS RBAC access control SOC 2 ISO 27001 compliance
+    findings:
+    - url: https://success.qualys.com/support/s/compliance-fileshare/a34Kd000003JkLtIAK/soc-2-type-ii
+      snippet: SOC 2 Type II report available; ISO 27001 certificate confirmed separately.
+    reviewed_by_gap_check: false
+    stale: false
+  stateful-web-crawling:
+    researched_at: '2026-07-18T19:44:21.224651'
+    queries:
+    - Qualys WAS GraphQL gRPC business logic authorization BOLA testing
+    findings:
+    - url: https://docs.qualys.com/en/was/portal/latest/web_applications/create_selenium_script.htm
+      snippet: Selenium scripts via Qualys Browser Recorder for scripted multi-step
+        login/workflow replay; Form Training supplies values for multi-step forms.
+    reviewed_by_gap_check: true
+    stale: false
+  automated-triage-fp-reduction:
+    researched_at: '2026-07-18T19:44:21.621930'
+    queries:
+    - Qualys WAS sensitive data PII SSN credit card detection false positive tagging
+    findings:
+    - url: https://docs.qualys.com/en/was/latest/knowledgebase/ignore_vulnerability.htm
+      snippet: No automated cross-scan-learning or PoC-replay triage engine found
+        beyond manual marking.
+    reviewed_by_gap_check: true
+    stale: false
+  aspm-integration:
+    researched_at: '2026-07-18T19:44:22.078746'
+    queries:
+    - Qualys WAS Jira ServiceNow ticketing ArmorCode ASPM SIEM Splunk integration
+    findings:
+    - url: https://technologypartners.qualys.com/partners/amorecode
+      snippet: ArmorCode listed as a generic API Tech Alliance Partner, no WAS-specific
+        field-mapping documentation.
+    reviewed_by_gap_check: true
+    stale: false
+  licensing-model-predictability:
+    researched_at: '2026-07-18T19:44:22.481233'
+    queries:
+    - Qualys WAS pricing licensing model per app enterprise
+    findings:
+    - url: https://beaglesecurity.com/blog/article/qualys-pricing.html
+      snippet: WAS starts at $1,995 per year for 25 applications.
+    reviewed_by_gap_check: false
+    stale: false
