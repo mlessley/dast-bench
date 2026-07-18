@@ -1,0 +1,23 @@
+id: rapid7-insightappsec
+name: Rapid7 InsightAppSec
+source: seeded
+status: candidate
+website: https://www.rapid7.com/products/insightappsec/
+notes: DAST on Rapid7's Insight Platform; Universal Translator normalizes modern JS-framework
+  traffic; on-prem scan engines report to a centralized cloud console
+ci_tool_id: null
+scores: []
+hands_on_results: []
+observations:
+- context: discovery research
+  note: 'Added on infra-vendor-bundling logic: a buyer already running Rapid7 for
+    infrastructure vulnerability management (InsightVM) may evaluate this as a native-platform
+    DAST add rather than a new vendor relationship, which is a common enterprise procurement
+    pattern. Universal Translator normalizes React/Angular/Vue traffic for modern
+    app testing; Attack Replay generates a locally-executable reproduction package
+    per finding; on-prem scan engines support internal-only apps while centralizing
+    results in a cloud console. Sources: rapid7.com/products/insightappsec, docs.rapid7.com/insightappsec/quick-start'
+  tags:
+  - discovery
+  - enterprise-pivot
+  timestamp: '2026-07-18T16:17:52.176811'

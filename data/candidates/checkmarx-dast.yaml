@@ -1,0 +1,26 @@
+id: checkmarx-dast
+name: Checkmarx DAST
+source: seeded
+status: candidate
+website: https://checkmarx.com/checkmarx-dast/
+notes: Enterprise DAST as part of the Checkmarx One unified AppSec platform (SAST,
+  API Security, IaC, Secrets, SCA, Container Security, DAST) with native cross-scanner
+  correlation; REST/SOAP/gRPC support
+ci_tool_id: null
+scores: []
+hands_on_results: []
+observations:
+- context: discovery research
+  note: 'Added for a buyer profile that is a large regulated enterprise with a mixed
+    legacy (SOAP-heavy) and modern API surface, preferring platform-consolidated SAST+DAST
+    procurement over point solutions. Checkmarx One correlates DAST findings back
+    to the SAST finding on the same code path in a single ticket; vendor claims 89%
+    noise reduction from ASPM correlation. Tests REST, SOAP, and gRPC endpoints. Scope
+    note: evidence here is restricted to Checkmarx-branded product material only --
+    deliberately excludes any spillover evidence from the standalone OWASP ZAP OSS
+    project, per a previously-identified vendor-scope conflation risk between the
+    two. Sources: checkmarx.com/checkmarx-dast, checkmarx.com/blog/checkmarx-dast-for-the-ai-coding-era'
+  tags:
+  - discovery
+  - enterprise-pivot
+  timestamp: '2026-07-18T16:17:51.380893'

@@ -1,7 +1,7 @@
 id: zap
 name: OWASP ZAP
 source: seeded
-status: evaluated
+status: rejected
 website: https://www.zaproxy.org/
 notes: Free, open-source, OWASP-maintained DAST tool; already wired into dast-bench's
   CI pipeline
@@ -356,3 +356,16 @@ observations:
   - hands-on
   - ground-truth-gap
   timestamp: '2026-07-12T20:45:48.183029'
+- context: enterprise-fit-pivot
+  note: 'Reclassified from evaluated to rejected: the benchmark''s target buyer profile
+    is a large regulated enterprise (financial services / insurance) evaluating DAST
+    as an audited, compliance-reported platform decision, not a CI pre-check tool.
+    Free/OSS scanners like ZAP rarely serve as that audited standard-of-record at
+    this buyer tier, even though individual teams may still run them informally as
+    a pre-commit/pre-CI check. This does not reflect on ZAP''s technical capability
+    (see its retained scores/evidence) -- it reflects a buyer-fit scope narrowing
+    for this benchmark.'
+  tags:
+  - enterprise-pivot
+  - status-change
+  timestamp: '2026-07-18T15:48:23.945114'

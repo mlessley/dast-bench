@@ -1,7 +1,7 @@
 id: nuclei
 name: Nuclei
 source: seeded
-status: evaluated
+status: rejected
 website: https://github.com/projectdiscovery/nuclei
 notes: Template-based vulnerability scanner from ProjectDiscovery; docker/CLI-friendly,
   huge community template library
@@ -396,3 +396,14 @@ observations:
   - hands-on
   - ground-truth-gap
   timestamp: '2026-07-12T20:45:48.519412'
+- context: enterprise-fit-pivot
+  note: 'Reclassified from evaluated to rejected: same buyer-fit rationale as ZAP
+    -- this benchmark''s target buyer is a large regulated enterprise treating DAST
+    as an audited platform purchase, and free/OSS/template-based scanners don''t typically
+    serve as that audited standard-of-record, regardless of technical merit. Retained
+    scores/evidence reflect real technical capability; the rejection is a buyer-tier
+    scope decision, not a capability judgment.'
+  tags:
+  - enterprise-pivot
+  - status-change
+  timestamp: '2026-07-18T15:48:24.329783'

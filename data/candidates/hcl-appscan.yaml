@@ -1,0 +1,22 @@
+id: hcl-appscan
+name: HCL AppScan
+source: seeded
+status: candidate
+website: https://www.hcl-software.com/appscan
+notes: Enterprise AppSec suite (SAST/DAST/IAST/SCA/API); DAST covers REST + SOAP;
+  broadest deployment flexibility (cloud, on-prem, sovereign cloud, hybrid, air-gapped)
+ci_tool_id: null
+scores: []
+hands_on_results: []
+observations:
+- context: discovery research
+  note: 'Added for a buyer with legacy-protocol (SOAP) surface and an on-prem/OpenShift-friendly
+    deployment preference. DAST covers REST + SOAP web services with OWASP API Top
+    10 testing; its SAST engine (AppScan Source) supports 30+ languages including
+    COBOL/RPG, relevant for mainframe-adjacent legacy portfolios. Deployment spans
+    cloud, on-prem, sovereign cloud, hybrid, and air-gapped -- the most deployment-flexible
+    of the newly-added candidates. Sources: hcl-software.com/appscan, help.hcl-software.com/appscan/Welcome.html'
+  tags:
+  - discovery
+  - enterprise-pivot
+  timestamp: '2026-07-18T16:17:51.742916'

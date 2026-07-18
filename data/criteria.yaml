@@ -91,7 +91,7 @@ criteria:
   category: Developer Experience
   name: Auto-Remediation / Auto-PR
   description: Can automatically propose or open a fix for a detected finding.
-  weight: 2.0
+  weight: 0.0
   rubric: '1: No auto-remediation capability. 3: Can suggest a fix diff but can''t
     open a PR automatically. 5: Can automatically open a pull request with a proposed
     fix for at least some finding classes.'
@@ -137,7 +137,7 @@ criteria:
   name: Legacy Application & Protocol Support
   description: Active and passive scanning coverage for older web technologies (ASP.NET
     WebForms, JSP, SOAP-heavy services) alongside modern stacks.
-  weight: 2.0
+  weight: 5.0
   rubric: '1: Assumes a modern stack; no meaningful support for older frameworks (ASP.NET
     WebForms, JSP, SOAP-heavy legacy services) or mainframe-fronting web gateways.
     3: Can crawl and passively scan legacy tech but active-scan coverage and accuracy
@@ -211,7 +211,7 @@ criteria:
   name: Incremental / Differential Scanning
   description: Ability to scan only newly changed code or endpoints rather than a
     full rescan every time.
-  weight: 1.0
+  weight: 0.0
   rubric: '1: Every scan is a full rescan of the entire app regardless of what changed.
     3: Some support for manually scoping a scan to specific paths/endpoints. 5: Automatically
     detects and scans only what changed since the last scan.'

@@ -1,0 +1,23 @@
+id: qualys-was
+name: Qualys WAS
+source: seeded
+status: candidate
+website: https://www.qualys.com/apps/web-app-scanning
+notes: Cloud DAST on the Qualys Cloud Platform (folded into the TotalAppSec release
+  stream as of March 2026); REST + SOAP via OpenAPI v3 import; ML-optimized scanning
+ci_tool_id: null
+scores: []
+hands_on_results: []
+observations:
+- context: discovery research
+  note: 'Added on the same infra-vendor-bundling logic as Rapid7: a buyer already
+    on Qualys for infrastructure vulnerability management (VMDR) may evaluate WAS
+    as a native-platform add. Tests REST and SOAP APIs via OpenAPI v3 import; vendor
+    claims 96% detection rate with ML-optimized scan patterns reducing scan time up
+    to 80% on large apps; TruRisk scoring factors severity/exploitability/asset-criticality/threat-intel
+    into a business-context risk score. Sources: qualys.com/apps/web-app-scanning,
+    cdn2.qualys.com/docs/mktg/web-application-scanning-datasheet.pdf'
+  tags:
+  - discovery
+  - enterprise-pivot
+  timestamp: '2026-07-18T16:17:52.573307'
