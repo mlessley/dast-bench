@@ -1,7 +1,7 @@
 id: qualys-was
 name: Qualys WAS
 source: seeded
-status: candidate
+status: rejected
 website: https://www.qualys.com/apps/web-app-scanning
 notes: Cloud DAST on the Qualys Cloud Platform (folded into the TotalAppSec release
   stream as of March 2026); REST + SOAP via OpenAPI v3 import; ML-optimized scanning

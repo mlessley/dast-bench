@@ -1,7 +1,7 @@
 id: hcl-appscan
 name: HCL AppScan
 source: seeded
-status: candidate
+status: finalist
 website: https://www.hcl-software.com/appscan
 notes: Enterprise AppSec suite (SAST/DAST/IAST/SCA/API); DAST covers REST + SOAP;
   broadest deployment flexibility (cloud, on-prem, sovereign cloud, hybrid, air-gapped)

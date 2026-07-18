@@ -1,7 +1,7 @@
 id: rapid7-insightappsec
 name: Rapid7 InsightAppSec
 source: seeded
-status: candidate
+status: rejected
 website: https://www.rapid7.com/products/insightappsec/
 notes: DAST on Rapid7's Insight Platform; Universal Translator normalizes modern JS-framework
   traffic; on-prem scan engines report to a centralized cloud console
