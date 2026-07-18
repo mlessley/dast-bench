@@ -1,0 +1,329 @@
+vendor_id: hcl-appscan
+criteria:
+  api-spa-coverage:
+    researched_at: '2026-07-18T16:39:43.463125'
+    queries:
+    - HCL AppScan API SOAP REST GraphQL scanning coverage
+    findings:
+    - url: https://help.hcl-software.com/appscan/Enterprise/10.7.0/topics/t_create_scan_graphQL_template.html
+      snippet: AppScan includes a new template for scanning a GraphQL web API.
+    reviewed_by_gap_check: false
+    stale: false
+  shadow-api-discovery:
+    researched_at: '2026-07-18T16:39:44.146867'
+    queries:
+    - HCL AppScan shadow API discovery undocumented endpoints zombie
+    findings:
+    - url: https://www.hcl-software.com/appscan/products/api-security
+      snippet: AI-driven discovery identifies all APIs, including shadow and zombie
+        types, via partnership with Salt Security.
+    reviewed_by_gap_check: false
+    stale: false
+  auth-session-handling:
+    researched_at: '2026-07-18T16:39:44.897339'
+    queries:
+    - HCL AppScan authentication SSO MFA scripted login session handling
+    findings:
+    - url: https://help.hcl-software.com/appscan/Enterprise/10.0.3/topics/c_saml_sso_in_ase.html
+      snippet: SP and IdP establish trust via SAML for SSO authentication in AppScan
+        Enterprise.
+    reviewed_by_gap_check: false
+    stale: false
+  detection-accuracy:
+    researched_at: '2026-07-18T16:39:45.693112'
+    queries:
+    - HCL AppScan false positive rate detection accuracy proof of exploit
+    findings:
+    - url: https://aimultiple.com/dast-tools
+      snippet: HCL AppScan demonstrated a 66% true positive rate for critical vulnerabilities,
+        60% accuracy in assigning correct severity.
+    reviewed_by_gap_check: false
+    stale: false
+  false-positive-rate:
+    researched_at: '2026-07-18T16:39:46.416389'
+    queries:
+    - HCL AppScan false positive rate detection accuracy proof of exploit
+    findings:
+    - url: https://aimultiple.com/dast-tools
+      snippet: 2% false positive rate per benchmark; conflicting user feedback describes
+        FP rate as noticeably high.
+    reviewed_by_gap_check: false
+    stale: false
+  safe-prod-scanning:
+    researched_at: '2026-07-18T16:39:47.051851'
+    queries:
+    - HCL AppScan production safe scanning passive mode rate limiting
+    findings:
+    - url: https://help.hcl-software.com/appscan/360/2.1.0/appseccloud_ref_faq_360.html
+      snippet: Reduce the maximum number of requests allowed per second for production
+        environments; clear automatic form fill to avoid flooding a database.
+    reviewed_by_gap_check: false
+    stale: false
+  cicd-native-fit:
+    researched_at: '2026-07-18T16:39:47.626880'
+    queries:
+    - HCL AppScan CI/CD integration Jenkins GitHub Actions exit codes
+    findings:
+    - url: https://plugins.jenkins.io/appscan/
+      snippet: HCL AppScan Jenkins plug-in executes SAST, SCA, and DAST scans.
+    reviewed_by_gap_check: false
+    stale: false
+  triage-remediation-guidance:
+    researched_at: '2026-07-18T16:39:48.211850'
+    queries:
+    - HCL AppScan auto remediation pull request fix suggestion
+    findings:
+    - url: https://www.hcl-software.com/appscan/products/rapidfix
+      snippet: RapidFix leverages agentic AI to streamline triage and offers reliable
+        fix recommendations.
+    reviewed_by_gap_check: false
+    stale: false
+  auto-remediation-pr:
+    researched_at: '2026-07-18T16:39:48.855134'
+    queries:
+    - HCL AppScan RapidFix DAST scope
+    findings:
+    - url: https://help.hcl-software.com/appscan/360/2.1.0/appseccloud_rapidfix.html
+      snippet: HCL AppScan RapidFix applies to SAST results.
+    reviewed_by_gap_check: true
+    stale: false
+  setup-onboarding-friction:
+    researched_at: '2026-07-18T16:39:49.389504'
+    queries:
+    - HCL AppScan setup onboarding first scan quick start
+    findings:
+    - url: https://www.hcl-software.com/blog/appscan/an-enhanced-experience-is-the-cornerstone-of-the-new-hcl-appscan-go
+      snippet: AppScan Go enhanced onboarding experience.
+    reviewed_by_gap_check: false
+    stale: false
+  reporting-exportability:
+    researched_at: '2026-07-18T16:39:49.914356'
+    queries:
+    - HCL AppScan executive dashboard risk trend reporting export
+    findings:
+    - url: https://help.hcl-software.com/appscan/ASoC/ent_generate_report.html
+      snippet: Export Issues list data as CSV, JSON, or SARIF; generate HTML/PDF/CSV/XML
+        reports.
+    reviewed_by_gap_check: false
+    stale: false
+  extensibility-custom-rules:
+    researched_at: '2026-07-18T16:39:50.455256'
+    queries:
+    - HCL AppScan IDE plugin Eclipse VS Code custom rules extensibility incremental
+      scan
+    findings:
+    - url: https://help.hcl-software.com/appscan/Source/9.0.3/topics/whats_new.html
+      snippet: Custom Rules Wizard for adding likelihood information to new taint
+        sources.
+    reviewed_by_gap_check: false
+    stale: false
+  business-logic-workflow-detection:
+    researched_at: '2026-07-18T16:39:51.037663'
+    queries:
+    - HCL AppScan business logic testing authorization BOLA multi-step workflow
+    findings:
+    - url: https://help.hcl-software.com/appscan/Standard/10.6.0/t_TestPrivilegeEscalation080.html
+      snippet: Privilege Escalation testing compares results across authenticated
+        user levels (higher vs. lower privilege) to detect broken access control.
+    reviewed_by_gap_check: true
+    stale: false
+  legacy-app-protocol-support:
+    researched_at: '2026-07-18T16:39:51.637578'
+    queries:
+    - HCL AppScan API SOAP REST GraphQL scanning coverage
+    findings:
+    - url: https://appsecsanta.com/hcl-appscan-dast
+      snippet: One of the oldest names in application security testing, established
+        presence in financial services and healthcare compliance workflows.
+    reviewed_by_gap_check: false
+    stale: false
+  third-party-partner-api-risk:
+    researched_at: '2026-07-18T16:39:52.220400'
+    queries:
+    - HCL AppScan partner API third-party open banking risk
+    findings:
+    - url: https://www.hcl-software.com/appscan/products/api-security
+      snippet: Generic vendor management language; no dedicated partner-API-specific
+        capability found.
+    reviewed_by_gap_check: true
+    stale: false
+  asset-discovery-inventory:
+    researched_at: '2026-07-18T16:39:52.870012'
+    queries:
+    - HCL AppScan shadow API discovery undocumented endpoints zombie
+    findings:
+    - url: https://www.hcl-software.com/appscan/products/api-security
+      snippet: Complete API inventory discovery via AI-driven scanning and Salt Security
+        partnership.
+    reviewed_by_gap_check: false
+    stale: false
+  compliance-standards-mapping:
+    researched_at: '2026-07-18T16:39:53.499787'
+    queries:
+    - HCL AppScan compliance PCI DSS GLBA SOX FFIEC vulnerability status management
+      exception
+    findings:
+    - url: https://help.hcl-software.com/appscan/Enterprise/10.8.1/topics/r_ffiec_report.html
+      snippet: FFIEC compliance report automatically detects issues relevant to FFIEC
+        security controls implementation guidelines.
+    reviewed_by_gap_check: false
+    stale: false
+  finding-validation-proof-of-exploit:
+    researched_at: '2026-07-18T16:39:54.077430'
+    queries:
+    - HCL AppScan false positive rate detection accuracy proof of exploit
+    findings:
+    - url: https://www.hcl-software.com/appscan
+      snippet: Aggregates and correlates findings from DAST, SAST, IAST to provide
+        proof of exploitability.
+    reviewed_by_gap_check: false
+    stale: false
+  sensitive-financial-data-exposure:
+    researched_at: '2026-07-18T16:39:54.673571'
+    queries:
+    - HCL AppScan sensitive data PII credit card SSN detection scan
+    findings:
+    - url: https://www.hcl-software.com/appscan/products/api-security
+      snippet: Pinpoints sensitive data in transit; no specific PAN/SSN pattern-matching
+        rule confirmed.
+    reviewed_by_gap_check: true
+    stale: false
+  scan-performance-scalability:
+    researched_at: '2026-07-18T16:39:55.290401'
+    queries:
+    - HCL AppScan scan performance scalability concurrent scans cloud
+    findings:
+    - url: https://help.hcl-software.com/appscan/360/1.0/sastservices_configuring_concurrent_scans.html
+      snippet: Configure maximum preparers/analyzers to allow Kubernetes to autoscale
+        scanning services.
+    reviewed_by_gap_check: false
+    stale: false
+  incremental-differential-scanning:
+    researched_at: '2026-07-18T16:39:55.881374'
+    queries:
+    - HCL AppScan DAST incremental scan changed parts
+    findings:
+    - url: https://help.hcl-software.com/appscan/ASoC/appseccloud_scanning_rescan_cm.html
+      snippet: Incremental scan mode scans only the parts of the application that
+        have changed since the last scan.
+    reviewed_by_gap_check: true
+    stale: false
+  ide-local-dev-tooling:
+    researched_at: '2026-07-18T16:39:56.434028'
+    queries:
+    - HCL AppScan IDE plugin Eclipse VS Code custom rules extensibility incremental
+      scan
+    findings:
+    - url: https://marketplace.visualstudio.com/items?itemName=HCLTechnologies.appscan-vs
+      snippet: HCL AppScan Visual Studio extension.
+    reviewed_by_gap_check: false
+    stale: false
+  ticketing-collaboration-integration:
+    researched_at: '2026-07-18T16:39:57.131751'
+    queries:
+    - HCL AppScan Jira ServiceNow ticketing SIEM ArmorCode ASPM integration
+    findings:
+    - url: https://help.hcl-software.com/appscan/ASoC/appseccloud_integration_jira_cloud.html
+      snippet: Automatic or ad-hoc creation of Jira tickets for identified security
+        issues.
+    reviewed_by_gap_check: false
+    stale: false
+  siem-soar-integration:
+    researched_at: '2026-07-18T16:39:57.915624'
+    queries:
+    - HCL AppScan Splunk SIEM add-on integration
+    findings:
+    - url: https://splunkbase.splunk.com/app/7991
+      snippet: Add-on For HCL AppScan imports DAST, SAST, SCA, IAST vulnerability
+        data into Splunk.
+    reviewed_by_gap_check: true
+    stale: false
+  historical-risk-trend-dashboards:
+    researched_at: '2026-07-18T16:39:58.676528'
+    queries:
+    - HCL AppScan executive dashboard risk trend reporting export
+    findings:
+    - url: https://help.hcltechsw.com/appscan/Enterprise/10.0.5/topics/c_dashboards.html
+      snippet: Security Risk Rating (trend), Open Issues by Severity (trend), by Business
+        Unit.
+    reviewed_by_gap_check: false
+    stale: false
+  vulnerability-status-management:
+    researched_at: '2026-07-18T16:39:59.404399'
+    queries:
+    - HCL AppScan compliance PCI DSS GLBA SOX FFIEC vulnerability status management
+      exception
+    findings:
+    - url: https://help.hcl-software.com/appscan/Enterprise/10.0.5/topics/c_remediation_process.html
+      snippet: Documented remediation process and policy compliance tracking.
+    reviewed_by_gap_check: false
+    stale: false
+  deployment-model-data-residency:
+    researched_at: '2026-07-18T16:40:00.328445'
+    queries:
+    - HCL AppScan enterprise DAST SOAP legacy on-premises
+    findings:
+    - url: https://www.hcl-software.com/appscan
+      snippet: Available on-premises and on-cloud, including sovereign cloud, hybrid
+        and air-gapped environments.
+    reviewed_by_gap_check: false
+    stale: false
+  multi-tenancy-access-control:
+    researched_at: '2026-07-18T16:40:01.325891'
+    queries:
+    - HCL AppScan RBAC roles custom user permissions activity log audit
+    findings:
+    - url: https://help.hcl-software.com/appscan/Enterprise/10.0.8/topics/r_custom_user_permissions.html
+      snippet: Five predefined roles plus support for custom roles/custom user types
+        with granular permission assignment.
+    reviewed_by_gap_check: true
+    stale: false
+  vendor-security-posture:
+    researched_at: '2026-07-18T16:40:03.009028'
+    queries:
+    - HCL AppScan RBAC access control multi-tenancy SOC 2 ISO 27001
+    findings:
+    - url: https://www.hcl-software.com/legal/compliance/soc2
+      snippet: SOC 2 Type II report confirms AICPA Trust Services Criteria for Security,
+        Availability, and Confidentiality.
+    reviewed_by_gap_check: false
+    stale: false
+  stateful-web-crawling:
+    researched_at: '2026-07-18T16:40:04.082861'
+    queries:
+    - HCL AppScan business logic testing authorization BOLA multi-step workflow
+    findings:
+    - url: https://help.hcl-software.com/appscan/Standard/10.7.0/r_ExploreMultiStepOperations063.html
+      snippet: AppScan extracts necessary sub-sequences from a recorded multi-step
+        sequence (Page1 > Page2 > Page3).
+    reviewed_by_gap_check: false
+    stale: false
+  automated-triage-fp-reduction:
+    researched_at: '2026-07-18T16:40:05.013815'
+    queries:
+    - HCL AppScan auto remediation pull request fix suggestion
+    findings:
+    - url: https://www.hcl-software.com/appscan/products/rapidfix
+      snippet: Agentic AI streamlines triage across findings.
+    reviewed_by_gap_check: false
+    stale: false
+  aspm-integration:
+    researched_at: '2026-07-18T16:40:05.951211'
+    queries:
+    - HCL AppScan Jira ServiceNow ticketing SIEM ArmorCode ASPM integration
+    findings:
+    - url: https://www.armorcode.com/integrations
+      snippet: ArmorCode integrations page lists 'AppScan DAST' as a named, distinct
+        integration.
+    reviewed_by_gap_check: true
+    stale: false
+  licensing-model-predictability:
+    researched_at: '2026-07-18T16:40:06.867844'
+    queries:
+    - HCL AppScan pricing licensing model per scan enterprise
+    findings:
+    - url: https://beaglesecurity.com/blog/article/hcl-appscan-pricing.html
+      snippet: Per-scan model; all scans same price; frequency of scanning is a major
+        cost driver.
+    reviewed_by_gap_check: false
+    stale: false

@@ -6,7 +6,259 @@ website: https://www.hcl-software.com/appscan
 notes: Enterprise AppSec suite (SAST/DAST/IAST/SCA/API); DAST covers REST + SOAP;
   broadest deployment flexibility (cloud, on-prem, sovereign cloud, hybrid, air-gapped)
 ci_tool_id: null
-scores: []
+scores:
+- criterion_id: api-spa-coverage
+  score: 3.5
+  evidence: 'REST/SOAP/GraphQL confirmed (GraphQL via template, Postman/SoapUI recording);
+    one independent review notes GraphQL/gRPC support ''not as complete as competitors
+    like StackHawk.'' Source: help.hcl-software.com/appscan GraphQL template docs'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:43.146749'
+- criterion_id: shadow-api-discovery
+  score: 4.0
+  evidence: 'AppScan API Security (built with Salt Security) does AI-driven, traffic-based
+    discovery of shadow and zombie APIs. Source: hcl-software.com/appscan/products/api-security'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:43.799163'
+- criterion_id: auth-session-handling
+  score: 4.0
+  evidence: 'SAML SSO, MFA/OTP, browser-based Recorded Login for scripted flows, and
+    a Multi-Step Operations feature for sequence-dependent logins. Source: help.hcl-software.com
+    SSO/OTP docs'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:44.555511'
+- criterion_id: detection-accuracy
+  score: 3.0
+  evidence: 'An independent benchmark cites a 66% true-positive rate for critical
+    vulnerabilities but only 60% accuracy in assigning correct severity -- real cited
+    numbers, moderate rather than exceptional. Source: aimultiple.com/dast-tools benchmark'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:45.250579'
+- criterion_id: false-positive-rate
+  score: 3.0
+  evidence: 'Same independent benchmark cites a 2% false-positive rate, but separate
+    user reviews describe the false-positive rate as noticeably high, requiring manual
+    rule adjustment -- genuinely conflicting evidence presented as such rather than
+    picking the favorable number. Source: aimultiple.com/dast-tools'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:46.126778'
+- criterion_id: safe-prod-scanning
+  score: 4.0
+  evidence: 'Documented max-request-rate configuration for production scans, explicit
+    guidance to disable automatic form-fill in production to avoid flooding a database,
+    and a passive IAST mode. Source: help.hcl-software.com production scanning guidance'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:46.770909'
+- criterion_id: cicd-native-fit
+  score: 4.0
+  evidence: 'Native Jenkins plugin, GitHub Actions action (appscan-dast-action), Azure
+    DevOps and GitLab integrations; specific exit-code/policy-gate documentation less
+    directly confirmed than for some competitors. Source: plugins.jenkins.io/appscan,
+    github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:47.361796'
+- criterion_id: triage-remediation-guidance
+  score: 4.0
+  evidence: 'RapidFix delivers AI-driven fix suggestions with human-verified recommendations,
+    plus a documented remediation-task workflow in AppScan Standard (the DAST product).
+    Source: hcl-software.com/appscan/products/rapidfix'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:47.940431'
+- criterion_id: auto-remediation-pr
+  score: 1.0
+  evidence: 'Confirmed absent for DAST: HCL''s own RapidFix documentation states ''HCL
+    AppScan RapidFix applies to SAST results'' repeated multiple times; CodeSweep
+    auto-fix is also SAST/source-code scoped. Independently gap-checked and confirmed.
+    Source: help.hcl-software.com/appscan/360/2.1.0/appseccloud_rapidfix.html'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:48.479582'
+- criterion_id: setup-onboarding-friction
+  score: 3.0
+  evidence: 'Cloud-native onboarding and an ''AppScan Go'' enhanced experience exist,
+    but no explicit ''minutes to first scan'' claim was found, unlike some competitors''
+    documented quick-start times. Source: hcl-software.com/blog/appscan onboarding
+    blog'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:49.141678'
+- criterion_id: reporting-exportability
+  score: 4.5
+  evidence: 'CSV/JSON/SARIF export from the Issues list, HTML/PDF/CSV/XML reports,
+    plus Jira and ServiceNow Vulnerability Response integration. Source: help.hcl-software.com
+    reports docs, hcl-software.com Jira blog'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:49.654944'
+- criterion_id: extensibility-custom-rules
+  score: 3.0
+  evidence: 'A Custom Rules Wizard exists for adding custom taint-source rules, but
+    documentation context is primarily SAST-oriented; DAST-specific custom detection-rule
+    extensibility is less clearly confirmed. Source: help.hcl-software.com IDE plugin
+    docs'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:50.203665'
+- criterion_id: business-logic-workflow-detection
+  score: 3.0
+  evidence: 'A documented ''Privilege Escalation'' feature compares scan results across
+    different authenticated user levels to detect broken access control -- real authorization-state-aware
+    testing -- but distinct from and narrower than full BOLA-style dual-account object-ID
+    comparison or generalized business-logic-workflow validation. Independently gap-checked,
+    revised up from an initial 2.5. Source: help.hcl-software.com/appscan/Standard/10.6.0/t_TestPrivilegeEscalation080.html'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:50.766219'
+- criterion_id: legacy-app-protocol-support
+  score: 4.5
+  evidence: 'Deep SOAP support, long IBM/HCL AppScan lineage explicitly positioned
+    for financial-services and healthcare legacy-compliance workflows -- likely the
+    strongest of the newly-added candidates on this criterion. Source: appsecsanta.com/hcl-appscan-dast
+    review'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:51.329614'
+- criterion_id: third-party-partner-api-risk
+  score: 1.5
+  evidence: 'Confirmed absent/inconclusive after independent gap-check: only generic
+    ''vendor management process'' marketing language found, no dedicated partner/open-banking
+    feature or risk-program-formatted output. Source: hcl-software.com/appscan/products/api-security'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:51.944096'
+- criterion_id: asset-discovery-inventory
+  score: 3.0
+  evidence: API-level discovery/inventory confirmed via the Salt Security partnership;
+    not confirmed at the rubric's top tier of scanning public IP ranges/domains for
+    rogue unmapped apps.
+  confidence: paper
+  timestamp: '2026-07-18T16:39:52.558672'
+- criterion_id: compliance-standards-mapping
+  score: 5.0
+  evidence: 'Built-in templates for PCI DSS, HIPAA, SOX, GDPR, plus a dedicated FFIEC
+    compliance report and 40+ total compliance report types cited (including GLBA)
+    -- directly hits the rubric''s named regulatory frameworks. Source: help.hcl-software.com
+    FFIEC report docs, help.hcl-software.com compliance policies'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:53.176115'
+- criterion_id: finding-validation-proof-of-exploit
+  score: 4.0
+  evidence: 'AppScan on Cloud aggregates and correlates DAST, SAST, and IAST findings
+    to provide proof of exploitability, prioritizing the most critical confirmed issues.
+    Source: general platform documentation'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:53.798824'
+- criterion_id: sensitive-financial-data-exposure
+  score: 2.5
+  evidence: 'AppScan API Security marketing claims it ''pinpoints sensitive data in
+    transit'' for API traffic (DAST-adjacent, not source code), but no page confirms
+    specific PAN/SSN/account-number pattern-matching as a named detection rule --
+    asserted only at a generic level. Independently gap-checked, evidence stayed weak/generic.
+    Source: hcl-software.com/appscan/products/api-security'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:54.391072'
+- criterion_id: scan-performance-scalability
+  score: 3.5
+  evidence: 'Kubernetes-autoscaling and horizontally-scalable ''chunk'' processing
+    architecture cited (mostly in SAST-hybrid-scanner context); cloud-native scalability
+    claims apply platform-wide including DAST. Source: help.hcl-software.com concurrent
+    scanning docs'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:55.017195'
+- criterion_id: incremental-differential-scanning
+  score: 4.5
+  evidence: 'Confirmed present for DAST after independent gap-check: AppScan on Cloud/360
+    documentation explicitly describes a DAST ''Incremental scan'' mode that scans
+    only the parts of the application that changed since the last scan, with an Explore
+    stage to detect new/changed structure. Source: help.hcl-software.com/appscan/ASoC/appseccloud_scanning_rescan_cm.html,
+    help.hcl-software.com/appscan/360/1.4.0/Incremental.html'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:55.578577'
+- criterion_id: ide-local-dev-tooling
+  score: 4.5
+  evidence: 'Free CodeSweep VS Code extension, Eclipse/IntelliJ/Visual Studio plugins,
+    and an MCP server for LLM/IDE integration -- a strong IDE footprint. Source: marketplace.visualstudio.com,
+    plugins.jetbrains.com'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:56.172459'
+- criterion_id: ticketing-collaboration-integration
+  score: 4.0
+  evidence: 'Native Jira Cloud integration for automatic/ad-hoc ticket creation, plus
+    a ServiceNow Vulnerability Response integration available from the ServiceNow
+    Store. Source: help.hcl-software.com Jira Cloud docs'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:56.775984'
+- criterion_id: siem-soar-integration
+  score: 3.5
+  evidence: 'Confirmed present for SIEM after independent gap-check: a published,
+    HCL-branded Splunk add-on (listed on Splunkbase) imports DAST/SAST/SCA/IAST vulnerability
+    data into Splunk dashboards. No SOAR (Cortex XSOAR) or QRadar/Sentinel integration
+    confirmed. Source: splunkbase.splunk.com/app/7991'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:57.543902'
+- criterion_id: historical-risk-trend-dashboards
+  score: 5.0
+  evidence: 'Security Risk Rating (trend) and Open Issues by Severity (trend) dashboards,
+    plus a Security Risk Rating by Business Unit breakdown -- a genuinely strong executive-level
+    trend view. Source: help.hcltechsw.com dashboards docs'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:58.290226'
+- criterion_id: vulnerability-status-management
+  score: 3.5
+  evidence: 'A documented remediation process and policy-compliance tracking exist,
+    but a formal exception/risk-acceptance workflow with a dedicated audit trail is
+    less directly confirmed than for some competitors. Source: help.hcl-software.com
+    remediation process docs'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:59.056884'
+- criterion_id: deployment-model-data-residency
+  score: 4.5
+  evidence: 'Cloud, on-prem, sovereign cloud, hybrid, and air-gapped deployment options
+    -- the most deployment-flexible of the four newly-added candidates. Source: hcl-software.com/appscan
+    platform overview'
+  confidence: paper
+  timestamp: '2026-07-18T16:39:59.807504'
+- criterion_id: multi-tenancy-access-control
+  score: 4.0
+  evidence: 'Confirmed after independent gap-check: five predefined roles (Administrator,
+    Manager, Application Manager, Tester, Reporting Viewer) plus custom roles/custom
+    user types with granular permissions, and a documented Activity Log audit trail
+    (admin-only, 1-year default retention). Business-unit-specific isolation not explicitly
+    confirmed. Source: help.hcl-software.com custom user permissions, appseccloud
+    user roles docs'
+  confidence: paper
+  timestamp: '2026-07-18T16:40:00.774740'
+- criterion_id: vendor-security-posture
+  score: 5.0
+  evidence: 'SOC 2 Type II (explicit AICPA Trust Services Criteria for Security, Availability,
+    Confidentiality), plus ISO 27001, ISO 27017, ISO 20243, ISO 22301, and ISO 31000
+    -- a broad certification portfolio. Source: hcl-software.com/legal/compliance/soc2,
+    help.hcl-software.com ISO certification docs'
+  confidence: paper
+  timestamp: '2026-07-18T16:40:02.167963'
+- criterion_id: stateful-web-crawling
+  score: 4.5
+  evidence: 'Documented Multi-Step Operations view explicitly handles page-sequence
+    dependencies (e.g. Page1 -> Page2 -> Page3), automatically extracting the necessary
+    sub-sequences. Source: help.hcl-software.com Multi-Step Operations docs'
+  confidence: paper
+  timestamp: '2026-07-18T16:40:03.560841'
+- criterion_id: automated-triage-fp-reduction
+  score: 4.0
+  evidence: 'Cross-scanner (DAST+SAST+IAST) correlation for proof-of-exploitability
+    plus RapidFix agentic-AI-assisted triage across scans. Source: hcl-software.com
+    platform docs'
+  confidence: paper
+  timestamp: '2026-07-18T16:40:04.532246'
+- criterion_id: aspm-integration
+  score: 4.5
+  evidence: 'Confirmed after independent gap-check: ArmorCode''s public integrations
+    page explicitly lists ''AppScan DAST'' as a named, distinct integration category
+    (alongside separate AppScan MAST and AppScan SAST entries) -- not generic marketing
+    language. Source: armorcode.com/integrations'
+  confidence: paper
+  timestamp: '2026-07-18T16:40:05.497100'
+- criterion_id: licensing-model-predictability
+  score: 3.0
+  evidence: 'Flat per-scan pricing (all scans priced the same) is transparent per
+    unit, but scan-frequency-driven total costs and non-public base pricing (quote-based)
+    limit precise multi-year budget forecasting. Source: beaglesecurity.com HCL AppScan
+    pricing article'
+  confidence: paper
+  timestamp: '2026-07-18T16:40:06.401255'
 hands_on_results: []
 observations:
 - context: discovery research
