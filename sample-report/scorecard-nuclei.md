@@ -2,7 +2,7 @@
 
 > 🚧 Draft/sample output demonstrating what dast-bench produces — not a final vendor recommendation. Scores, weights, and evidence below are illustrative of a real evaluation in progress.
 
-Status: evaluated
+Status: rejected
 
 | Criterion | Category | Weight | Score | Evidence | Confidence |
 |---|---|---|---|---|---|
@@ -14,19 +14,19 @@ Status: evaluated
 | Safe Production Scanning | Production Safety & Operability | 6 | 3.5 | Rate-limiting flags exist and most templates are non-destructive by nature (matching, not exploiting), but no dedicated safe-mode branding/formal guarantee like ZAP's. | paper |
 | CI/CD-Native Fit | Production Safety & Operability | 5 | 3.5 | Strong JSON/JSONL/SARIF output and widespread CI adoption -- but Nuclei always returns exit code 0 regardless of findings; must parse JSON output yourself to fail a build. Falls short of clear exit codes. Source: [github.com/orgs/projectdiscovery/discussions/3218](https://github.com/orgs/projectdiscovery/discussions/3218) | paper |
 | Triage & Remediation Guidance | Developer Experience | 4 | 3 | Templates include name/description/references, but quality is inconsistent across 11,000+ community-contributed templates. | paper |
-| Auto-Remediation / Auto-PR | Developer Experience | 2 | 3 | ProjectDiscovery's commercial 'Neo' product (PR Security Review) posts PR comments with the finding, exploit evidence, and a suggested fix, then retests once a fix is pushed -- does not open its own PR with a fix. Distinct commercial product in PD's own ecosystem, not Nuclei itself. Source: [projectdiscovery.io/solutions/pr-security-review](https://projectdiscovery.io/solutions/pr-security-review), [projectdiscovery.io/blog/continuous-pr-security-review](https://projectdiscovery.io/blog/continuous-pr-security-review) | paper |
+| Auto-Remediation / Auto-PR | Developer Experience | 0 | 3 | ProjectDiscovery's commercial 'Neo' product (PR Security Review) posts PR comments with the finding, exploit evidence, and a suggested fix, then retests once a fix is pushed -- does not open its own PR with a fix. Distinct commercial product in PD's own ecosystem, not Nuclei itself. Source: [projectdiscovery.io/solutions/pr-security-review](https://projectdiscovery.io/solutions/pr-security-review), [projectdiscovery.io/blog/continuous-pr-security-review](https://projectdiscovery.io/blog/continuous-pr-security-review) | paper |
 | Setup & Onboarding Friction | Developer Experience | 3 | 5 | Single static Go binary, go install or docker, -update-templates auto-fetches the library -- genuinely lower friction than ZAP's Java/docker footprint. | paper |
 | Reporting Quality / Exportability | Reporting & Extensibility | 2 | 4.5 | JSON/JSONL/SARIF output -- SARIF integrates natively with GitHub's code-scanning security tab, a stronger integration story than ZAP's plugin-based approach. | paper |
 | Extensibility / Custom Rules | Reporting & Extensibility | 1 | 5 | The entire tool is custom rules -- a simple YAML DSL explicitly designed for community/user-authored templates, no vendor involvement needed. | paper |
 | Business Logic & Workflow Vulnerability Detection | Coverage | 4 | 3 | Nuclei natively supports 'workflow' templates with a shared execution context (cookiejar reuse, named extractors, key-value sharing) across chained templates for multi-step authenticated flows (e.g. login -> extract CSRF token -> exploit) -- limited to predefined chained patterns. Source: [docs.projectdiscovery.io/templates/workflows/overview](https://docs.projectdiscovery.io/templates/workflows/overview), [nuclei.projectdiscovery.io/templating-guide/workflows](https://nuclei.projectdiscovery.io/templating-guide/workflows) | paper |
-| Legacy Application & Protocol Support | Coverage | 2 | 3 | Dedicated active-scan network-protocol templates for legacy services (FTP, Telnet, SMB, SSH) plus a JS protocol library (v9.8.0) for complex legacy protocol interactions (SMB, RDP) -- real active scanning of legacy protocols, though legacy web-app-framework coverage specifically is less clear. Source: [docs.projectdiscovery.io/templates/protocols/network](https://docs.projectdiscovery.io/templates/protocols/network), [projectdiscovery.io/blog/nuclei-templates-v9-8-0-a-leap-forward-in-network-security-scanning](https://projectdiscovery.io/blog/nuclei-templates-v9-8-0-a-leap-forward-in-network-security-scanning) | paper |
+| Legacy Application & Protocol Support | Coverage | 5 | 3 | Dedicated active-scan network-protocol templates for legacy services (FTP, Telnet, SMB, SSH) plus a JS protocol library (v9.8.0) for complex legacy protocol interactions (SMB, RDP) -- real active scanning of legacy protocols, though legacy web-app-framework coverage specifically is less clear. Source: [docs.projectdiscovery.io/templates/protocols/network](https://docs.projectdiscovery.io/templates/protocols/network), [projectdiscovery.io/blog/nuclei-templates-v9-8-0-a-leap-forward-in-network-security-scanning](https://projectdiscovery.io/blog/nuclei-templates-v9-8-0-a-leap-forward-in-network-security-scanning) | paper |
 | Third-Party/Partner API Risk Assessment | Coverage | 1 | 2 | Cloud platform's attack-surface-management angle is about discovering your own exposed assets, not partner/third-party-integration risk assessment specifically. | paper |
 | Asset Discovery & Inventory Tracking | Coverage | 1 | 5 | ProjectDiscovery's cloud platform is a genuine attack-surface-management product (subdomain/IP/ASN/CNAME/tech-fingerprint discovery, screenshots) -- an RSAC 2025 Innovation Sandbox finalist specifically for this capability. Source: RSAC 2025 Innovation Sandbox coverage, [projectdiscovery.io](https://projectdiscovery.io) | paper |
 | Compliance & Standards Mapping | Detection Quality | 4 | 3.5 | Normalized CWE metadata and CVE/CVSS classification across templates (recent improvement); no financial-services-specific (GLBA/SOX/FFIEC/NYDFS) mapping out of the box. | paper |
 | Finding Validation / Proof-of-Exploit | Detection Quality | 2 | 3.5 | A template match is itself a precise, specific assertion about the condition tested -- arguably inherently more confirmed than a generic payload-based finding -- though not universally accompanied by attached response evidence. | paper |
 | Sensitive Financial Data Exposure Detection | Detection Quality | 2 | 3 | nuclei-templates repo has a merged [credit-card-number-detection.yaml](https://credit-card-number-detection.yaml) template (PR #11381, March 2025) and dedicated payment-processor secret-key templates (e.g. Stripe secret keys) -- covers card PANs and payment API secrets, no dedicated SSN/routing-number template found. Source: [github.com/projectdiscovery/nuclei-templates/pull/11381](https://github.com/projectdiscovery/nuclei-templates/pull/11381), [github.com/projectdiscovery/nuclei-templates/blob/master/exposures/tokens/stripe/stripe-secret-key.yaml](https://github.com/projectdiscovery/nuclei-templates/blob/master/exposures/tokens/stripe/stripe-secret-key.yaml) | paper |
 | Scan Performance & Scalability | Production Safety & Operability | 2 | 4.5 | OSS tool is fast/concurrent by design; ProjectDiscovery's cloud platform explicitly markets continuous scanning 'at scale' across many assets. | paper |
-| Incremental / Differential Scanning | Production Safety & Operability | 1 | 3 | Cloud platform does continuous asset/change monitoring (new hosts/endpoints detected automatically) -- incremental at the asset-discovery level, not confirmed at the application-code level. | paper |
+| Incremental / Differential Scanning | Production Safety & Operability | 0 | 3 | Cloud platform does continuous asset/change monitoring (new hosts/endpoints detected automatically) -- incremental at the asset-discovery level, not confirmed at the application-code level. | paper |
 | IDE / Local Developer Tooling | Developer Experience | 1 | 3 | Nuclei is fundamentally a CLI tool runnable locally -- exact rubric-3 match. No official first-party IDE plugin (only an unofficial third-party VS Code syntax-highlighting extension); official CI path is a GitHub Action, not a pre-commit hook. Source: [github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei), [github.com/projectdiscovery/nuclei-action](https://github.com/projectdiscovery/nuclei-action) | paper |
 | Ticketing & Collaboration Integration | Reporting & Extensibility | 2 | 4.5 | Native, documented integrations to Jira/GitHub/GitLab with built-in deduplication preventing duplicate tickets -- more official than ZAP's community-maintained add-ons. | paper |
 | SIEM/SOAR Integration | Reporting & Extensibility | 1 | 4.5 | Native, documented integrations to Splunk and Elasticsearch. | paper |
@@ -44,10 +44,10 @@ Status: evaluated
 
 | Category | Weight | Weighted Score |
 |---|---|---|
-| Coverage | 26 | 3.37 |
+| Coverage | 29 | 3.33 |
 | Detection Quality | 22 | 2.70 |
-| Production Safety & Operability | 14 | 3.61 |
-| Developer Experience | 10 | 3.60 |
+| Production Safety & Operability | 13 | 3.65 |
+| Developer Experience | 8 | 3.75 |
 | Reporting & Extensibility | 14 | 3.82 |
 | Deployment & Data Governance | 14 | 3.86 |
 
