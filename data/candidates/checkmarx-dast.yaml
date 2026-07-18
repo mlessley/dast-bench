@@ -7,7 +7,268 @@ notes: Enterprise DAST as part of the Checkmarx One unified AppSec platform (SAS
   API Security, IaC, Secrets, SCA, Container Security, DAST) with native cross-scanner
   correlation; REST/SOAP/gRPC support
 ci_tool_id: null
-scores: []
+scores:
+- criterion_id: api-spa-coverage
+  score: 3.5
+  evidence: 'REST/SOAP/gRPC endpoint testing confirmed, plus browser-recorded scripted
+    logins for JS-heavy SPA auth flows -- but no confirmed GraphQL schema-introspection/fuzzing
+    capability for Checkmarx-branded DAST specifically. Source: checkmarx.com/checkmarx-dast'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:05.187704'
+- criterion_id: shadow-api-discovery
+  score: 4.0
+  evidence: 'Bundled Checkmarx API Security module discovers shadow/zombie APIs via
+    source-code scanning as code is committed -- source-level discovery rather than
+    traffic-analysis/JS-bundle-parsing as the rubric''s top tier envisions, but functionally
+    a real continuous inventory. Source: checkmarx.com/product/api-security'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:05.549120'
+- criterion_id: auth-session-handling
+  score: 4.5
+  evidence: 'Robust support: SSO via SAML/OAuth/OIDC, MFA/TOTP with token capture,
+    browser-recorded scripted logins for multi-step/JS-heavy flows, session persistence
+    across a scan. Source: docs.checkmarx.com/authentication-support, docs.checkmarx.com/sso-authentication'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:05.968640'
+- criterion_id: detection-accuracy
+  score: 3.5
+  evidence: Comprehensive OWASP Top 10 and OWASP API Top 10 coverage claimed, plus
+    business-logic-aware testing -- but no independently published benchmark/ground-truth
+    accuracy score found. Paper confidence, inferred from platform positioning rather
+    than a cited third-party benchmark.
+  confidence: paper
+  timestamp: '2026-07-18T16:28:06.330958'
+- criterion_id: false-positive-rate
+  score: 3.5
+  evidence: Proof-based scanning validates findings before flagging, and SAST-DAST
+    correlation is cited to reduce noise -- but the vendor's own '89% noise reduction'
+    figure applies to platform-wide ASPM correlation across all scanners, not a DAST-isolated
+    false-positive rate, so it's cited here with that caveat rather than at face value.
+  confidence: paper
+  timestamp: '2026-07-18T16:28:06.691386'
+- criterion_id: safe-prod-scanning
+  score: 4.0
+  evidence: 'Explicit production-safe, non-destructive testing mode with documented
+    rate-limit configuration for complex applications. Source: docs.checkmarx.com/limiting-engine-scans,
+    checkmarx.com/checkmarx-dast'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:07.082504'
+- criterion_id: cicd-native-fit
+  score: 4.5
+  evidence: 'Native plugins for major CI/CD platforms plus a CLI path for anything
+    unsupported, with severity-threshold policy gating (e.g. fail build on Critical/High)
+    as a documented, real control point. Source: docs.checkmarx.com/ci-cd-integrations,
+    harness.io blog on Checkmarx One + Harness STO'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:07.518443'
+- criterion_id: triage-remediation-guidance
+  score: 4.0
+  evidence: '''Developer Assist'' agentic AI tool delivers real-time, context-aware
+    remediation guidance inside the IDE. Source: docs.checkmarx.com (Checkmarx One
+    Developer Assist)'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:07.949258'
+- criterion_id: auto-remediation-pr
+  score: 1.0
+  evidence: 'Confirmed absent for DAST: Checkmarx''s Remediation Assist / auto-PR
+    feature explicitly scopes itself to ''SAST and SCA findings generated within Checkmarx
+    One'' -- no DAST scope mentioned anywhere in that feature''s own documentation.
+    Independently gap-checked by a fresh reviewer with no shared context, who confirmed
+    the same absence. Source: checkmarx.com/product/triage-and-remediation'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:08.326640'
+- criterion_id: setup-onboarding-friction
+  score: 4.5
+  evidence: 'Vendor claims onboarding new apps ''in minutes, not days'' with a three-click
+    setup, pre-built scan templates, an environment setup wizard, and built-in tunneling
+    for internal apps without firewall reconfiguration. Source: checkmarx.com/checkmarx-dast,
+    docs.checkmarx.com/dast-environment-setup-wizard'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:08.748969'
+- criterion_id: reporting-exportability
+  score: 4.0
+  evidence: 'CSV export with Vulnerability Name/Severity/Status/Aging fields, plus
+    direct Jira/ServiceNow/Slack/Teams integration -- no confirmed white-label branding
+    option for external auditors. Source: docs.checkmarx.com/global-csv-result-reports,
+    docs.checkmarx.com/checkmarx-one-reporting'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:09.135714'
+- criterion_id: extensibility-custom-rules
+  score: 3.0
+  evidence: 'Custom scripting via ZEST/GraalJS engines (inherited from the underlying
+    ZAP-derived engine per Checkmarx''s own docs) allows tailored scan logic -- but
+    script jobs are documented as blocked on the primary Checkmarx One SaaS product
+    for security reasons, supported only via the separate DAST-CLI tool. Source: docs.checkmarx.com/scripting'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:09.563728'
+- criterion_id: business-logic-workflow-detection
+  score: 4.0
+  evidence: 'Explicit runtime business-logic testing for authorization bypass, privilege
+    escalation, and transaction manipulation across multi-step workflows, including
+    OWASP API Top 10 BOLA-class issues. Source: checkmarx.com/learn/integrating-dast-and-sast-into-devsecops-for-continuous-api-security'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:09.964160'
+- criterion_id: legacy-app-protocol-support
+  score: 4.0
+  evidence: 'Strong SOAP coverage confirmed (REST/SOAP/gRPC endpoint testing), reinforced
+    by the underlying ZAP-derived engine''s long OSS history of SOAP support (per
+    Checkmarx''s own scripting docs, not the separate standalone ZAP project) -- but
+    no explicit claims found for ASP.NET WebForms/JSP/mainframe-gateway support specifically.
+    Source: checkmarx.com/checkmarx-dast, docs.checkmarx.com/scripting'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:10.372469'
+- criterion_id: third-party-partner-api-risk
+  score: 1.5
+  evidence: 'Inconclusive after independent gap-check: the related Checkmarx API Security
+    module has generic ''open banking'' marketing copy about helping ''banks and their
+    partners discover, control, and mitigate API security risk,'' but no dedicated
+    feature or vendor-risk-assessment-formatted output distinguishing partner/third-party
+    endpoints was found in product documentation. Treated as unconfirmed rather than
+    a firm capability. Source: checkmarx.com/product/api-security'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:10.842770'
+- criterion_id: asset-discovery-inventory
+  score: 3.0
+  evidence: 'Checkmarx API Security inventories APIs as code is committed across repos
+    -- strong at the API level, but scoped to code-known applications rather than
+    the rubric''s top tier of scanning public IP ranges/domains to surface rogue unmapped
+    internet-facing apps. Source: checkmarx.com/product/api-security'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:11.280642'
+- criterion_id: compliance-standards-mapping
+  score: 3.0
+  evidence: OWASP Top 10 and OWASP API Security Top 10 mapping confirmed; no explicit
+    PCI-DSS/GLBA/SOX/FFIEC/NYDFS regulatory-framework mapping found in DAST-specific
+    documentation, though the platform broadly targets enterprise/regulated customers.
+  confidence: paper
+  timestamp: '2026-07-18T16:28:11.847349'
+- criterion_id: finding-validation-proof-of-exploit
+  score: 4.0
+  evidence: 'Proof-based scanning validates findings and flags only exploitable vulnerabilities
+    with contextual evidence; SAST-DAST correlation additionally confirms which source-level
+    findings are actually reachable/exploitable at runtime. Source: docs.checkmarx.com/checkmarx-dast'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:12.289641'
+- criterion_id: sensitive-financial-data-exposure
+  score: 1.0
+  evidence: 'Confirmed absent: Checkmarx''s only sensitive-pattern-detection product
+    is Secrets Detection, explicitly scoped to ''170+ types of login credentials,
+    access tokens, encryption keys, API keys, SSH keys, webhook URLs'' -- credentials/secrets,
+    not financial PII (account/routing numbers, card PANs, SSNs) in application responses.
+    Independently gap-checked and confirmed by a fresh reviewer. Source: docs.checkmarx.com/secret-detection'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:12.722955'
+- criterion_id: scan-performance-scalability
+  score: 3.5
+  evidence: 'Vendor claims handling scans across ''dozens of microservices in parallel''
+    with configurable resource throttling, and cites 2.1B lines of code scanned monthly
+    platform-wide -- but no independently benchmarked DAST-specific scan-speed number
+    found. Source: checkmarx.com/checkmarx-dast'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:13.098365'
+- criterion_id: incremental-differential-scanning
+  score: 1.0
+  evidence: 'Confirmed absent: Checkmarx''s own support documentation states plainly
+    that ''only API Security and SAST support incremental scans,'' and selecting DAST
+    for a scan run forces a full rescan instead. Independently gap-checked and confirmed
+    by a fresh reviewer with a direct citation. Source: support.checkmarx.com'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:13.489615'
+- criterion_id: ide-local-dev-tooling
+  score: 4.0
+  evidence: 'VS Code and Visual Studio extensions, pre-commit secret scanning hook,
+    and real-time in-IDE feedback via Developer Assist / ASCA -- strong overall IDE
+    integration for the platform, though the DAST-specific portion of this local feedback
+    loop is less clearly documented than the SAST/secrets portion. Source: docs.checkmarx.com/checkmarx-one-vs-code-extension'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:13.999771'
+- criterion_id: ticketing-collaboration-integration
+  score: 4.0
+  evidence: 'Native bidirectional Jira integration (automated create/update/close
+    by severity), plus Slack/Teams alerting; ServiceNow path exists but is less direct
+    (via a DefectDojo bridge rather than a first-party Checkmarx connector). Source:
+    docs.checkmarx.com/jira'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:14.401425'
+- criterion_id: siem-soar-integration
+  score: 1.0
+  evidence: 'Confirmed absent: Checkmarx''s official integrations pages (marketing
+    page and the canonical docs.checkmarx.com integrations doc) list SCM, CI/CD, IDE,
+    ticketing, registry, and CNAPP integrations, but no SIEM (Splunk/QRadar/Sentinel)
+    or SOAR (Cortex XSOAR) platform, and no CEF/syslog export capability. Independently
+    gap-checked and confirmed by a fresh reviewer. Source: checkmarx.com/why-checkmarx/integrations,
+    docs.checkmarx.com/checkmarx-one-integrations'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:14.803997'
+- criterion_id: historical-risk-trend-dashboards
+  score: 4.5
+  evidence: 'Executive Overview Dashboard shows vulnerability density over time with
+    a separate trend line per severity level, plus a Totals/Over-Time toggle for executive-level
+    reporting. Source: docs.checkmarx.com/executive-overview-dashboard'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:15.223509'
+- criterion_id: vulnerability-status-management
+  score: 4.5
+  evidence: 'Dedicated triage/vulnerability-management workflow, plus a policy-governed
+    exception process requiring explicit approval and recorded reasoning for risk
+    acceptance, backed by an AuditTrail audit log of user actions. Source: docs.checkmarx.com/managing-triaging-vulnerabilities'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:15.641047'
+- criterion_id: deployment-model-data-residency
+  score: 4.0
+  evidence: 'SaaS, on-premises, and hybrid deployment models are all supported, including
+    air-gapped for core scanning -- but newer ASPM/Assist/MCP-server features are
+    documented as SaaS-only, a real limitation on the on-prem/air-gapped path. Source:
+    securityscientist.net/blog/12-questions-and-answers-about-checkmarx-one'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:16.042294'
+- criterion_id: multi-tenancy-access-control
+  score: 4.0
+  evidence: 'Custom roles beyond the predefined set, project access scoped to Team
+    membership (business-unit-style isolation), and an AuditTrail table logging access-control
+    user actions. Source: docs.checkmarx.com/access-control-overview'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:16.471004'
+- criterion_id: vendor-security-posture
+  score: 4.5
+  evidence: 'SOC 2 Type II certified (independent annual audit, report available on
+    request), ISO/IEC 27001:2022 certified, and FedRAMP Authorized -- strong, though
+    the SOC 2 report is available on request rather than proactively published, which
+    is why this stops short of the rubric''s top tier. Source: checkmarx.com/trust'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:16.923227'
+- criterion_id: stateful-web-crawling
+  score: 4.0
+  evidence: 'Explicit handling of multi-step forms and custom business processes,
+    maintaining session state (tokens/cookies/SSO flows) across the full navigation
+    sequence rather than treating each page independently. Source: checkmarx.com/learn/dast
+    pages'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:17.389152'
+- criterion_id: automated-triage-fp-reduction
+  score: 4.0
+  evidence: 'SAST-DAST cross-scanner correlation automatically confirms which source-level
+    findings are actually reachable/exploitable at runtime, reducing re-triage burden
+    across scans -- same platform-wide-vs-DAST-isolated caveat on the specific ''89%''
+    figure as noted for false-positive-rate. Source: checkmarx.com/blog/checkmarx-dast-for-the-ai-coding-era'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:17.801426'
+- criterion_id: aspm-integration
+  score: 4.0
+  evidence: 'Confirmed native, documented integration with DefectDojo, a major third-party
+    ASPM platform -- in addition to Checkmarx''s own built-in ASPM (Application Risk
+    Management), which the rubric''s criterion doesn''t directly credit since it''s
+    about hooks into other ASPM platforms specifically. Source: defectdojo.com/integrations/checkmarx-one'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:18.187721'
+- criterion_id: licensing-model-predictability
+  score: 3.0
+  evidence: 'Per-Contributing-Developer licensing with a documented, formulaic lines-of-code
+    cap tied to license count -- a real, transparent scaling axis -- but base pricing
+    itself isn''t published (custom quotes only), and buyers should budget an additional
+    15-35% for implementation/support/training in year one. Source: checkmarx.com/legal/checkmarx-one-license-types-and-restrictions'
+  confidence: paper
+  timestamp: '2026-07-18T16:28:18.616406'
 hands_on_results: []
 observations:
 - context: discovery research

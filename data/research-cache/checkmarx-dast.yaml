@@ -1,0 +1,329 @@
+vendor_id: checkmarx-dast
+criteria:
+  api-spa-coverage:
+    researched_at: '2026-07-18T16:28:05.360058'
+    queries:
+    - Checkmarx DAST product 2026 SAST DAST correlation platform features
+    findings:
+    - url: https://checkmarx.com/checkmarx-dast/
+      snippet: Test REST, SOAP, and gRPC endpoints in live environments to surface
+        vulnerabilities that static testing misses.
+    reviewed_by_gap_check: false
+    stale: false
+  shadow-api-discovery:
+    researched_at: '2026-07-18T16:28:05.771642'
+    queries:
+    - Checkmarx One attack surface management asset discovery shadow API unmapped
+    findings:
+    - url: https://checkmarx.com/product/api-security/
+      snippet: Discovering APIs at the source, including shadow and zombie APIs that
+        have no documentation at all.
+    reviewed_by_gap_check: false
+    stale: false
+  auth-session-handling:
+    researched_at: '2026-07-18T16:28:06.152915'
+    queries:
+    - Checkmarx DAST authentication session handling SSO MFA scripted login
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-433921-authentication-support.html
+      snippet: Supports SAML, OAuth, OIDC, multi-factor flows, and custom session
+        protocols so the scan reaches what the user reaches.
+    reviewed_by_gap_check: false
+    stale: false
+  detection-accuracy:
+    researched_at: '2026-07-18T16:28:06.508554'
+    queries:
+    - Checkmarx DAST proof of exploit validation false positive reduction accuracy
+    findings:
+    - url: https://checkmarx.com/checkmarx-dast/
+      snippet: Accuracy, coverage, and AI-powered intelligence to secure code without
+        slowing down how they build it.
+    reviewed_by_gap_check: false
+    stale: false
+  false-positive-rate:
+    researched_at: '2026-07-18T16:28:06.890859'
+    queries:
+    - Checkmarx DAST proof of exploit validation false positive reduction accuracy
+    findings:
+    - url: https://checkmarx.com/blog/checkmarx-dast-for-the-ai-coding-era/
+      snippet: ASPM correlates findings across all scanners using application context,
+        reporting 89% noise reduction.
+    reviewed_by_gap_check: false
+    stale: false
+  safe-prod-scanning:
+    researched_at: '2026-07-18T16:28:07.278715'
+    queries:
+    - Checkmarx DAST passive scan safe production non-destructive rate limiting
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-46453-limiting-engine-scans.html
+      snippet: Production-safe testing that avoids destructive tests and enables daily
+        scans in live environments with minimal risk.
+    reviewed_by_gap_check: false
+    stale: false
+  cicd-native-fit:
+    researched_at: '2026-07-18T16:28:07.730383'
+    queries:
+    - Checkmarx One CI/CD pipeline integration exit codes policy gates
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-68684-ci-cd-integrations.html
+      snippet: CI/CD integrations with severity-threshold policy gates to block a
+        build pipeline on Critical/High findings.
+    reviewed_by_gap_check: false
+    stale: false
+  triage-remediation-guidance:
+    researched_at: '2026-07-18T16:28:08.127600'
+    queries:
+    - Checkmarx One IDE plugin VS Code pre-commit developer local scan custom rules
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-405960-checkmarx-one-developer-assist.html
+      snippet: Agentic AI tool that delivers real-time context-aware prevention, remediation,
+        and guidance to developers inside the IDE.
+    reviewed_by_gap_check: false
+    stale: false
+  auto-remediation-pr:
+    researched_at: '2026-07-18T16:28:08.562485'
+    queries:
+    - Checkmarx DAST auto-remediation auto-PR fix generation
+    findings:
+    - url: https://checkmarx.com/product/triage-and-remediation/
+      snippet: 'FAQ: ''Which scan types are supported? SAST and SCA findings generated
+        within Checkmarx One.'''
+    reviewed_by_gap_check: true
+    stale: false
+  setup-onboarding-friction:
+    researched_at: '2026-07-18T16:28:08.940860'
+    queries:
+    - Checkmarx DAST setup onboarding time first scan quick start template
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-433922-dast-environment-setup-wizard.html
+      snippet: Built-in pre-scan verification allows you to test authentication before
+        initiating a full scan.
+    reviewed_by_gap_check: false
+    stale: false
+  reporting-exportability:
+    researched_at: '2026-07-18T16:28:09.336314'
+    queries:
+    - Checkmarx One executive dashboard risk trend reporting export white label
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-281619-global-csv-result-reports.html
+      snippet: Supports exporting CSV data including Vulnerability Name, Severity,
+        Status, and Aging, easily filtered/sorted/grouped.
+    reviewed_by_gap_check: false
+    stale: false
+  extensibility-custom-rules:
+    researched_at: '2026-07-18T16:28:09.770309'
+    queries:
+    - Checkmarx DAST custom scan rules extensibility policy engine scripting
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-433944-scripting.html
+      snippet: DAST includes only two ZAP script engines - ZEST and GraalJS... Script
+        jobs are supported only on the DAST-CLI and are blocked for CheckmarxOne users
+        for security reasons.
+    reviewed_by_gap_check: false
+    stale: false
+  business-logic-workflow-detection:
+    researched_at: '2026-07-18T16:28:10.167880'
+    queries:
+    - Checkmarx DAST business logic BOLA authorization multi-step workflow testing
+    findings:
+    - url: https://checkmarx.com/learn/integrating-dast-and-sast-into-devsecops-for-continuous-api-security/
+      snippet: DAST uncovers business logic issues such as authorization bypass, privilege
+        escalation, or transaction manipulation that static analysis cannot identify.
+    reviewed_by_gap_check: false
+    stale: false
+  legacy-app-protocol-support:
+    researched_at: '2026-07-18T16:28:10.621305'
+    queries:
+    - Checkmarx DAST product 2026 SAST DAST correlation platform features
+    findings:
+    - url: https://checkmarx.com/checkmarx-dast/
+      snippet: Test REST, SOAP, and gRPC endpoints in live environments.
+    reviewed_by_gap_check: false
+    stale: false
+  third-party-partner-api-risk:
+    researched_at: '2026-07-18T16:28:11.037018'
+    queries:
+    - Checkmarx API Security open banking partner third-party endpoint risk
+    findings:
+    - url: https://checkmarx.com/product/api-security/
+      snippet: 'Generic marketing language re: open banking/partner API risk; no dedicated
+        feature documentation found.'
+    reviewed_by_gap_check: true
+    stale: false
+  asset-discovery-inventory:
+    researched_at: '2026-07-18T16:28:11.626760'
+    queries:
+    - Checkmarx One attack surface management asset discovery shadow API unmapped
+    findings:
+    - url: https://checkmarx.com/product/api-security/
+      snippet: 'Complete API inventory: discovers newly created or updated APIs as
+        developers check in or compile source code.'
+    reviewed_by_gap_check: false
+    stale: false
+  compliance-standards-mapping:
+    researched_at: '2026-07-18T16:28:12.069243'
+    queries:
+    - Checkmarx DAST business logic BOLA authorization multi-step workflow testing
+    findings:
+    - url: https://checkmarx.com/learn/integrating-dast-and-sast-into-devsecops-for-continuous-api-security/
+      snippet: OWASP API Top 10 vulnerabilities like BOLA are a core detection target.
+    reviewed_by_gap_check: false
+    stale: false
+  finding-validation-proof-of-exploit:
+    researched_at: '2026-07-18T16:28:12.529420'
+    queries:
+    - Checkmarx DAST proof of exploit validation false positive reduction accuracy
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-433898-checkmarx-dast.html
+      snippet: Proof-based scanning techniques validate findings and flag only exploitable
+        vulnerabilities while providing contextual evidence.
+    reviewed_by_gap_check: false
+    stale: false
+  sensitive-financial-data-exposure:
+    researched_at: '2026-07-18T16:28:12.911309'
+    queries:
+    - Checkmarx DAST PII sensitive data detection credit card SSN scanning
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-386854-secret-detection.html
+      snippet: Scoped to credential/token/key types, not financial PII patterns like
+        PANs, routing numbers, or SSNs.
+    reviewed_by_gap_check: true
+    stale: false
+  scan-performance-scalability:
+    researched_at: '2026-07-18T16:28:13.284544'
+    queries:
+    - Checkmarx DAST scan speed scalability concurrent scans large applications
+    findings:
+    - url: https://checkmarx.com/checkmarx-dast/
+      snippet: Scalable performance that should handle multiple simultaneous scans,
+        intelligently throttle resource usage.
+    reviewed_by_gap_check: false
+    stale: false
+  incremental-differential-scanning:
+    researched_at: '2026-07-18T16:28:13.732797'
+    queries:
+    - Checkmarx incremental scan DAST support
+    findings:
+    - url: https://support.checkmarx.com/s/article/When-should-I-use-an
+      snippet: Only API Security and SAST support incremental scans; selecting additional
+        scanners causes a full scan to be performed instead.
+    reviewed_by_gap_check: true
+    stale: false
+  ide-local-dev-tooling:
+    researched_at: '2026-07-18T16:28:14.192403'
+    queries:
+    - Checkmarx One IDE plugin VS Code pre-commit developer local scan custom rules
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-68742-checkmarx-one-vs-code-extension--plugin-.html
+      snippet: Run a new scan from your IDE even before committing the code, or import
+        scan results from your Checkmarx One account.
+    reviewed_by_gap_check: false
+    stale: false
+  ticketing-collaboration-integration:
+    researched_at: '2026-07-18T16:28:14.592399'
+    queries:
+    - Checkmarx One Jira ServiceNow Slack integration ticketing SIEM SOAR
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-8242-atlassian-jira-integration.html
+      snippet: Automate the creation, modification, and closure of Jira issues for
+        specific vulnerabilities, filtered by severity.
+    reviewed_by_gap_check: false
+    stale: false
+  siem-soar-integration:
+    researched_at: '2026-07-18T16:28:15.018315'
+    queries:
+    - Checkmarx SIEM SOAR Splunk QRadar Cortex XSOAR integration
+    findings:
+    - url: https://checkmarx.com/why-checkmarx/integrations/
+      snippet: No SIEM/SOAR platform listed among SCM/CI-CD/ticketing/CNAPP integrations.
+    reviewed_by_gap_check: true
+    stale: false
+  historical-risk-trend-dashboards:
+    researched_at: '2026-07-18T16:28:15.433201'
+    queries:
+    - Checkmarx One executive dashboard risk trend reporting export white label
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-249202-executive-overview-dashboard.html
+      snippet: Time-based view of vulnerability trends using vulnerability density,
+        switching between Totals and Over Time modes.
+    reviewed_by_gap_check: false
+    stale: false
+  vulnerability-status-management:
+    researched_at: '2026-07-18T16:28:15.838291'
+    queries:
+    - Checkmarx One ASPM risk prioritization exception management vulnerability lifecycle
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-68516-managing--triaging--vulnerabilities.html
+      snippet: Explicit approvals for exceptions with recorded reasoning so risk acceptance
+        is governed and audit-ready.
+    reviewed_by_gap_check: false
+    stale: false
+  deployment-model-data-residency:
+    researched_at: '2026-07-18T16:28:16.254941'
+    queries:
+    - Checkmarx One deployment on-premises SaaS hybrid air-gapped
+    findings:
+    - url: https://www.securityscientist.net/blog/12-questions-and-answers-about-checkmarx-one/
+      snippet: Modern Checkmarx One features (ASPM, Assist, Developer Assist, MCP
+        server) are SaaS-only; core scanning supports air-gapped deployment.
+    reviewed_by_gap_check: false
+    stale: false
+  multi-tenancy-access-control:
+    researched_at: '2026-07-18T16:28:16.675955'
+    queries:
+    - Checkmarx One RBAC role based access control audit log multi-tenancy
+    findings:
+    - url: https://docs.checkmarx.com/en/34965-46601-access-control-overview--v2-0-and-up-.html
+      snippet: Predefined and custom roles; users can only access Projects assigned
+        to Teams of which they are a member.
+    reviewed_by_gap_check: false
+    stale: false
+  vendor-security-posture:
+    researched_at: '2026-07-18T16:28:17.155322'
+    queries:
+    - Checkmarx One SOC 2 ISO 27001 penetration test security compliance
+    findings:
+    - url: https://checkmarx.com/trust/
+      snippet: SOC 2 Type II Certified, ISO 27001 Certified, and FedRAMP Authorized.
+    reviewed_by_gap_check: false
+    stale: false
+  stateful-web-crawling:
+    researched_at: '2026-07-18T16:28:17.596693'
+    queries:
+    - Checkmarx DAST crawler multi-step forms session state traditional web application
+    findings:
+    - url: https://checkmarx.com/learn/dast/why-todays-best-dast-tools-are-crucial-for-complete-application-security/
+      snippet: Uncovers issues in areas that require advanced navigation, such as
+        multi-step forms or custom business processes.
+    reviewed_by_gap_check: false
+    stale: false
+  automated-triage-fp-reduction:
+    researched_at: '2026-07-18T16:28:17.984298'
+    queries:
+    - Checkmarx DAST product 2026 SAST DAST correlation platform features
+    findings:
+    - url: https://checkmarx.com/blog/checkmarx-dast-for-the-ai-coding-era/
+      snippet: DAST findings cross-reference back to SAST findings on the same code
+        path so AppSec sees both in one ticket.
+    reviewed_by_gap_check: false
+    stale: false
+  aspm-integration:
+    researched_at: '2026-07-18T16:28:18.401009'
+    queries:
+    - Checkmarx One Jira ServiceNow Slack integration ticketing SIEM SOAR
+    findings:
+    - url: https://defectdojo.com/integrations/checkmarx-one
+      snippet: Native DefectDojo integration for Checkmarx One findings ingestion.
+    reviewed_by_gap_check: false
+    stale: false
+  licensing-model-predictability:
+    researched_at: '2026-07-18T16:28:18.810966'
+    queries:
+    - Checkmarx pricing licensing model per developer scan
+    findings:
+    - url: https://checkmarx.com/legal/checkmarx-one-license-types-and-restrictions/
+      snippet: Contributing Developer license subject to an account-level usage limit
+        of 15,000,000 lines of code scanned in the last 90 days, multiplied by the
+        number of licenses purchased.
+    reviewed_by_gap_check: false
+    stale: false
