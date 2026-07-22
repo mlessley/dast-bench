@@ -148,3 +148,168 @@ criteria:
       snippet: DefectDojo's own integration page for StackHawk.
     reviewed_by_gap_check: true
     stale: false
+  auth-session-handling:
+    researched_at: '2026-07-22T02:10:55.359005'
+    queries:
+    - StackHawk authentication JWT OAuth configuration YAML
+    findings:
+    - url: https://docs.stackhawk.com/getting-started/auth-scan.html
+      snippet: 3rd-party OAuth 2.0 flows (Auth0, Okta, Firebase, KeyCloak) directly
+        configurable.
+    reviewed_by_gap_check: false
+    stale: false
+  detection-accuracy:
+    researched_at: '2026-07-22T02:10:55.780536'
+    queries:
+    - StackHawk HawkScan detection accuracy false positive claims independent review
+    findings:
+    - url: https://docs.stackhawk.com/changelog.html
+      snippet: Documented false-positive-reduction engineering changes, e.g. boolean-blind-SQLi
+        detection refinement.
+    reviewed_by_gap_check: false
+    stale: false
+  false-positive-rate:
+    researched_at: '2026-07-22T02:10:56.202187'
+    queries:
+    - StackHawk HawkScan detection accuracy false positive claims independent review
+    findings:
+    - url: https://docs.stackhawk.com/changelog.html
+      snippet: Improved response comparison reduces false positives in SQLi scan rules
+        by stripping parameter values.
+    reviewed_by_gap_check: false
+    stale: false
+  cicd-native-fit:
+    researched_at: '2026-07-22T02:10:56.600872'
+    queries:
+    - StackHawk CI/CD exit code 42 findings threshold build gating
+    findings:
+    - url: https://docs.stackhawk.com/getting-started/
+      snippet: Exit code 42 when the finding threshold is reached, distinct from exit
+        code 1 for scan errors.
+    reviewed_by_gap_check: false
+    stale: false
+  triage-remediation-guidance:
+    researched_at: '2026-07-22T02:10:56.981979'
+    queries:
+    - StackHawk remediation guidance code-level context fix suggestions
+    findings:
+    - url: https://www.stackhawk.com/blog/how-does-stackhawk-work/
+      snippet: Remediation guidance written to match the target language, with code-level,
+        framework-tailored context.
+    reviewed_by_gap_check: false
+    stale: false
+  setup-onboarding-friction:
+    researched_at: '2026-07-22T02:10:57.376818'
+    queries:
+    - StackHawk setup onboarding quick start three line config
+    findings:
+    - url: https://docs.stackhawk.com/getting-started/quickstart/
+      snippet: 'Minimum config is a three-line YAML file: applicationId, env, host.'
+    reviewed_by_gap_check: false
+    stale: false
+  reporting-exportability:
+    researched_at: '2026-07-22T02:10:57.790168'
+    queries:
+    - StackHawk Jira Slack PR comment reporting integration
+    findings:
+    - url: https://docs.stackhawk.com/integrations/workflows/jira/
+      snippet: Direct Vulnerability Dispatch creates Jira issues; links existing issues
+        with finding comments.
+    - url: https://slack.com/marketplace/A0114L5HGP5-stackhawk
+      snippet: 'Slack app: scan-start notifications and findings summary by risk.'
+    reviewed_by_gap_check: false
+    stale: false
+  legacy-app-protocol-support:
+    researched_at: '2026-07-22T02:10:58.255332'
+    queries:
+    - StackHawk cloud scale concurrent scans per-PR CI/CD gating architecture
+    findings:
+    - url: https://www.stackhawk.com/solutions/dast/
+      snippet: REST, GraphQL, SOAP, and gRPC API support.
+    reviewed_by_gap_check: false
+    stale: false
+  finding-validation-proof-of-exploit:
+    researched_at: '2026-07-22T02:10:58.680050'
+    queries:
+    - StackHawk HawkScan detection accuracy false positive claims independent review
+    findings:
+    - url: https://docs.stackhawk.com/hawkscan/viewing-scan-results/
+      snippet: Confidence level field (High/Medium/Low) per finding; Low confidence
+        flagged as needing independent confirmation.
+    reviewed_by_gap_check: false
+    stale: false
+  scan-performance-scalability:
+    researched_at: '2026-07-22T02:10:59.109124'
+    queries:
+    - StackHawk cloud scale concurrent scans per-PR CI/CD gating architecture
+    findings:
+    - url: https://www.stackhawk.com/blog/running-stackhawk-in-cicd/
+      snippet: Runs within customer infrastructure/CI pipeline; scans complete in
+        minutes, enabling per-PR gating.
+    reviewed_by_gap_check: false
+    stale: false
+  historical-risk-trend-dashboards:
+    researched_at: '2026-07-22T02:10:59.532708'
+    queries:
+    - StackHawk AppSec Intelligence Platform dashboard risk trend reporting
+    findings:
+    - url: https://www.stackhawk.com/product/oversight/
+      snippet: Tracks vulnerabilities from discovery through validated remediation;
+        board-level risk-reduction-over-time metrics.
+    reviewed_by_gap_check: false
+    stale: false
+  vulnerability-status-management:
+    researched_at: '2026-07-22T02:10:59.959970'
+    queries:
+    - StackHawk Jira Slack PR comment reporting integration
+    findings:
+    - url: https://docs.stackhawk.com/integrations/workflows/jira/
+      snippet: Finding status workflow (Assigned/Risk Accepted/False Positive) tied
+        to Jira issues.
+    reviewed_by_gap_check: false
+    stale: false
+  multi-tenancy-access-control:
+    researched_at: '2026-07-22T02:11:00.388905'
+    queries:
+    - StackHawk RBAC role based access control audit log enterprise activity history
+    findings:
+    - url: https://www.stackhawk.com/pricing/
+      snippet: Enterprise plan includes SSO, role-based permissions, and activity
+        history & audit log.
+    - url: https://docs.stackhawk.com/web-app/sso-saml-integration.html
+      snippet: SSO/SAML integration on the Enterprise plan.
+    reviewed_by_gap_check: false
+    stale: false
+  stateful-web-crawling:
+    researched_at: '2026-07-22T02:11:00.792158'
+    queries:
+    - StackHawk ZAP engine built on multi-page crawling traditional web app
+    findings:
+    - url: https://appsecsanta.com/stackhawk-vs-zap
+      snippet: HawkScan Test Engine re-engineers ZAP's foundation; Selenium-based
+        crawling for complex structures.
+    reviewed_by_gap_check: false
+    stale: false
+  automated-triage-fp-reduction:
+    researched_at: '2026-07-22T02:11:01.218241'
+    queries:
+    - StackHawk HawkScan detection accuracy false positive claims independent review
+    findings:
+    - url: https://docs.stackhawk.com/changelog.html
+      snippet: Documented FP-reduction engineering changes; no automated PoC-generation
+        or ML-learning engine found.
+    reviewed_by_gap_check: false
+    stale: false
+  licensing-model-predictability:
+    researched_at: '2026-07-22T02:11:01.626990'
+    queries:
+    - StackHawk pricing per application per target tiered enterprise contact sales
+    findings:
+    - url: https://www.stackhawk.com/pricing/
+      snippet: Contributor-based pricing, $42-49/contributor/month, 20-contributor
+        minimum on Pro.
+    - url: https://beaglesecurity.com/blog/article/stackhawk-pricing.html
+      snippet: Contributor-based pricing provides more predictable costs than per-application/per-scan
+        models.
+    reviewed_by_gap_check: false
+    stale: false

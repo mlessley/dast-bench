@@ -348,6 +348,143 @@ scores:
     contrasted against Invicti which offers on-prem)'
   confidence: paper
   timestamp: '2026-07-22T01:55:56.003406'
+- criterion_id: auth-session-handling
+  score: 4.5
+  evidence: 'JSON/form-based auth plus 3rd-party OAuth 2.0 identity providers (Auth0,
+    Okta, Firebase, KeyCloak) directly configurable in the YAML config, with external
+    token injection available for custom scenarios outside the scanner -- strong,
+    low-friction, well-documented. Source: docs.stackhawk.com/getting-started/auth-scan.html'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:55.169539'
+- criterion_id: detection-accuracy
+  score: 4.0
+  evidence: 'VENDOR CLAIM, not independently verified. HawkScan runs real attacks
+    against the live app; dedicated Intelligent Business Logic Testing feature specifically
+    targets authorization/logic flaws -- notable vs ZAP/Nuclei. Documented engineering-level
+    detection refinements (e.g. correctly distinguishing true/false boolean-blind-SQLi
+    condition responses) show ongoing tuning, but all from StackHawk''s own materials.
+    Source: docs.stackhawk.com/changelog.html'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:55.587606'
+- criterion_id: false-positive-rate
+  score: 4.0
+  evidence: 'VENDOR CLAIM. Runtime testing against the live app (not code patterns)
+    reduces FPs per their own materials; documented specific improvements (stripping
+    query/form parameter values to reduce SQLi false positives on input-validated
+    apps) are more concrete than generic marketing, though still first-party and not
+    independently verified. Source: docs.stackhawk.com/changelog.html'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:55.979265'
+- criterion_id: cicd-native-fit
+  score: 5.0
+  evidence: 'Core value prop -- YAML config-as-code, deliberately CI-native exit-code
+    design: exit 42 specifically when the configured failure threshold is reached
+    (distinguishable from exit 1 for an actual scan error). Source: docs.stackhawk.com/getting-started'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:56.401171'
+- criterion_id: triage-remediation-guidance
+  score: 4.5
+  evidence: 'Remediation guidance is written in the target language with code-level,
+    framework-tailored context, not generic security jargon -- fixes can be reviewed
+    and applied directly in the editor. Source: stackhawk.com/blog/how-does-stackhawk-work'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:56.793044'
+- criterion_id: setup-onboarding-friction
+  score: 4.0
+  evidence: 'Confirmed minimum config is a genuine three-line YAML file (applicationId/env/host);
+    an onboarding wizard builds a complete config in a few clicks -- fast, but requires
+    SaaS signup/API key, a qualitatively different friction than a docker pull. Source:
+    docs.stackhawk.com/getting-started/quickstart'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:57.184195'
+- criterion_id: reporting-exportability
+  score: 5.0
+  evidence: 'Direct, first-party Jira Cloud integration (auto-creates issues, comments
+    on linked issues, supports any issue type) and a Slack app (scan-start notifications
+    plus a findings summary by risk on completion) -- stronger than ZAP''s plugin-based
+    story, comparable to Nuclei''s SARIF/tracker integrations. Source: docs.stackhawk.com/integrations/workflows/jira,
+    slack.com/marketplace/A0114L5HGP5-stackhawk'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:57.589488'
+- criterion_id: legacy-app-protocol-support
+  score: 3.0
+  evidence: 'Explicit SOAP support alongside REST/GraphQL/gRPC (SOAP is often legacy-adjacent);
+    no legacy-framework-specific (older Microsoft web forms, JSP) testing confirmed.
+    Source: stackhawk.com/solutions/dast'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:58.013322'
+- criterion_id: finding-validation-proof-of-exploit
+  score: 4.0
+  evidence: 'HawkScan runs real dynamic tests against the live running application
+    by design (not static pattern matching), and each finding carries a documented
+    confidence-level field (High/Medium/Low) -- inherently closer to proof-of-exploit
+    validation than a signature-only tool, though Low-confidence results are explicitly
+    flagged as needing independent confirmation. Source: docs.stackhawk.com/hawkscan/viewing-scan-results'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:58.472333'
+- criterion_id: scan-performance-scalability
+  score: 4.0
+  evidence: 'Unlimited applications/scans with no concurrency restrictions as usage
+    scales per the published pricing model; the scanner runs within the customer''s
+    own infrastructure/CI pipeline (eliminating internet latency), and scans complete
+    in minutes, which is what makes per-PR gating practical. Source: stackhawk.com/blog/running-stackhawk-in-cicd'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:58.890973'
+- criterion_id: historical-risk-trend-dashboards
+  score: 4.0
+  evidence: 'Revised up with real citations: the ''Application Security Oversight''
+    product tracks every vulnerability from discovery through validated remediation,
+    provides a real-time risk-posture dashboard, and generates board-level metrics
+    showing whether risk is being reduced over time, not just scan-activity counts
+    -- more concrete than the original ''implied by platform positioning'' framing.
+    Source: stackhawk.com/product/oversight'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:59.329746'
+- criterion_id: vulnerability-status-management
+  score: 4.0
+  evidence: 'Real, documented finding-lifecycle workflow (mark as Assigned/Risk Accepted/False
+    Positive, tied to Jira issues) -- best-documented of the three original candidates
+    on this criterion. Source: docs.stackhawk.com/integrations/workflows/jira'
+  confidence: paper
+  timestamp: '2026-07-22T02:10:59.749555'
+- criterion_id: multi-tenancy-access-control
+  score: 4.5
+  evidence: 'Revised up with a real citation: StackHawk Enterprise explicitly includes
+    role-based permissions, activity history & audit log (tracking org membership
+    changes, scans kicked off, findings triaged), and SSO/SAML -- direct confirmation
+    of fine-grained RBAC that the original pass couldn''t find. Source: stackhawk.com/pricing,
+    docs.stackhawk.com/web-app/sso-saml-integration.html'
+  confidence: paper
+  timestamp: '2026-07-22T02:11:00.190325'
+- criterion_id: stateful-web-crawling
+  score: 3.5
+  evidence: 'Originally built on ZAP''s underlying scan engine, but HawkScan Test
+    Engine (HSTE) is now a complete re-engineering of that foundation for CI/CD (container-first,
+    API-first architecture); Selenium-based crawling handles more complex structures
+    than simple traditional HTTP crawling, but StackHawk''s positioning/workflow (specs-driven
+    configs) is API-first -- multi-page traditional crawling isn''t a marketed strength.
+    Source: appsecsanta.com/stackhawk-vs-zap'
+  confidence: paper
+  timestamp: '2026-07-22T02:11:00.596203'
+- criterion_id: automated-triage-fp-reduction
+  score: 3.5
+  evidence: 'Real finding-lifecycle workflow (Assigned/Risk Accepted/False Positive)
+    persists manual triage decisions across scans, and documented engineering-level
+    false-positive-reduction improvements (e.g. boolean-blind-SQLi refinement) show
+    ongoing algorithmic tuning -- but no documented automated PoC-generation or cross-scan
+    ML-driven learning engine. Source: docs.stackhawk.com/changelog.html'
+  confidence: paper
+  timestamp: '2026-07-22T02:11:01.003527'
+- criterion_id: licensing-model-predictability
+  score: 4.0
+  evidence: 'Corrected and revised up: pricing is actually contributor-based (not
+    per-application/target as originally stated) -- a real published starting price
+    ($42/contributor/month, Pro at $49/contributor/month with a 20-contributor minimum),
+    which independent commentary notes provides more predictable costs as testing
+    volume increases than per-scan/per-app models. Enterprise-scale tiers still move
+    to custom/contact-sales pricing. Source: stackhawk.com/pricing, beaglesecurity.com/blog/article/stackhawk-pricing'
+  confidence: paper
+  timestamp: '2026-07-22T02:11:01.421891'
 hands_on_results: []
 observations:
 - context: discovery research
