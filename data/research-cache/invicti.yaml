@@ -76,3 +76,72 @@ criteria:
         IDE plugin.
     reviewed_by_gap_check: true
     stale: false
+  legacy-app-protocol-support:
+    researched_at: '2026-07-22T02:03:59.015061'
+    queries:
+    - Invicti SOAP legacy application scanning ASP.NET WebForms JSP
+    findings:
+    - url: https://www.invicti.com/soap-scanner
+      snippet: SOAP services scanned by parsing WSDL descriptions.
+    - url: https://www.invicti.com/web-vulnerability-scanner/vulnerabilities/aspnet-identified
+      snippet: ASP.NET application detection confirmed.
+    reviewed_by_gap_check: false
+    stale: false
+  safe-prod-scanning:
+    researched_at: '2026-07-22T02:03:59.409706'
+    queries:
+    - Invicti safe production scanning rate limiting passive mode
+    findings:
+    - url: https://www.invicti.com/support/scanning-production-environment/
+      snippet: Non-destructive scans; passive checks issue no extra HTTP requests.
+    - url: https://docs.invicti.com/ip/target-scan-configuration
+      snippet: 'Four scan speed tiers: Sequential, Slow, Moderate, Fast.'
+    reviewed_by_gap_check: false
+    stale: false
+  scan-performance-scalability:
+    researched_at: '2026-07-22T02:03:59.816984'
+    queries:
+    - Invicti scan performance scalability concurrent scans speed
+    findings:
+    - url: https://www.invicti.com/blog/web-security/netsparker-scan-performance-upgrades/
+      snippet: Up to 150% faster vulnerability discovery via dynamic resource allocation.
+    reviewed_by_gap_check: false
+    stale: false
+  setup-onboarding-friction:
+    researched_at: '2026-07-22T02:04:00.239550'
+    queries:
+    - Invicti setup onboarding time first scan quick start
+    findings:
+    - url: https://www.invicti.com/support/invicti-quick-start-guide/
+      snippet: 30-day implementation plan; Days 1-10 for onboarding first web apps/APIs.
+    reviewed_by_gap_check: false
+    stale: false
+  siem-soar-integration:
+    researched_at: '2026-07-22T02:04:00.676115'
+    queries:
+    - Invicti SIEM integration Splunk QRadar Sentinel
+    findings:
+    - url: https://docs.invicti.com/ie-is/invicti-enterprise-addon-splunk
+      snippet: Unified add-on supporting both Splunk Enterprise (on-prem) and Splunk
+        Cloud.
+    reviewed_by_gap_check: false
+    stale: false
+  multi-tenancy-access-control:
+    researched_at: '2026-07-22T02:04:01.120254'
+    queries:
+    - Invicti role based access control RBAC audit log enterprise pricing per target
+    findings:
+    - url: https://appsecsanta.com/invicti
+      snippet: Enterprise edition adds RBAC and Custom Roles.
+    reviewed_by_gap_check: false
+    stale: false
+  licensing-model-predictability:
+    researched_at: '2026-07-22T02:04:01.554466'
+    queries:
+    - Invicti role based access control RBAC audit log enterprise pricing per target
+    findings:
+    - url: https://beaglesecurity.com/blog/article/invicti-pricing.html
+      snippet: Real-world deals commonly $15,000-25,000+/year; Standard tier estimated
+        $4k-6k/target/year.
+    reviewed_by_gap_check: false
+    stale: false

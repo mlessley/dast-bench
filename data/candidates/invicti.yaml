@@ -292,6 +292,68 @@ scores:
     date/target/type, no partner-risk categorization)'
   confidence: paper
   timestamp: '2026-07-22T01:55:52.870441'
+- criterion_id: legacy-app-protocol-support
+  score: 3.0
+  evidence: 'SOAP API scanning explicitly supported via WSDL schema parsing (file
+    or URL), and ASP.NET applications are explicitly detected/supported including
+    JS-heavy interfaces; no JSP-specific accuracy claims found beyond general protocol
+    coverage. Source: invicti.com/soap-scanner, invicti.com/web-vulnerability-scanner/vulnerabilities/aspnet-identified'
+  confidence: paper
+  timestamp: '2026-07-22T02:03:58.796964'
+- criterion_id: safe-prod-scanning
+  score: 4.0
+  evidence: 'Revised up with real citations: a dedicated ''Scanning Production Environments''
+    guide exists, passive security checks issue no extra HTTP requests, and scan speed
+    is configurable across four tiers (Sequential/Slow/Moderate/Fast) specifically
+    to handle rate-limited/production environments -- more concrete than initially
+    found, though Invicti''s own docs still caveat that active checks can be invasive
+    even though non-destructive. Source: invicti.com/support/scanning-production-environment,
+    docs.invicti.com/ip/target-scan-configuration'
+  confidence: paper
+  timestamp: '2026-07-22T02:03:59.220083'
+- criterion_id: scan-performance-scalability
+  score: 3.5
+  evidence: 'Revised up with real citations: configurable speed tiers (Sequential/Slow/Moderate/Fast,
+    default Fast), plus a documented performance upgrade claiming up to 150% faster
+    vulnerability discovery via dynamic resource allocation -- but independent commentary
+    notes scalability challenges (resource consumption, longer scan times) when running
+    many concurrent scanning agents across a large application portfolio. Source:
+    invicti.com/blog/web-security/netsparker-scan-performance-upgrades, docs.invicti.com/ip/target-scan-configuration'
+  confidence: paper
+  timestamp: '2026-07-22T02:03:59.629068'
+- criterion_id: setup-onboarding-friction
+  score: 3.0
+  evidence: 'Invicti''s own recommended rollout plan allocates Days 1-10 of a 30-day
+    implementation plan to onboarding, configuring, and prioritizing the first set
+    of web apps/APIs -- moderate enterprise-platform setup complexity, not a minutes-to-first-scan
+    tool, consistent with its enterprise positioning. Source: invicti.com/support/invicti-quick-start-guide'
+  confidence: paper
+  timestamp: '2026-07-22T02:04:00.049156'
+- criterion_id: siem-soar-integration
+  score: 4.0
+  evidence: 'Revised up with a real citation: a dedicated, unified Invicti Enterprise
+    add-on for Splunk (supporting both Splunk Enterprise on-prem and Splunk Cloud)
+    is published on Splunkbase -- a confirmed native SIEM integration, though no QRadar
+    or Microsoft Sentinel integration was found. Source: docs.invicti.com/ie-is/invicti-enterprise-addon-splunk'
+  confidence: paper
+  timestamp: '2026-07-22T02:04:00.448720'
+- criterion_id: multi-tenancy-access-control
+  score: 4.0
+  evidence: 'RBAC and Custom Roles are explicitly listed as Enterprise-edition features,
+    marketed as ''broader RBAC'' relative to smaller competitors; a dedicated audit-log
+    capability was not independently confirmed in public materials. Source: appsecsanta.com/invicti'
+  confidence: paper
+  timestamp: '2026-07-22T02:04:00.898281'
+- criterion_id: licensing-model-predictability
+  score: 3.5
+  evidence: 'Licensed per-target (web app, API endpoint, or defined URL scope) across
+    Standard/Premium/Enterprise tiers -- a clear, transparent axis -- but Enterprise-tier
+    pricing is fully customized/contact-sales, and independent market data shows real-world
+    deals commonly landing at $15,000-25,000+/year once RBAC/SCA/ASPM/on-prem/support
+    are bundled in, well above the $4k-6k Standard-tier estimates quoted by third-party
+    pricing aggregators (not Invicti''s own published pricing page). Source: beaglesecurity.com/blog/article/invicti-pricing'
+  confidence: paper
+  timestamp: '2026-07-22T02:04:01.338362'
 hands_on_results: []
 observations:
 - context: discovery research
