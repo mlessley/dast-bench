@@ -339,6 +339,125 @@ scores:
     One''s 5 predefined RBAC roles, is that separate paid platform''s feature)'
   confidence: paper
   timestamp: '2026-07-22T01:55:55.025739'
+- criterion_id: shadow-api-discovery
+  score: 3.0
+  evidence: 'AJAX Spider (built on the Crawljax engine) executes JavaScript to discover
+    new paths/API routes in SPA/AJAX applications; no dedicated deprecated/versioned-endpoint
+    detection engine confirmed beyond that JS-execution-based path discovery. Source:
+    zaproxy.org/docs/desktop/addons/ajax-spider'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:48.180641'
+- criterion_id: auth-session-handling
+  score: 3.5
+  evidence: 'Native authentication methods (browser-based, client script, form-based,
+    JSON-based, auto-detect) plus session management (header/cookie-based, auto-detect);
+    Client Script (Zest) authentication automates complex/custom login flows since
+    there''s no dedicated native SSO/OAuth/MFA auth type -- solid but requires manual
+    scripting for anything beyond the built-in methods. Source: deepwiki.com/zaproxy/zap-extensions/2.3-authentication-and-session-management'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:48.884825'
+- criterion_id: cicd-native-fit
+  score: 5.0
+  evidence: 'First-class docker automation via the zap-full-scan.py script (ghcr.io/zaproxy/zaproxy:stable
+    image) plus the newer YAML-based Automation Framework covering contexts, authentication,
+    spider, active scan, and report generation as discrete jobs -- this project''s
+    own CI pipeline uses it directly. Source: zaproxy.org/docs/docker'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:49.614543'
+- criterion_id: triage-remediation-guidance
+  score: 3.0
+  evidence: 'Every alert includes a Description, a Solution, and References -- static
+    text that is identical for every instance of the same alert type, since ZAP has
+    no access to source code to tailor guidance to the specific instance/tech stack.
+    Source: zaproxy.org/docs/desktop/start/features/alerts, zaproxy.org/docs/alerts'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:50.338358'
+- criterion_id: setup-onboarding-friction
+  score: 4.5
+  evidence: 'Free, official docker images (ghcr.io/zaproxy/zaproxy) enable a first
+    useful scan in minutes with sensible defaults -- independently confirmed by this
+    project''s own live-verification run during the initial dogfood session. Source:
+    zaproxy.org/docs/docker'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:51.159223'
+- criterion_id: reporting-exportability
+  score: 4.0
+  evidence: 'Native HTML, XML, and JSON report formats (JSON commonly used for pipeline/external-tool
+    integration); a community-built (not first-party) add-on exports alerts as Jira
+    issues. Source: zaproxy.org/docs/desktop/addons/report-generation, kasunbalasooriya.medium.com/an-add-on-for-owasp-zap-to-export-alerts-of-a-web-application-as-issues-to-jira'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:51.901316'
+- criterion_id: extensibility-custom-rules
+  score: 5.0
+  evidence: 'Scripting engine supports any JSR223-compatible language (Zest, JavaScript,
+    Groovy, Python, Ruby); dedicated Active Scan Rules and Passive Scan Rules add-ons
+    let custom detection logic run as part of a normal scan, backed by a large community
+    add-on marketplace. Source: zaproxy.org/docs/desktop/addons/active-scan-rules,
+    zaproxy.org/docs/desktop/addons/passive-scan-rules'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:52.640646'
+- criterion_id: legacy-app-protocol-support
+  score: 4.0
+  evidence: 'Founded in 2010 as a fork of Paros Proxy, ZAP was originally a general-purpose
+    HTTP(S) intercepting proxy/scanner predating SPA-era tooling, making it inherently
+    protocol/framework-agnostic for classic server-rendered legacy applications; SPA-specific
+    crawling (AJAX Spider) was added later as an add-on. Source: en.wikipedia.org/wiki/ZAP_(software)'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:53.312700'
+- criterion_id: finding-validation-proof-of-exploit
+  score: 3.0
+  evidence: 'Active scan alerts attach real evidence (the matched payload/response
+    snippet) per finding instance, but this is not a formalized, systematic proof-of-exploit/re-exploitation
+    engine spanning all rule types. Source: zaproxy.org/docs/desktop/start/features/alerts'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:53.899823'
+- criterion_id: sensitive-financial-data-exposure
+  score: 3.5
+  evidence: 'Revised up with a real citation: the PII Disclosure passive rule (alert
+    10062) explicitly detects credit-card-like numbers validated via a Luhn checksum
+    plus a Bank Identification Number (BIN) list lookup, and SSN-like patterns --
+    a more rigorous, validated mechanism than a bare regex match. No dedicated bank-routing/account-number-specific
+    detection was confirmed. Source: zaproxy.org/docs/alerts/10062'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:54.464918'
+- criterion_id: deployment-model-data-residency
+  score: 5.0
+  evidence: 'Runs entirely self-hosted -- desktop app, the official docker image,
+    or CLI -- with no SaaS/cloud-backend component at all, so all scan data and traffic
+    stay wherever it''s run, inherently on-prem/air-gap-capable by nature rather than
+    by a configured deployment option. Source: zaproxy.org/docs/docker'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:55.004085'
+- criterion_id: stateful-web-crawling
+  score: 4.5
+  evidence: 'ZAP''s traditional Spider predates the AJAX Spider add-on (added later
+    specifically for SPAs), reflecting its original design as a classic multi-page,
+    session-stateful crawler from its 2010 founding as a Paros Proxy fork. Source:
+    en.wikipedia.org/wiki/ZAP_(software)'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:55.541901'
+- criterion_id: automated-triage-fp-reduction
+  score: 3.0
+  evidence: 'Alert Filters can change alerts matching specific criteria to a ''False
+    Positive'' confidence level, and this persists across future scans -- static,
+    rule-based suppression configured by the user, not adaptive/ML learning or automated
+    proof-of-concept-based re-confirmation. Source: zaproxy.org/docs/desktop/addons/alert-filters'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:56.145985'
+- criterion_id: aspm-integration
+  score: 4.0
+  evidence: 'DefectDojo, a named example ASPM platform, ships a dedicated, documented
+    ZAP scan-report parser/importer as one of its supported import types -- a real
+    first-party connector on the ASPM side, not just generic export. Source: ironflower.nl/blog/defectdojo/defectdojo.html'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:56.721489'
+- criterion_id: licensing-model-predictability
+  score: 5.0
+  evidence: 'Fully open-source under the Apache License 2.0, confirmed by ZAP''s own
+    legal notice; zero cost regardless of usage scale -- the most predictable possible
+    licensing model. Source: github.com/zaproxy/zaproxy/blob/main/LEGALNOTICE.md'
+  confidence: paper
+  timestamp: '2026-07-22T02:06:57.278864'
 hands_on_results:
 - test_id: scan-29200159094-juice-shop
   description: CI scan run 29200159094

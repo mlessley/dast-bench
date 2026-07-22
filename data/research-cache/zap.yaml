@@ -128,3 +128,150 @@ criteria:
         CLI, has no user/role concept at all.
     reviewed_by_gap_check: true
     stale: false
+  shadow-api-discovery:
+    researched_at: '2026-07-22T02:06:48.496708'
+    queries:
+    - OWASP ZAP AJAX Spider shadow API discovery deprecated endpoints
+    findings:
+    - url: https://www.zaproxy.org/docs/desktop/addons/ajax-spider/
+      snippet: AJAX Spider executes JavaScript looking for new paths or API routes
+        in SPA/AJAX applications.
+    reviewed_by_gap_check: false
+    stale: false
+  auth-session-handling:
+    researched_at: '2026-07-22T02:06:49.237384'
+    queries:
+    - OWASP ZAP authentication Zest script SSO OAuth MFA session management
+    findings:
+    - url: https://deepwiki.com/zaproxy/zap-extensions/2.3-authentication-and-session-management
+      snippet: 'Authentication methods: browser-based, client script, form-based,
+        JSON-based, auto-detect; session management via header/cookie.'
+    reviewed_by_gap_check: false
+    stale: false
+  cicd-native-fit:
+    researched_at: '2026-07-22T02:06:49.967654'
+    queries:
+    - OWASP ZAP zap-full-scan docker automation framework exit codes CI/CD
+    findings:
+    - url: https://www.zaproxy.org/docs/docker/
+      snippet: ZAP's docker images automate scanning in CI/CD; zap-full-scan.py and
+        the YAML Automation Framework.
+    reviewed_by_gap_check: false
+    stale: false
+  triage-remediation-guidance:
+    researched_at: '2026-07-22T02:06:50.703649'
+    queries:
+    - OWASP ZAP alert description solution references remediation guidance
+    findings:
+    - url: https://www.zaproxy.org/docs/desktop/start/features/alerts/
+      snippet: Alerts include description, solution, and references; solution text
+        is generic, identical for all instances of an alert reference.
+    reviewed_by_gap_check: false
+    stale: false
+  setup-onboarding-friction:
+    researched_at: '2026-07-22T02:06:51.531245'
+    queries:
+    - OWASP ZAP zap-full-scan docker automation framework exit codes CI/CD
+    findings:
+    - url: https://www.zaproxy.org/docs/docker/
+      snippet: Official docker images for quick setup.
+    reviewed_by_gap_check: false
+    stale: false
+  reporting-exportability:
+    researched_at: '2026-07-22T02:06:52.266916'
+    queries:
+    - OWASP ZAP report generation HTML XML JSON Jira Slack integration
+    findings:
+    - url: https://www.zaproxy.org/docs/desktop/addons/report-generation/report-traditional-xml/
+      snippet: Native HTML/XML/JSON report generation.
+    - url: https://kasunbalasooriya.medium.com/an-add-on-for-owasp-zap-to-export-alerts-of-a-web-application-as-issues-to-jira-891ea1698fbf
+      snippet: Community-built add-on exports ZAP alerts as Jira issues.
+    reviewed_by_gap_check: false
+    stale: false
+  extensibility-custom-rules:
+    researched_at: '2026-07-22T02:06:52.964965'
+    queries:
+    - OWASP ZAP Zest scripting custom active passive scan rules add-ons marketplace
+    findings:
+    - url: https://www.zaproxy.org/docs/desktop/addons/active-scan-rules/
+      snippet: Active Scan Rules add-on; scripting engine supports Zest, JS, Groovy,
+        Python, Ruby.
+    reviewed_by_gap_check: false
+    stale: false
+  legacy-app-protocol-support:
+    researched_at: '2026-07-22T02:06:53.603594'
+    queries:
+    - OWASP ZAP Apache License 2.0 open source Spider crawler history
+    findings:
+    - url: https://en.wikipedia.org/wiki/ZAP_(software)
+      snippet: ZAP is a fork of Paros Proxy, founded 2010; originally a general-purpose
+        HTTP(S) proxy/scanner.
+    reviewed_by_gap_check: false
+    stale: false
+  finding-validation-proof-of-exploit:
+    researched_at: '2026-07-22T02:06:54.182621'
+    queries:
+    - OWASP ZAP alert description solution references remediation guidance
+    findings:
+    - url: https://www.zaproxy.org/docs/desktop/start/features/alerts/
+      snippet: Alert instances carry evidence from the actual request/response.
+    reviewed_by_gap_check: false
+    stale: false
+  sensitive-financial-data-exposure:
+    researched_at: '2026-07-22T02:06:54.729235'
+    queries:
+    - OWASP ZAP passive scan rule PII disclosure SSN credit card detection
+    findings:
+    - url: https://www.zaproxy.org/docs/alerts/10062/
+      snippet: PII Disclosure detects credit card numbers (Luhn-validated, BIN-list-checked)
+        and SSN-like patterns.
+    reviewed_by_gap_check: false
+    stale: false
+  deployment-model-data-residency:
+    researched_at: '2026-07-22T02:06:55.272904'
+    queries:
+    - OWASP ZAP zap-full-scan docker automation framework exit codes CI/CD
+    findings:
+    - url: https://www.zaproxy.org/docs/docker/
+      snippet: Fully self-hostable via docker/desktop/CLI, no cloud backend.
+    reviewed_by_gap_check: false
+    stale: false
+  stateful-web-crawling:
+    researched_at: '2026-07-22T02:06:55.854141'
+    queries:
+    - OWASP ZAP Apache License 2.0 open source Spider crawler history
+    findings:
+    - url: https://en.wikipedia.org/wiki/ZAP_(software)
+      snippet: ZAP founded 2010 as a Paros Proxy fork; AJAX Spider added later for
+        SPA support.
+    reviewed_by_gap_check: false
+    stale: false
+  automated-triage-fp-reduction:
+    researched_at: '2026-07-22T02:06:56.415334'
+    queries:
+    - OWASP ZAP Alert Filters false positive suppression DefectDojo integration
+    findings:
+    - url: https://www.zaproxy.org/docs/desktop/addons/alert-filters/
+      snippet: Alert Filters change matching alerts to False Positive confidence,
+        persisting across future scans.
+    reviewed_by_gap_check: false
+    stale: false
+  aspm-integration:
+    researched_at: '2026-07-22T02:06:56.999695'
+    queries:
+    - OWASP ZAP Alert Filters false positive suppression DefectDojo integration
+    findings:
+    - url: https://ironflower.nl/blog/defectdojo/defectdojo.html
+      snippet: DefectDojo consolidates findings from multiple scanners including OWASP
+        ZAP via a dedicated importer.
+    reviewed_by_gap_check: false
+    stale: false
+  licensing-model-predictability:
+    researched_at: '2026-07-22T02:06:57.539203'
+    queries:
+    - OWASP ZAP Apache License 2.0 open source Spider crawler history
+    findings:
+    - url: https://github.com/zaproxy/zaproxy/blob/main/LEGALNOTICE.md
+      snippet: ZAP is licensed under the Apache License 2.0.
+    reviewed_by_gap_check: false
+    stale: false
