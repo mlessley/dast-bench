@@ -188,7 +188,7 @@
 | Authentication & Session Handling | 6 | 4.5 | 4 | 4 | 4 | 3.5 | 4.5 | 4.5 | 3.5 | 3.5 |
 | Detection Accuracy | 7 | 3.5 | 3 | 4 | 2 | 3 | 3 | 4 | 3 | 3.5 |
 | Noise / False-Positive Rate | 4 | 3.5 | 3 | 4.5 | 2 | 3 | 3 | 4 | 4.5 | 3.5 |
-| Safe Production Scanning | 6 | 4 | 4 | 3 | 3.5 | 3 | 4.5 | 4.5 | 3 | 4.5 |
+| Safe Production Scanning | 6 | 4 | 4 | 4 | 3.5 | 3 | 4.5 | 4.5 | 3 | 4.5 |
 | CI/CD-Native Fit | 5 | 4.5 | 4 | 5 | 3.5 | 4 | 4.5 | 5 | 4 | 5 |
 | Triage & Remediation Guidance | 4 | 4 | 4 | 4.5 | 3 | 3 | 4.5 | 4.5 | 4 | 3 |
 | Auto-Remediation / Auto-PR | 0 | 1 | 1 | 3.5 | 3 | 1 | 1 | 2.5 | 5 | 1 |
@@ -200,31 +200,31 @@
 | Third-Party/Partner API Risk Assessment | 1 | 1.5 | 1.5 | 2 | 2 | 1.5 | 1.5 | 2 | 2 | 3 |
 | Asset Discovery & Inventory Tracking | 1 | 3 | 3 | 3.5 | 5 | 5 | 5 | 3.5 | 4.5 | 1 |
 | Compliance & Standards Mapping | 4 | 3 | 5 | 4.5 | 3.5 | 4 | 4 | 4.5 | 4.5 | 3.5 |
-| Finding Validation / Proof-of-Exploit | 2 | 4 | 4 | 5 | 3.5 | 2.5 | 4.5 | 4 | 3 | 3 |
-| Sensitive Financial Data Exposure Detection | 2 | 1 | 2.5 | 4 | 3 | 4.5 | 2 | 3 | 2 | 3 |
-| Scan Performance & Scalability | 2 | 3.5 | 3.5 | 3 | 4.5 | 3.5 | 3.5 | 4 | 4 | 3 |
+| Finding Validation / Proof-of-Exploit | 2 | 4 | 4 | 5 | 3.5 | 2.5 | 4.5 | 4 | 4 | 3 |
+| Sensitive Financial Data Exposure Detection | 2 | 1 | 2.5 | 4 | 3 | 4.5 | 2 | 3 | 2 | 3.5 |
+| Scan Performance & Scalability | 2 | 3.5 | 3.5 | 3.5 | 4.5 | 3.5 | 3.5 | 4 | 4 | 3 |
 | Incremental / Differential Scanning | 0 | 1 | 4.5 | 5 | 3 | 4.5 | 5 | 3 | 3 | 3 |
 | IDE / Local Developer Tooling | 1 | 4 | 4.5 | 3 | 3 | 1 | 3.5 | 4 | 3 | 3 |
 | Ticketing & Collaboration Integration | 2 | 4 | 4 | 5 | 4.5 | 4 | 3.5 | 4.5 | 4.5 | 3 |
-| SIEM/SOAR Integration | 1 | 1 | 3.5 | 3.5 | 4.5 | 4 | 4.5 | 2.5 | 2 | 2 |
-| Historical Risk Trend Dashboards | 2 | 4.5 | 5 | 4.5 | 3 | 4 | 3 | 3.5 | 4.5 | 1 |
+| SIEM/SOAR Integration | 1 | 1 | 3.5 | 4 | 4.5 | 4 | 4.5 | 2.5 | 2 | 2 |
+| Historical Risk Trend Dashboards | 2 | 4.5 | 5 | 4.5 | 3.5 | 4 | 3 | 4 | 4.5 | 1 |
 | Vulnerability Status Management | 4 | 4.5 | 3.5 | 4.5 | 3 | 3 | 3 | 4 | 4 | 1 |
 | Deployment Model & Data Residency | 5 | 4 | 4.5 | 4.5 | 4.5 | 4 | 3 | 2 | 3 | 5 |
-| Multi-Tenancy & Access Control | 3 | 4 | 4 | 4 | 3 | 4 | 4 | 3 | 4 | 1 |
-| Vendor Security Posture | 3 | 4.5 | 5 | 4.5 | 4 | 4.5 | 4.5 | 3.5 | 5 | 3 |
+| Multi-Tenancy & Access Control | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4.5 | 4 | 1 |
+| Vendor Security Posture | 3 | 4.5 | 5 | 4.5 | 4.5 | 4.5 | 4.5 | 3.5 | 5 | 3 |
 | Traditional Stateful Web Crawling | 3 | 4 | 4.5 | 4 | 3 | 3.5 | 4 | 3.5 | 4 | 4.5 |
-| Automated Triage / FP-Reduction Engine | 3 | 4 | 4 | 5 | 3.5 | 1.5 | 1.5 | 3 | 2.5 | 3 |
+| Automated Triage / FP-Reduction Engine | 3 | 4 | 4 | 5 | 3.5 | 1.5 | 1.5 | 3.5 | 2.5 | 3 |
 | ASPM Integration | 2 | 4 | 4.5 | 5 | 4 | 1.5 | 1.5 | 4 | 5 | 4 |
-| Predictability of Licensing Model | 3 | 3 | 3 | 3.5 | 3.5 | 4 | 3.5 | 3.5 | 3 | 5 |
+| Predictability of Licensing Model | 3 | 3 | 3 | 3.5 | 3.5 | 4 | 3.5 | 4 | 3 | 5 |
 
 ## Category Breakdown
 
 | Category | Weight | Checkmarx DAST | HCL AppScan | Invicti | Nuclei | Qualys WAS | Rapid7 InsightAppSec | StackHawk | Veracode Dynamic Analysis | OWASP ZAP |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Coverage | 29 | 3.90 | 3.79 | 3.83 | 3.33 | 3.02 | 3.38 | 3.79 | 3.45 | 3.60 |
-| Detection Quality | 22 | 3.30 | 3.55 | 4.41 | 2.70 | 3.07 | 3.02 | 3.86 | 3.39 | 3.34 |
-| Production Safety & Operability | 13 | 4.12 | 3.92 | 3.77 | 3.65 | 3.46 | 4.35 | 4.62 | 3.54 | 4.46 |
+| Detection Quality | 22 | 3.30 | 3.55 | 4.41 | 2.70 | 3.07 | 3.02 | 3.93 | 3.48 | 3.39 |
+| Production Safety & Operability | 13 | 4.12 | 3.92 | 4.31 | 3.65 | 3.46 | 4.35 | 4.62 | 3.54 | 4.46 |
 | Developer Experience | 8 | 4.19 | 3.69 | 3.75 | 3.75 | 2.75 | 4.19 | 4.25 | 3.88 | 3.56 |
-| Reporting & Extensibility | 14 | 3.93 | 4.04 | 4.61 | 3.82 | 3.11 | 3.11 | 4.07 | 4.04 | 2.50 |
-| Deployment & Data Governance | 14 | 3.89 | 4.18 | 4.18 | 3.86 | 4.11 | 3.64 | 2.86 | 3.64 | 3.71 |
-| **Weighted Total** | 100 | 3.82 | 3.83 | 4.10 | 3.41 | 3.23 | 3.49 | 3.86 | 3.59 | 3.52 |
+| Reporting & Extensibility | 14 | 3.93 | 4.04 | 4.64 | 3.89 | 3.11 | 3.11 | 4.14 | 4.04 | 2.50 |
+| Deployment & Data Governance | 14 | 3.89 | 4.18 | 4.18 | 4.18 | 4.11 | 3.64 | 3.29 | 3.64 | 3.71 |
+| **Weighted Total** | 100 | 3.82 | 3.83 | 4.18 | 3.46 | 3.23 | 3.49 | 3.95 | 3.61 | 3.52 |
