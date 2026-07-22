@@ -263,6 +263,16 @@ scores:
     (no partner-API-specific feature found there or elsewhere)'
   confidence: paper
   timestamp: '2026-07-22T01:49:22.526611'
+- criterion_id: detection-accuracy
+  score: 3.0
+  evidence: 'No credible independent benchmark found either direction after gap-check;
+    the widely-circulated ''94% false positive'' figure (see false-positive-rate)
+    is not a valid accuracy signal. Scored on general platform claims (signature-based
+    detection, Universal Translator for modern frameworks) absent contrary evidence.
+    Source: peerspot.com/products/rapid7-insightappsec-reviews (general platform reviews
+    checked; no credible independent accuracy benchmark found there)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:56.465775'
 hands_on_results: []
 observations:
 - context: discovery research

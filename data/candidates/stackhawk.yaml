@@ -321,6 +321,33 @@ scores:
     defectdojo.com/integrations/stackhawk'
   confidence: paper
   timestamp: '2026-07-15T00:59:52.885168'
+- criterion_id: auto-remediation-pr
+  score: 2.5
+  evidence: 'Delivers findings into PR comments and auto-generates a reproduction
+    cURL command -- doesn''t generate a fix diff or open a PR automatically. Source:
+    docs.stackhawk.com/integrations/workflows/github/github-pr-checks (only posts
+    commit statuses and PR comment summaries linking to findings, no auto-generated
+    fix diff or auto-opened PR), stackhawk.com/blog/github-copilot-secure-code (Copilot
+    Agent Skill''s Fix step is user-invoked Copilot chat editing, not an autonomous
+    PR)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:55.501278'
+- criterion_id: third-party-partner-api-risk
+  score: 2.0
+  evidence: 'No dedicated vendor-risk-assessment output shaping found for partner-facing
+    APIs specifically. Source: stackhawk.com/solutions/stackhawk-for-financial-sector
+    (only generic ''sensitive financial data'' marketing language; no open-banking/partner-API-specific
+    scanning mode or vendor-risk-formatted output)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:55.760534'
+- criterion_id: deployment-model-data-residency
+  score: 2.0
+  evidence: 'Cloud-only execution (config-as-code + cloud backend, Tier 2 per dast-onboard-tool''s
+    tiering); no on-prem or configurable data-residency option found. Source: appsecsanta.com
+    (independent review states StackHawk is SaaS-only with no on-prem/air-gapped option,
+    contrasted against Invicti which offers on-prem)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:56.003406'
 hands_on_results: []
 observations:
 - context: discovery research

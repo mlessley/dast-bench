@@ -346,6 +346,12 @@ scores:
     and TruRisk''s risk-prioritization scoring. Source: docs.qualys.com/en/was/latest/knowledgebase/ignore_vulnerability.htm'
   confidence: paper
   timestamp: '2026-07-22T01:49:25.411572'
+- criterion_id: detection-accuracy
+  score: 3.0
+  evidence: 'Vendor claims a 96% detection rate via ML-optimized scan patterns --
+    self-reported, not independently benchmarked. Source: qualys.com/apps/web-app-scanning'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:56.719942'
 hands_on_results: []
 observations:
 - context: discovery research

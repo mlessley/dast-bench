@@ -320,6 +320,14 @@ scores:
     pointguardai.com/integrations/nuclei'
   confidence: paper
   timestamp: '2026-07-15T00:59:44.015912'
+- criterion_id: third-party-partner-api-risk
+  score: 2.0
+  evidence: 'Cloud platform''s attack-surface-management angle is about discovering
+    your own exposed assets, not partner/third-party-integration risk assessment specifically.
+    Source: projectdiscovery.featurebase.app/p/api-security (''API Security'' appears
+    on ProjectDiscovery''s public roadmap, not yet shipped)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:55.258423'
 hands_on_results:
 - test_id: scan-29200162833-juice-shop
   description: CI scan run 29200162833

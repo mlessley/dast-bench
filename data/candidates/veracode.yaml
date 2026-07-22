@@ -324,6 +324,43 @@ scores:
     feature dedupes within one scan, not across scans. Source: docs.veracode.com/r/Scan_Web_Applications'
   confidence: paper
   timestamp: '2026-07-15T00:59:56.250099'
+- criterion_id: third-party-partner-api-risk
+  score: 2.0
+  evidence: 'No dedicated vendor-risk-assessment output shaping for partner-facing
+    APIs found -- inferred absence. Source: veracode.com/security/third-party-risk-assessment
+    (Veracode''s ''third-party risk'' products, SCA/VAST, address risk from vendors''
+    code coming in, not risk of your APIs facing partners -- opposite direction from
+    the rubric)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:53.076037'
+- criterion_id: sensitive-financial-data-exposure
+  score: 2.0
+  evidence: 'No dedicated financial-data-pattern (account/routing number, card PAN)
+    detection capability found -- inferred absence. Source: docs.veracode.com/r/c_review_cwe
+    (only generic sensitive-data-exposure CWEs found, CWE-200/201/359 family; no dedicated
+    financial-pattern detector for PANs/routing numbers/SSNs)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:53.285212'
+- criterion_id: extensibility-custom-rules
+  score: 2.5
+  evidence: 'Community integration tooling (Veracode-Community-Projects) exists for
+    automation/glue, but no detection-rule-authoring DSL comparable to ZAP''s Zest
+    or Nuclei''s YAML templates found. Source: docs.veracode.com/r/c_sc_policies_custom,
+    docs.veracode.com/r/Create_Custom_Rules_for_Agent_Based_Scanning (custom rules
+    found are for SCA agent-based scanning license/component policy controls, not
+    new DAST detection signatures)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:53.491122'
+- criterion_id: siem-soar-integration
+  score: 2.0
+  evidence: 'No confirmed native SIEM/SOAR integration found in research -- explicitly
+    a research gap rather than a confirmed absence; only community Slack-webhook-redirect
+    tooling for SCA agent results was found. Source: docs.veracode.com/r/Veracode_Integrations
+    (official integrations page lists Jira/Bugzilla/RSA Archer/Imperva/CI-CD/IDE tools,
+    no native Splunk/QRadar/Sentinel/XSOAR), splunkbase.splunk.com/app/7277 (''Veracode
+    Splunk Bridge'' is third-party/community-built, not Veracode-authored)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:53.702472'
 hands_on_results: []
 observations:
 - context: discovery research

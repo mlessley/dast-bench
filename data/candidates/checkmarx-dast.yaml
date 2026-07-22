@@ -286,6 +286,15 @@ scores:
     Source: checkmarx.com/learn/integrating-dast-and-sast-into-devsecops-for-continuous-api-security'
   confidence: paper
   timestamp: '2026-07-22T01:49:21.808101'
+- criterion_id: detection-accuracy
+  score: 3.5
+  evidence: 'Comprehensive OWASP Top 10 and OWASP API Top 10 coverage claimed, plus
+    business-logic-aware testing -- but no independently published benchmark/ground-truth
+    accuracy score found. Paper confidence, inferred from platform positioning rather
+    than a cited third-party benchmark. Source: checkmarx.com/checkmarx-dast (vendor''s
+    own general accuracy/coverage claim, not an independent benchmark)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:56.219062'
 hands_on_results: []
 observations:
 - context: discovery research

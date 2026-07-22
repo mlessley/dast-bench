@@ -284,6 +284,14 @@ scores:
     hub.docker.com/r/invicti/scan-cli'
   confidence: paper
   timestamp: '2026-07-15T00:59:35.599880'
+- criterion_id: third-party-partner-api-risk
+  score: 2.0
+  evidence: 'No dedicated vendor-risk-assessment output shaping for partner-facing
+    APIs found in public materials -- inferred absence. Source: invicti.com/solutions/financial-services,
+    docs.invicti.com/ie-is/manage-api-inventory (API Inventory filters only by source/scan
+    date/target/type, no partner-risk categorization)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:52.870441'
 hands_on_results: []
 observations:
 - context: discovery research

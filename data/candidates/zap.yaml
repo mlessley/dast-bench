@@ -291,6 +291,54 @@ scores:
     named in the rubric. Source: github.com/zaproxy/action-full-scan'
   confidence: paper
   timestamp: '2026-07-15T01:00:01.560756'
+- criterion_id: auto-remediation-pr
+  score: 1.0
+  evidence: 'No auto-remediation or auto-PR capability -- it''s a scanner, not a code-fixing
+    tool. Source: github.com/zaproxy/action-full-scan (ZAP''s own official GitHub
+    Action only opens/updates/closes a GitHub issue, no diff, no PR)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:53.911215'
+- criterion_id: asset-discovery-inventory
+  score: 1.0
+  evidence: 'Not an attack-surface-management tool; requires a manually-provided target.
+    Source: github.com/zaproxy/zaproxy/wiki/RelatedProjects (OWASP Amass is a separate,
+    unrelated OWASP project, only listed as a ''Related Project'' on ZAP''s wiki,
+    not an integration)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:54.146890'
+- criterion_id: siem-soar-integration
+  score: 2.0
+  evidence: 'Possible via third-party bridging tools (e.g. Flame, forwarding ZAP output
+    to Splunk) -- not a native ZAP capability. Source: zaproxy.org/docs (ZAP itself
+    only outputs JSON/XML/HTML/Markdown reports, no CEF/syslog or native SIEM/SOAR
+    connector)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:54.383162'
+- criterion_id: historical-risk-trend-dashboards
+  score: 1.0
+  evidence: 'Produces per-scan reports only; no cross-scan executive trend dashboard.
+    Source: zaproxy.org/docs (no historical/trend view exists in ZAP itself; the only
+    related evidence found, Checkmarx One''s Executive Overview Dashboard, is a separate
+    paid platform''s feature, not available in OSS ZAP)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:54.594015'
+- criterion_id: vulnerability-status-management
+  score: 1.0
+  evidence: 'No exception/risk-acceptance workflow or audit trail for finding lifecycle
+    -- a scan-and-report tool, not a vulnerability management platform. Source: zaproxy.org/docs
+    (ZAP itself has no lifecycle workflow beyond a flat alert list; the only related
+    evidence found, Checkmarx One''s triage states/audit trail, is that separate paid
+    platform''s feature)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:54.807263'
+- criterion_id: multi-tenancy-access-control
+  score: 1.0
+  evidence: 'No built-in RBAC or audit logging; single-user tool by design, relies
+    on OS/CI-level access control. Source: zaproxy.org/docs (ZAP itself, run locally/via
+    CLI, has no user/role concept at all; the only related evidence found, Checkmarx
+    One''s 5 predefined RBAC roles, is that separate paid platform''s feature)'
+  confidence: paper
+  timestamp: '2026-07-22T01:55:55.025739'
 hands_on_results:
 - test_id: scan-29200159094-juice-shop
   description: CI scan run 29200159094
