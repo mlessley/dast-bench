@@ -272,6 +272,80 @@ scores:
     Qualys pricing article'
   confidence: paper
   timestamp: '2026-07-18T19:44:22.282790'
+- criterion_id: false-positive-rate
+  score: 3.0
+  evidence: 'No independent benchmark or user-review data found specifically quantifying
+    WAS''s false-positive rate in either direction; the vendor''s own product page
+    makes no specific FP-rate claim either. Source: qualys.com/apps/web-app-scanning'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:22.842336'
+- criterion_id: safe-prod-scanning
+  score: 3.0
+  evidence: 'Only a ''Discovery scan'' vs. ''Vulnerability scan'' mode distinction
+    was found; no explicit passive-mode/rate-limiting documentation located for WAS
+    specifically -- a genuine research gap relative to other vendors scored so far.
+    Source: cdn2.qualys.com/docs/qualys-was-getting-started-guide.pdf'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:23.123984'
+- criterion_id: triage-remediation-guidance
+  score: 3.0
+  evidence: 'TruRisk-based prioritization implied at the platform level; no WAS-specific
+    instance-tailored remediation-guidance citation found distinct from generic vulnerability
+    descriptions. Source: docs.qualys.com/en/vmdr/latest/trurisk/truRisk_report.htm
+    (platform-wide, not WAS-specific)'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:23.401017'
+- criterion_id: auto-remediation-pr
+  score: 1.0
+  evidence: 'Confirmed absent for WAS after independent gap-check: Qualys does have
+    an ''Auto-Remediation'' feature, but it is scoped to Policy Compliance (CAR scripts
+    fixing infrastructure misconfigurations) and VMDR patch/ticket remediation --
+    not WAS, and not code-fix/PR generation. Source: blog.qualys.com/product-tech/2023/04/03/augment-security-asset-tagging-with-custom-assessment-and-remediation-car'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:23.677068'
+- criterion_id: business-logic-workflow-detection
+  score: 1.5
+  evidence: 'Confirmed weak after independent gap-check: ''Form Training'' and Selenium/Browser-Recorder
+    scripts enable crawling through multi-step workflows but no authorization-state-aware
+    business-logic testing capability was found (nothing analogous to a privilege-escalation-diff
+    test). A source explicitly states ''Standard DAST tools like Qualys WAS cannot
+    validate business logic,'' and this stands unrebutted. Source: getautonoma.com/blog/dast-tools'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:23.943763'
+- criterion_id: legacy-app-protocol-support
+  score: 3.0
+  evidence: 'SOAP support confirmed; no ASP.NET WebForms/JSP/mainframe-gateway-specific
+    claims found for WAS. Source: qualys.com/apps/web-app-scanning'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:24.242030'
+- criterion_id: third-party-partner-api-risk
+  score: 1.5
+  evidence: 'Confirmed absent after independent gap-check: Qualys''s partner/vendor-asset
+    content is under CSAM (''Import Third-Party Assets API'') for general asset inventory,
+    not a WAS-specific partner-API-differentiated scanning or risk-program-formatted
+    output. Source: qualys.com/faqs-resources-attack-surface-management'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:24.546220'
+- criterion_id: scan-performance-scalability
+  score: 3.5
+  evidence: 'Vendor claims ML-optimized scan patterns reduce scan time by up to 80%
+    on large applications -- self-reported, but a specific number. Source: qualys.com/apps/web-app-scanning'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:24.827019'
+- criterion_id: ide-local-dev-tooling
+  score: 1.0
+  evidence: 'Confirmed absent after independent gap-check: no IDE plugin (VS Code,
+    IntelliJ, Eclipse) or pre-commit tool found anywhere for WAS; only the CI/CD Jenkins
+    plugin exists, which is pipeline integration, not local/IDE tooling. Source: plugins.jenkins.io/qualys-was'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:25.113736'
+- criterion_id: automated-triage-fp-reduction
+  score: 1.5
+  evidence: 'Confirmed weak after independent gap-check: no cross-scan learning or
+    automated proof-of-concept replay found beyond manual ignore/exception marking
+    and TruRisk''s risk-prioritization scoring. Source: docs.qualys.com/en/was/latest/knowledgebase/ignore_vulnerability.htm'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:25.411572'
 hands_on_results: []
 observations:
 - context: discovery research

@@ -269,6 +269,23 @@ scores:
     15-35% for implementation/support/training in year one. Source: checkmarx.com/legal/checkmarx-one-license-types-and-restrictions'
   confidence: paper
   timestamp: '2026-07-18T16:28:18.616406'
+- criterion_id: false-positive-rate
+  score: 3.5
+  evidence: 'Proof-based scanning validates findings before flagging, and SAST-DAST
+    correlation is cited to reduce noise -- but the vendor''s own ''89% noise reduction''
+    figure applies to platform-wide ASPM correlation across all scanners, not a DAST-isolated
+    false-positive rate, so it''s cited here with that caveat rather than at face
+    value. Source: checkmarx.com/blog/checkmarx-dast-for-the-ai-coding-era'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:21.508910'
+- criterion_id: compliance-standards-mapping
+  score: 3.0
+  evidence: 'OWASP Top 10 and OWASP API Security Top 10 mapping confirmed; no explicit
+    PCI-DSS/GLBA/SOX/FFIEC/NYDFS regulatory-framework mapping found in DAST-specific
+    documentation, though the platform broadly targets enterprise/regulated customers.
+    Source: checkmarx.com/learn/integrating-dast-and-sast-into-devsecops-for-continuous-api-security'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:21.808101'
 hands_on_results: []
 observations:
 - context: discovery research

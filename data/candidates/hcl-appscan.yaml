@@ -259,6 +259,20 @@ scores:
     pricing article'
   confidence: paper
   timestamp: '2026-07-18T16:40:06.401255'
+- criterion_id: asset-discovery-inventory
+  score: 3.0
+  evidence: 'API-level discovery/inventory confirmed via the Salt Security partnership;
+    not confirmed at the rubric''s top tier of scanning public IP ranges/domains for
+    rogue unmapped apps. Source: hcl-software.com/appscan/products/api-security'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:22.179275'
+- criterion_id: finding-validation-proof-of-exploit
+  score: 4.0
+  evidence: 'AppScan on Cloud aggregates and correlates DAST, SAST, and IAST findings
+    to provide proof of exploitability, prioritizing the most critical confirmed issues.
+    Source: hcl-software.com/appscan'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:46.181998'
 hands_on_results: []
 observations:
 - context: discovery research

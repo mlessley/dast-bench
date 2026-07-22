@@ -255,6 +255,14 @@ scores:
     quotes. Source: rapid7.com/products/insightappsec/pricing'
   confidence: paper
   timestamp: '2026-07-18T19:27:04.291264'
+- criterion_id: third-party-partner-api-risk
+  score: 1.5
+  evidence: 'Confirmed absent after independent gap-check: no citable feature found;
+    searches for InsightAppSec plus partner/open-banking/third-party-risk terms returned
+    only generic industry TPRM content unrelated to Rapid7. Source: rapid7.com/products/insightappsec
+    (no partner-API-specific feature found there or elsewhere)'
+  confidence: paper
+  timestamp: '2026-07-22T01:49:22.526611'
 hands_on_results: []
 observations:
 - context: discovery research
