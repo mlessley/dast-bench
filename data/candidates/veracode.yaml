@@ -361,6 +361,24 @@ scores:
     Splunk Bridge'' is third-party/community-built, not Veracode-authored)'
   confidence: paper
   timestamp: '2026-07-22T01:55:53.702472'
+- criterion_id: detection-accuracy
+  score: 3.0
+  evidence: 'No specific independent detection-rate benchmark found for Veracode''s
+    DAST specifically; scored from general enterprise-platform positioning and market
+    recognition (a 9x Gartner Magic Quadrant Leader for Application Security Testing)
+    rather than a cited accuracy number. Source: veracode.com/products/dynamic-analysis-dast,
+    securityscientist.net/blog/12-questions-and-answers-about-veracode-dast'
+  confidence: paper
+  timestamp: '2026-07-22T02:04:57.464252'
+- criterion_id: finding-validation-proof-of-exploit
+  score: 4.0
+  evidence: 'Revised up with a real citation: clicking a finding in Veracode DAST
+    Essentials surfaces the exact payload used for the exploit, and findings can be
+    independently replicated via a generated curl request -- a concrete proof-of-exploit
+    mechanism comparable to other proof-based scanners, not just an inherent dynamic-testing
+    advantage over static pattern matching. Source: veracode.com/blog/getting-started-guide-veracode-dast-essentials'
+  confidence: paper
+  timestamp: '2026-07-22T02:04:57.879568'
 hands_on_results: []
 observations:
 - context: discovery research

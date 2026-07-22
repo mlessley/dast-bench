@@ -171,3 +171,23 @@ criteria:
         the output'), not automation.
     reviewed_by_gap_check: true
     stale: false
+  detection-accuracy:
+    researched_at: '2026-07-22T02:04:57.667917'
+    queries:
+    - Veracode DAST detection accuracy benchmark independent review
+    findings:
+    - url: https://www.veracode.com/products/dynamic-analysis-dast
+      snippet: Enterprise DAST platform positioning; no specific detection-rate benchmark
+        published.
+    reviewed_by_gap_check: false
+    stale: false
+  finding-validation-proof-of-exploit:
+    researched_at: '2026-07-22T02:04:58.086337'
+    queries:
+    - Veracode DAST finding validation proof of exploit exploitability confirmation
+    findings:
+    - url: https://www.veracode.com/blog/getting-started-guide-veracode-dast-essentials/
+      snippet: Access the exact payloads used for the exploit and replicate findings
+        using a curl request.
+    reviewed_by_gap_check: false
+    stale: false
