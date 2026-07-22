@@ -328,6 +328,132 @@ scores:
     on ProjectDiscovery''s public roadmap, not yet shipped)'
   confidence: paper
   timestamp: '2026-07-22T01:55:55.258423'
+- criterion_id: shadow-api-discovery
+  score: 3.0
+  evidence: 'Exposure/technology-fingerprint templates check for known paths (e.g.
+    robots.txt) as heuristic fingerprinting; the template catalog is actively pruned
+    of false-positive/deprecated-service templates, but there''s no dedicated deprecated/versioned-API-endpoint-aware
+    discovery engine. Source: projectdiscovery.io/blog/nuclei-templates-april-2026'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:44.781609'
+- criterion_id: safe-prod-scanning
+  score: 3.5
+  evidence: 'Rate-limit (-rl/-rlm) and concurrency (-c/-pc) flags plus a ''template-spray''
+    scan strategy that spreads load across many targets instead of hammering one --
+    real configurability for sensitive environments, but templates are match-based
+    by default rather than a formally branded ''safe mode'' like ZAP''s. Source: docs.projectdiscovery.io/opensource/nuclei/mass-scanning-cli'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:45.204306'
+- criterion_id: triage-remediation-guidance
+  score: 3.0
+  evidence: 'Template info block includes name/description/reference/severity/classification
+    (CVSS/CWE/CVE) fields, but quality is inconsistent across 12,000+ community-contributed
+    templates and not tailored to the specific instance/tech stack. Source: docs.projectdiscovery.io/templates/structure'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:45.627823'
+- criterion_id: setup-onboarding-friction
+  score: 5.0
+  evidence: 'Single static Go binary installable via ''go install'', a prebuilt binary
+    download, or docker pull; ''-update-templates'' (or automatic first-run fetch)
+    downloads the full community template library. Source: docs.projectdiscovery.io/opensource/nuclei/install'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:46.037980'
+- criterion_id: reporting-exportability
+  score: 4.5
+  evidence: 'Native JSON, JSONL (-jsonl), and SARIF (-sarif-export) output; SARIF
+    integrates natively with GitHub/GitLab code-scanning security tabs via the official
+    nuclei-action. Source: docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning,
+    github.com/projectdiscovery/nuclei-action'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:46.430049'
+- criterion_id: extensibility-custom-rules
+  score: 5.0
+  evidence: 'The entire engine is built around a simple YAML DSL explicitly designed
+    for community/user-authored detection templates -- no vendor involvement needed
+    to add new detection logic. Source: docs.projectdiscovery.io/templates/structure'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:46.813953'
+- criterion_id: compliance-standards-mapping
+  score: 3.5
+  evidence: 'Classification metadata (cvss-metrics, cvss-score, cve-id, cwe-id) is
+    being actively normalized across templates, including a recent effort to normalize
+    CWE-ID metadata across HTTP exposure/misconfiguration templates; no financial-services-specific
+    (GLBA/SOX/FFIEC/NYDFS) mapping out of the box. Source: github.com/projectdiscovery/nuclei-templates/blob/main/TEMPLATE-CREATION-GUIDE.md'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:47.194584'
+- criterion_id: finding-validation-proof-of-exploit
+  score: 3.5
+  evidence: 'A template match is itself a precise, specific assertion (a matcher checking
+    a string/regex/status-code against the actual response) -- arguably inherently
+    more confirmed than a generic payload-based finding -- though not universally
+    accompanied by explicit exploit-proof evidence beyond the match itself. Source:
+    docs.projectdiscovery.io/templates/structure'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:47.583461'
+- criterion_id: scan-performance-scalability
+  score: 4.5
+  evidence: 'Configurable rate-limit/concurrency/payload-concurrency flags support
+    fast, parallel execution by design; ProjectDiscovery''s cloud platform explicitly
+    markets continuous scanning across an org''s full exposure surface with daily
+    auto-refresh. Source: docs.projectdiscovery.io/opensource/nuclei/mass-scanning-cli,
+    projectdiscovery.io/blog/pdcp-0-8-8'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:47.994458'
+- criterion_id: incremental-differential-scanning
+  score: 3.0
+  evidence: 'ProjectDiscovery Cloud continuously monitors internet-exposed assets,
+    automatically discovering new hosts/endpoints and alerting on attack-surface changes
+    -- incremental at the asset-discovery/exposure level, not confirmed at the application-code/endpoint-content
+    level the rubric describes. Source: projectdiscovery.io/blog/the-new-way-to-discover-your-exposure'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:48.406821'
+- criterion_id: ticketing-collaboration-integration
+  score: 4.5
+  evidence: 'Native Tracker integrations for GitHub, GitLab, Jira, and Linear with
+    built-in deduplication (persisted locally in reporting-db.json) that prevents
+    duplicate tickets and can close issues automatically once a subsequent clean scan
+    shows the vulnerability resolved -- more official than ZAP''s community-maintained
+    add-ons. Source: github.com/projectdiscovery/nuclei/blob/main/DESIGN.md'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:48.841491'
+- criterion_id: siem-soar-integration
+  score: 4.5
+  evidence: 'Native Exporter integrations for Splunk and Elasticsearch (plus MongoDB).
+    Source: deepwiki.com/projectdiscovery/nuclei/6-output-and-reporting'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:49.243039'
+- criterion_id: historical-risk-trend-dashboards
+  score: 3.5
+  evidence: 'Revised up with a real citation: ProjectDiscovery Cloud has built-in
+    compliance/executive report generation, but an explicit remediation-velocity/risk-reduction-over-time
+    trend view specifically isn''t confirmed. Source: projectdiscovery.io/blog/projectdiscovery-achieves-soc-2-type-2-certification'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:49.664300'
+- criterion_id: multi-tenancy-access-control
+  score: 4.0
+  evidence: 'Revised up with a real citation: ProjectDiscovery Cloud provides granular
+    RBAC with defined roles, enterprise SSO integration, and comprehensive audit logs
+    tracking who ran a scan, acknowledged a vulnerability, or changed a setting, with
+    timestamps. Source: projectdiscovery.io/blog/projectdiscovery-achieves-soc-2-type-2-certification'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:50.069944'
+- criterion_id: vendor-security-posture
+  score: 4.5
+  evidence: 'Revised up with a real citation: ProjectDiscovery achieved SOC 2 Type
+    2 certification (AICPA SSAE 18 standard), confirmed via a dedicated announcement,
+    plus a public Trust Center (SafeBase-powered); ISO 27001 certification still not
+    confirmed. Source: projectdiscovery.io/blog/projectdiscovery-achieves-soc-2-type-2-certification,
+    security.projectdiscovery.io'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:50.476298'
+- criterion_id: licensing-model-predictability
+  score: 3.5
+  evidence: 'Core engine plus all 12,000+ community templates are MIT-licensed and
+    free -- maximally predictable at zero cost. ProjectDiscovery Cloud (where advanced
+    ASM/team features live) uses enterprise/contact-sales pricing without public per-asset
+    rate transparency. Source: github.com/projectdiscovery/nuclei'
+  confidence: paper
+  timestamp: '2026-07-22T02:08:50.879990'
 hands_on_results:
 - test_id: scan-29200162833-juice-shop
   description: CI scan run 29200162833

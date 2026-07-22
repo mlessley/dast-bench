@@ -134,3 +134,163 @@ criteria:
       snippet: PointGuard AI dedicated Nuclei integration.
     reviewed_by_gap_check: true
     stale: false
+  shadow-api-discovery:
+    researched_at: '2026-07-22T02:08:44.986475'
+    queries:
+    - Nuclei templates exposure fingerprint path discovery deprecated endpoints
+    findings:
+    - url: https://projectdiscovery.io/blog/nuclei-templates-april-2026
+      snippet: Exposure and fingerprint template categories; deprecated/false-positive
+        templates actively pruned.
+    reviewed_by_gap_check: false
+    stale: false
+  safe-prod-scanning:
+    researched_at: '2026-07-22T02:08:45.410098'
+    queries:
+    - Nuclei rate limiting flags non-destructive safe scanning options
+    findings:
+    - url: https://docs.projectdiscovery.io/opensource/nuclei/mass-scanning-cli
+      snippet: -rl/-rlm rate-limit flags, -c/-pc concurrency flags, template-spray
+        scan strategy.
+    reviewed_by_gap_check: false
+    stale: false
+  triage-remediation-guidance:
+    researched_at: '2026-07-22T02:08:45.831548'
+    queries:
+    - Nuclei template metadata name description reference severity classification
+    findings:
+    - url: https://docs.projectdiscovery.io/templates/structure
+      snippet: 'Info block: name, author, severity, description, reference, tags,
+        metadata.'
+    reviewed_by_gap_check: false
+    stale: false
+  setup-onboarding-friction:
+    researched_at: '2026-07-22T02:08:46.229938'
+    queries:
+    - Nuclei go install docker update-templates setup binary
+    findings:
+    - url: https://docs.projectdiscovery.io/opensource/nuclei/install
+      snippet: go install, docker pull, or prebuilt binary; templates auto-fetched
+        on first run.
+    reviewed_by_gap_check: false
+    stale: false
+  reporting-exportability:
+    researched_at: '2026-07-22T02:08:46.619180'
+    queries:
+    - Nuclei JSON JSONL SARIF output GitHub code scanning integration
+    findings:
+    - url: https://github.com/projectdiscovery/nuclei-action
+      snippet: Nuclei GitHub Action for CI/CD; SARIF/JSON output for code-scanning
+        integration.
+    reviewed_by_gap_check: false
+    stale: false
+  extensibility-custom-rules:
+    researched_at: '2026-07-22T02:08:47.002636'
+    queries:
+    - Nuclei template metadata name description reference severity classification
+    findings:
+    - url: https://docs.projectdiscovery.io/templates/structure
+      snippet: YAML-based template DSL for community/user-authored detection logic.
+    reviewed_by_gap_check: false
+    stale: false
+  compliance-standards-mapping:
+    researched_at: '2026-07-22T02:08:47.378141'
+    queries:
+    - Nuclei templates CWE CVE CVSS classification metadata compliance
+    findings:
+    - url: https://github.com/projectdiscovery/nuclei-templates/blob/main/TEMPLATE-CREATION-GUIDE.md
+      snippet: Classification should include cvss-metrics, cvss-score, cve-id, cwe-id
+        fields.
+    reviewed_by_gap_check: false
+    stale: false
+  finding-validation-proof-of-exploit:
+    researched_at: '2026-07-22T02:08:47.786898'
+    queries:
+    - Nuclei template metadata name description reference severity classification
+    findings:
+    - url: https://docs.projectdiscovery.io/templates/structure
+      snippet: Matchers assert conditions against the actual observed response.
+    reviewed_by_gap_check: false
+    stale: false
+  scan-performance-scalability:
+    researched_at: '2026-07-22T02:08:48.205532'
+    queries:
+    - ProjectDiscovery Cloud platform continuous monitoring asset discovery incremental
+    findings:
+    - url: https://projectdiscovery.io/blog/pdcp-0-8-8
+      snippet: Continuous cloud asset discovery with daily auto-updates refreshing
+        exposure data every 24 hours.
+    reviewed_by_gap_check: false
+    stale: false
+  incremental-differential-scanning:
+    researched_at: '2026-07-22T02:08:48.614690'
+    queries:
+    - ProjectDiscovery Cloud platform continuous monitoring asset discovery incremental
+    findings:
+    - url: https://projectdiscovery.io/blog/the-new-way-to-discover-your-exposure
+      snippet: Continuously monitors all exposed assets, automatically discovering
+        new hosts, endpoints, and changes.
+    reviewed_by_gap_check: false
+    stale: false
+  ticketing-collaboration-integration:
+    researched_at: '2026-07-22T02:08:49.045301'
+    queries:
+    - ProjectDiscovery Nuclei Jira GitHub GitLab integration deduplication Splunk
+      Elasticsearch
+    findings:
+    - url: https://github.com/projectdiscovery/nuclei/blob/main/DESIGN.md
+      snippet: Tracker interface for GitHub/GitLab/Jira/Linear with deduplication
+        and auto-close on resolution.
+    reviewed_by_gap_check: false
+    stale: false
+  siem-soar-integration:
+    researched_at: '2026-07-22T02:08:49.451659'
+    queries:
+    - ProjectDiscovery Nuclei Jira GitHub GitLab integration deduplication Splunk
+      Elasticsearch
+    findings:
+    - url: https://deepwiki.com/projectdiscovery/nuclei/6-output-and-reporting
+      snippet: Exporters support Elasticsearch, MongoDB, and Splunk.
+    reviewed_by_gap_check: false
+    stale: false
+  historical-risk-trend-dashboards:
+    researched_at: '2026-07-22T02:08:49.862355'
+    queries:
+    - ProjectDiscovery Cloud platform team members RBAC SOC 2 dashboard
+    findings:
+    - url: https://projectdiscovery.io/blog/projectdiscovery-achieves-soc-2-type-2-certification
+      snippet: Compliance reporting built into the platform for executives/compliance
+        frameworks.
+    reviewed_by_gap_check: false
+    stale: false
+  multi-tenancy-access-control:
+    researched_at: '2026-07-22T02:08:50.266323'
+    queries:
+    - ProjectDiscovery Cloud platform team members RBAC SOC 2 dashboard
+    findings:
+    - url: https://projectdiscovery.io/blog/projectdiscovery-achieves-soc-2-type-2-certification
+      snippet: SSO integration and comprehensive audit logs tracking scan runs, acknowledgements,
+        and setting changes.
+    reviewed_by_gap_check: false
+    stale: false
+  vendor-security-posture:
+    researched_at: '2026-07-22T02:08:50.677997'
+    queries:
+    - ProjectDiscovery Cloud platform team members RBAC SOC 2 dashboard
+    findings:
+    - url: https://projectdiscovery.io/blog/projectdiscovery-achieves-soc-2-type-2-certification
+      snippet: SOC 2 Type 2 certified per AICPA SSAE 18 standard.
+    - url: https://security.projectdiscovery.io/
+      snippet: Public Trust Center, SafeBase-powered.
+    reviewed_by_gap_check: false
+    stale: false
+  licensing-model-predictability:
+    researched_at: '2026-07-22T02:08:51.086248'
+    queries:
+    - Nuclei MIT license open source projectdiscovery github
+    findings:
+    - url: https://github.com/projectdiscovery/nuclei
+      snippet: MIT licensed; CLI, all community templates, and Go source code are
+        open-source.
+    reviewed_by_gap_check: false
+    stale: false
